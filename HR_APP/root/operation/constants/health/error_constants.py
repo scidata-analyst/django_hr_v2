@@ -1,0 +1,17 @@
+"""
+Health & Safety Error Constants
+"""
+
+# Error Codes
+INCIDENT_NOT_FOUND = "INCIDENT_NOT_FOUND"
+INVESTIGATION_IN_PROGRESS = "INVESTIGATION_IN_PROGRESS"
+INVALID_INCIDENT_TYPE = "INVALID_INCIDENT_TYPE"
+MISSING_REQUIRED_DOCUMENTATION = "MISSING_REQUIRED_DOCUMENTATION"
+
+# Error Messages
+ERROR_MESSAGES = {
+    INCIDENT_NOT_FOUND: "Incident not found",
+    INVESTIGATION_IN_PROGRESS: "Investigation is still in progress",
+    INVALID_INCIDENT_TYPE: "Invalid incident type",
+    MISSING_REQUIRED_DOCUMENTATION: "Required documentation is missing",
+}

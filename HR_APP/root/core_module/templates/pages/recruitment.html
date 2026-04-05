@@ -1,0 +1,3563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HRMSPro — Recruitment & Hiring</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════════
+   CSS VARIABLES & RESET
+═══════════════════════════════════════════ */
+    :root {
+      --bg: #f0f2f7;
+      --sidebar-bg: #0f1623;
+      --sidebar-w: 260px;
+      --topbar-h: 64px;
+      --white: #ffffff;
+      --primary: #2563eb;
+      --primary-light: #dbeafe;
+      --primary-dark: #1d4ed8;
+      --accent: #f59e0b;
+      --accent-light: #fef3c7;
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --danger: #ef4444;
+      --danger-light: #fee2e2;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --info: #06b6d4;
+      --info-light: #cffafe;
+      --purple: #8b5cf6;
+      --purple-light: #ede9fe;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --text-dark: #0f172a;
+      --text-mid: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.05);
+      --card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font: "Alata", sans-serif;
+      --font-serif: "Alata", sans-serif;
+      --sidebar-text: #94a3b8;
+      --sidebar-hover: rgba(255, 255, 255, 0.06);
+      --sidebar-active: rgba(37, 99, 235, 0.18);
+      --sidebar-active-border: #2563eb;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ═══════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--sidebar-bg);
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      z-index: 200;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 999px;
+    }
+
+    .sidebar-brand {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      line-height: 1.1;
+    }
+
+    .brand-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-sub {
+      font-size: 0.65rem;
+      color: var(--sidebar-text);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-section {
+      padding: 20px 12px 8px;
+    }
+
+    .sidebar-section-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(148, 163, 184, 0.5);
+      padding: 0 8px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      color: var(--sidebar-text);
+      font-size: 0.8rem;
+      font-weight: 500;
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: left;
+      position: relative;
+      margin-bottom: 1px;
+    }
+
+    .nav-item-btn:hover {
+      background: var(--sidebar-hover);
+      color: #fff;
+    }
+
+    .nav-item-btn.active {
+      background: var(--sidebar-active);
+      color: #fff;
+      border-left: 2px solid var(--sidebar-active-border);
+    }
+
+    .nav-item-btn .nav-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.05);
+      transition: background 0.18s;
+    }
+
+    .nav-item-btn.active .nav-icon,
+    .nav-item-btn:hover .nav-icon {
+      background: rgba(37, 99, 235, 0.25);
+    }
+
+    .nav-item-btn .nav-badge {
+      margin-left: auto;
+      background: var(--danger);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+
+    .user-card:hover {
+      background: var(--sidebar-hover);
+    }
+
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .user-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-role {
+      font-size: 0.65rem;
+      color: var(--sidebar-text);
+    }
+
+    /* ═══════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════ */
+    .main-wrap {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      height: var(--topbar-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      flex: 1;
+    }
+
+    .topbar-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 14px;
+      width: 240px;
+    }
+
+    .topbar-search input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: var(--font);
+      font-size: 0.8rem;
+      color: var(--text-dark);
+      width: 100%;
+    }
+
+    .topbar-search input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .topbar-action {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-mid);
+      font-size: 1rem;
+      transition: all 0.18s;
+      position: relative;
+    }
+
+    .topbar-action:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary-light);
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 7px;
+      height: 7px;
+      background: var(--danger);
+      border-radius: 50%;
+      border: 1.5px solid var(--white);
+    }
+
+    .topbar-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* PAGE CONTENT */
+    .page-content {
+      padding: 28px;
+      flex: 1;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .page-header-left {}
+
+    .page-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .page-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+    .btn-primary-custom {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary-custom:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-outline-custom {
+      background: var(--white);
+      color: var(--text-mid);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-outline-custom:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .btn-danger-custom {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-success-custom {
+      background: var(--success);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    /* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+    .card-custom {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+
+    .card-custom:hover {
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .card-body-custom {
+      padding: 20px;
+    }
+
+    .card-header-custom {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-header-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    /* STAT CARDS */
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .stat-card.blue::after {
+      background: var(--primary);
+    }
+
+    .stat-card.green::after {
+      background: var(--success);
+    }
+
+    .stat-card.amber::after {
+      background: var(--accent);
+    }
+
+    .stat-card.red::after {
+      background: var(--danger);
+    }
+
+    .stat-card.purple::after {
+      background: var(--purple);
+    }
+
+    .stat-card.cyan::after {
+      background: var(--info);
+    }
+
+    .stat-card.pink::after {
+      background: var(--pink);
+    }
+
+    .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.blue {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .stat-icon.green {
+      background: var(--success-light);
+      color: var(--success);
+    }
+
+    .stat-icon.amber {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .stat-icon.red {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .stat-icon.purple {
+      background: var(--purple-light);
+      color: var(--purple);
+    }
+
+    .stat-icon.cyan {
+      background: var(--info-light);
+      color: var(--info);
+    }
+
+    .stat-icon.pink {
+      background: var(--pink-light);
+      color: var(--pink);
+    }
+
+    .stat-info {
+      flex: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-change {
+      font-size: 0.72rem;
+      font-weight: 500;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .stat-change.up {
+      color: var(--success);
+    }
+
+    .stat-change.down {
+      color: var(--danger);
+    }
+
+    /* ═══════════════════════════════════════════
+   TABLES
+═══════════════════════════════════════════ */
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table-custom thead th {
+      padding: 10px 14px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .table-custom tbody td {
+      padding: 12px 14px;
+      font-size: 0.8rem;
+      color: var(--text-mid);
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+
+    .table-custom tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table-custom tbody tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* ═══════════════════════════════════════════
+   BADGES / PILLS
+═══════════════════════════════════════════ */
+    .badge-custom {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 0.67rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-success {
+      background: var(--success-light);
+      color: #065f46;
+    }
+
+    .badge-danger {
+      background: var(--danger-light);
+      color: #991b1b;
+    }
+
+    .badge-warning {
+      background: var(--accent-light);
+      color: #92400e;
+    }
+
+    .badge-info {
+      background: var(--info-light);
+      color: #155e75;
+    }
+
+    .badge-primary {
+      background: var(--primary-light);
+      color: #1e40af;
+    }
+
+    .badge-purple {
+      background: var(--purple-light);
+      color: #5b21b6;
+    }
+
+    .badge-gray {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .badge-pink {
+      background: var(--pink-light);
+      color: #9d174d;
+    }
+
+    /* ═══════════════════════════════════════════
+   AVATAR
+═══════════════════════════════════════════ */
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .avatar-sm {
+      width: 26px;
+      height: 26px;
+      font-size: 0.65rem;
+    }
+
+    .avatar-lg {
+      width: 44px;
+      height: 44px;
+      font-size: 1rem;
+    }
+
+    .av-blue {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+
+    .av-green {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .av-amber {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .av-red {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .av-purple {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+
+    .av-cyan {
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+    }
+
+    .av-pink {
+      background: linear-gradient(135deg, #ec4899, #db2777);
+    }
+
+    /* ═══════════════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════════════ */
+    .progress-custom {
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .pf-blue {
+      background: var(--primary);
+    }
+
+    .pf-green {
+      background: var(--success);
+    }
+
+    .pf-amber {
+      background: var(--accent);
+    }
+
+    .pf-red {
+      background: var(--danger);
+    }
+
+    .pf-purple {
+      background: var(--purple);
+    }
+
+    /* ═══════════════════════════════════════════
+   MINI CHART (CSS-only bar charts)
+═══════════════════════════════════════════ */
+    .mini-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 40px;
+    }
+
+    .mini-bar {
+      flex: 1;
+      border-radius: 3px 3px 0 0;
+      background: var(--primary-light);
+      transition: background 0.2s;
+      min-width: 8px;
+    }
+
+    .mini-bar.active {
+      background: var(--primary);
+    }
+
+    .mini-bar:hover {
+      background: var(--primary);
+    }
+
+    /* ═══════════════════════════════════════════
+   FORM ELEMENTS
+═══════════════════════════════════════════ */
+    .form-custom {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label-custom {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-control-custom {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-family: var(--font);
+      font-size: 0.82rem;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+      background: var(--white);
+    }
+
+    .form-control-custom:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    /* ═══════════════════════════════════════════
+   TIMELINE
+═══════════════════════════════════════════ */
+    .timeline {
+      position: relative;
+      padding-left: 24px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      bottom: 4px;
+      width: 1.5px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 18px;
+    }
+
+    .timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--white);
+      box-shadow: 0 0 0 1px var(--border);
+    }
+
+    .timeline-dot.blue {
+      background: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    .timeline-dot.green {
+      background: var(--success);
+      box-shadow: 0 0 0 2px var(--success-light);
+    }
+
+    .timeline-dot.amber {
+      background: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-light);
+    }
+
+    .timeline-dot.red {
+      background: var(--danger);
+      box-shadow: 0 0 0 2px var(--danger-light);
+    }
+
+    .timeline-time {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .timeline-text {
+      font-size: 0.78rem;
+      color: var(--text-mid);
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════
+   CALENDAR MINI
+═══════════════════════════════════════════ */
+    .mini-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      text-align: center;
+    }
+
+    .cal-day-header {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding: 4px 0;
+    }
+
+    .cal-day {
+      font-size: 0.72rem;
+      padding: 5px 3px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: var(--text-mid);
+      transition: all 0.15s;
+    }
+
+    .cal-day:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .cal-day.today {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .cal-day.has-event {
+      position: relative;
+    }
+
+    .cal-day.has-event::after {
+      content: '';
+      position: absolute;
+      bottom: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .cal-day.other-month {
+      color: #cbd5e1;
+    }
+
+    /* ═══════════════════════════════════════════
+   KANBAN
+═══════════════════════════════════════════ */
+    .kanban-col {
+      background: #f8fafc;
+      border-radius: var(--radius);
+      padding: 14px;
+      min-height: 200px;
+    }
+
+    .kanban-col-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .kanban-col-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .kanban-count {
+      background: var(--border);
+      color: var(--text-muted);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 10px;
+    }
+
+    .kanban-card {
+      background: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s;
+      cursor: grab;
+    }
+
+    .kanban-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .kanban-card-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .kanban-card-meta {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ═══════════════════════════════════════════
+   DONUT CHART (CSS)
+═══════════════════════════════════════════ */
+    .donut-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+    }
+
+    .donut-svg {
+      transform: rotate(-90deg);
+    }
+
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .donut-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1;
+    }
+
+    .donut-sub {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ═══════════════════════════════════════════
+   LEGEND
+═══════════════════════════════════════════ */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.75rem;
+      color: var(--text-mid);
+      margin-bottom: 6px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════════
+   RATING STARS
+═══════════════════════════════════════════ */
+    .stars {
+      color: var(--accent);
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    /* ═══════════════════════════════════════════
+   TOGGLE SWITCH
+═══════════════════════════════════════════ */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle {
+      width: 36px;
+      height: 20px;
+      background: #cbd5e1;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.on {
+      background: var(--success);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: left 0.2s;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle.on::after {
+      left: 19px;
+    }
+
+    .toggle-label {
+      font-size: 0.75rem;
+      color: var(--text-mid);
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════
+   NOTIFICATION CARD
+═══════════════════════════════════════════ */
+    .notif-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .notif-item:last-child {
+      border-bottom: none;
+    }
+
+    .notif-icon-wrap {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .notif-text {
+      flex: 1;
+      font-size: 0.78rem;
+      color: var(--text-mid);
+      line-height: 1.4;
+    }
+
+    .notif-time {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+    @media (max-width: 991px) {
+      :root {
+        --sidebar-w: 0px;
+      }
+
+      .sidebar {
+        transform: translateX(-260px);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+        --sidebar-w: 260px;
+      }
+
+      .main-wrap {
+        margin-left: 0;
+      }
+
+      .mobile-toggle {
+        display: flex !important;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--text-mid);
+        font-size: 1rem;
+      }
+    }
+
+    .mobile-toggle {
+      display: none;
+    }
+
+    @media (max-width: 576px) {
+      .page-content {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .topbar-search {
+        display: none;
+      }
+    }
+
+      /* MODAL BODY */
+      .modal-body {
+        padding: 20px 24px;
+      }
+
+      /* MODAL FOOTER */
+      .modal-ftr {
+        padding: 16px 24px;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        background: #fafafa;
+        border-radius: 0 0 14px 14px;
+      }
+
+      /* FORM GRID */
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .form-grid.cols-1 {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid.cols-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      @media(max-width:560px) {
+
+        .form-grid,
+        .form-grid.cols-3 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .fg.full {
+        grid-column: 1/-1;
+      }
+
+      .fl {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+
+      }
+
+      .fi {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 9px 12px;
+
+        font-size: 0.82rem;
+        color: #0f172a;
+        outline: none;
+        transition: border-color 0.18s, box-shadow 0.18s;
+        background: #fff;
+      }
+
+      .fi:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .fi::placeholder {
+        color: #cbd5e1;
+      }
+
+      select.fi {
+        cursor: pointer;
+      }
+
+      textarea.fi {
+        resize: vertical;
+        min-height: 80px;
+      }
+/* SECTION DIVIDER */
+      .form-section {
+        font-size: 0.68rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #94a3b8;
+        padding: 10px 0 4px;
+        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 4px;
+        grid-column: 1/-1;
+
+      }
+
+      /* BTN STYLES */
+      .btn-modal-primary {
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 8px;
+
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.18s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-modal-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      }
+
+      .btn-modal-cancel {
+        background: #fff;
+        color: #475569;
+        border: 1.5px solid #e2e8f0;
+        padding: 9px 20px;
+        border-radius: 8px;
+
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.18s;
+      }
+
+      .btn-modal-cancel:hover {
+        border-color: #94a3b8;
+        color: #0f172a;
+      }
+
+      /* CRUD TABLE ACTIONS */
+      .crud-actions {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+      }
+
+      .btn-view {
+        background: #eff6ff;
+        color: #2563eb;
+        border: none;
+        padding: 5px 9px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.72rem;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+
+      .btn-edit {
+        background: #f0fdf4;
+        color: #16a34a;
+        border: none;
+        padding: 5px 9px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.72rem;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+
+      .btn-del {
+        background: #fef2f2;
+        color: #ef4444;
+        border: none;
+        padding: 5px 9px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.72rem;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+
+      .btn-view:hover {
+        background: #dbeafe;
+      }
+
+      .btn-edit:hover {
+        background: #dcfce7;
+      }
+
+      .btn-del:hover {
+        background: #fee2e2;
+      }
+
+      /* SUB-MODULE TABS */
+      .sub-tabs {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 4px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .sub-tab {
+        padding: 7px 14px;
+        border-radius: 7px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: #64748b;
+
+        transition: all 0.18s;
+        white-space: nowrap;
+      }
+
+      .sub-tab.active {
+        background: #fff;
+        color: #2563eb;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+
+      .sub-tab:hover:not(.active) {
+        color: #0f172a;
+      }
+
+      /* SUB-MODULE PANELS */
+      .sub-panel {
+        display: none;
+      }
+
+      .sub-panel.active {
+        display: block;
+      }
+
+      /* PROFILE CARD IN VIEW */
+      .profile-banner {
+        height: 80px;
+        border-radius: 10px;
+        margin-bottom: -30px;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+      }
+
+      .profile-avatar-wrap {
+        padding: 0 20px;
+      }
+
+      .profile-avatar-lg {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #fff;
+
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .detail-item {}
+
+      .detail-label {
+        font-size: 0.67rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94a3b8;
+        margin-bottom: 2px;
+      }
+
+      .detail-value {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #0f172a;
+      }
+
+      /* TOAST */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 2000;
+        background: #0f172a;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 10px;
+
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+
+      #toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      #toast-icon {
+        font-size: 1rem;
+      }
+
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><div class="brand-icon">💼</div><div class="brand-text"><div class="brand-name">HRMSPro</div><div class="brand-sub">Enterprise Suite</div></div></div>
+      
+      <div class="sidebar-section"><div class="sidebar-section-label">Main</div>
+        <button class="nav-item-btn" onclick="location.href='{% url 'home' %}'"><span class="nav-icon">🏠</span> Dashboard</button>
+      </div>
+      <div class="sidebar-section"><div class="sidebar-section-label">Core Modules</div>
+        <button class="nav-item-btn" onclick="location.href='{% url 'employee' %}'"><span class="nav-icon">👤</span> Employee Management</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'attendance' %}'"><span class="nav-icon">🕒</span> Attendance & Leave<span class="nav-badge">5</span></button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'payroll' %}'"><span class="nav-icon">💰</span> Payroll Management</button>
+        <button class="nav-item-btn active" onclick="location.href='{% url 'recruitment' %}'"><span class="nav-icon">📝</span> Recruitment & Hiring</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'onboarding' %}'"><span class="nav-icon">🤝</span> Onboarding & Offboarding</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'ess' %}'"><span class="nav-icon">🖥️</span> Self-Service (ESS)</button>
+      </div>
+      <div class="sidebar-section"><div class="sidebar-section-label">Talent & Growth</div>
+        <button class="nav-item-btn" onclick="location.href='{% url 'performance' %}'"><span class="nav-icon">📈</span> Performance Mgmt</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'training' %}'"><span class="nav-icon">🎓</span> Training & Development</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'talent' %}'"><span class="nav-icon">🚀</span> Talent & Succession</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'engagement' %}'"><span class="nav-icon">🌟</span> Engagement & Recognition</button>
+      </div>
+      <div class="sidebar-section"><div class="sidebar-section-label">Operations</div>
+        <button class="nav-item-btn" onclick="location.href='{% url 'health' %}'"><span class="nav-icon">🏥</span> Health, Safety & Benefits</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'compliance' %}'"><span class="nav-icon">⚖️</span> Compliance & Policies</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'report' %}'"><span class="nav-icon">📊</span> Reports & Analytics</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'branding' %}'"><span class="nav-icon">📣</span> Recruitment Marketing</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'global_view' %}'"><span class="nav-icon">🌍</span> Global HR</button>
+        <button class="nav-item-btn" onclick="location.href='{% url 'integration' %}'"><span class="nav-icon">⚙️</span> Integrations</button>
+      </div>
+      <div class="sidebar-footer"><div class="user-card"><div class="user-avatar">AR</div><div class="user-info"><div class="user-name">Ahmed Rahman</div><div class="user-role">HR Administrator</div></div><i class="bi bi-three-dots-vertical" style="color:#94a3b8;font-size:0.9rem;"></i></div></div>
+    </aside>
+    <div class="main-wrap">
+      <div class="topbar">
+        <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="bi bi-list"></i></button>
+        <div class="topbar-title">Recruitment & Hiring</div>
+        <div class="topbar-search"><i class="bi bi-search" style="color:#94a3b8;font-size:0.85rem;"></i><input type="text" placeholder="Search anything..." /></div>
+        <div class="topbar-date" id="topbar-date"></div>
+        <div class="topbar-action"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
+        <div class="topbar-action"><i class="bi bi-gear"></i></div>
+        <div class="avatar av-blue" style="width:34px;height:34px;font-size:0.72rem;cursor:pointer;">AR</div>
+      </div>
+      <div class="page-content">
+        <div class="page active" id="page-recruitment">
+          <div class="page-header">
+            <div class="page-header-left">
+              <div class="page-title">Recruitment & Hiring</div>
+              <div class="page-subtitle">47 open positions · 234 active candidates</div>
+            </div>
+            <div class="page-actions">
+              <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalCandidate"><i class="bi bi-people"></i> Add
+                Candidate</button>
+              <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalJob"><i class="bi bi-plus-lg"></i> Post
+                Job</button>
+            </div>
+          </div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-3">
+              <div class="stat-card blue">
+                <div class="stat-icon blue"><i class="bi bi-briefcase"></i></div>
+                <div class="stat-info">
+                  <div class="stat-label">Open Positions</div>
+                  <div class="stat-value">47</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card amber">
+                <div class="stat-icon amber"><i class="bi bi-person-lines-fill"></i></div>
+                <div class="stat-info">
+                  <div class="stat-label">Applicants</div>
+                  <div class="stat-value">234</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card purple">
+                <div class="stat-icon purple"><i class="bi bi-camera-video"></i></div>
+                <div class="stat-info">
+                  <div class="stat-label">Interviews Today</div>
+                  <div class="stat-value">8</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-card green">
+                <div class="stat-icon green"><i class="bi bi-person-check"></i></div>
+                <div class="stat-info">
+                  <div class="stat-label">Hired This Month</div>
+                  <div class="stat-value">12</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Kanban Pipeline -->
+          <div class="card-custom mb-3">
+            <div class="card-header-custom">
+              <div class="card-header-title">Hiring Pipeline</div><button class="btn-outline-custom"
+                style="padding:4px 10px;" data-bs-toggle="modal" data-bs-target="#modalInterview">📅 Schedule Interview</button><button
+                class="btn-outline-custom" style="padding:4px 10px;" data-bs-toggle="modal" data-bs-target="#modalOffer">📃 Offer Letter</button>
+            </div>
+            <div class="card-body-custom">
+              <div class="row g-3">
+                <div class="col-md-3 col-6">
+                  <div class="kanban-col">
+                    <div class="kanban-col-header">
+                      <div class="kanban-col-title">Applied</div>
+                      <div class="kanban-count">42</div>
+                    </div>
+                    <div class="kanban-card">
+                      <div class="kanban-card-title">Arif Hossain</div>
+                      <div class="kanban-card-meta"><span>Sr. Developer</span>
+                        <div class="avatar av-blue" style="width:22px;height:22px;font-size:0.6rem;">AH</div>
+                      </div>
+                    </div>
+                    <div class="kanban-card">
+                      <div class="kanban-card-title">Tasnim Akter</div>
+                      <div class="kanban-card-meta"><span>UX Designer</span>
+                        <div class="avatar av-pink" style="width:22px;height:22px;font-size:0.6rem;">TA</div>
+                      </div>
+                    </div>
+                    <div class="kanban-card">
+                      <div class="kanban-card-title">Jabir Uddin</div>
+                      <div class="kanban-card-meta"><span>Sales Lead</span>
+                        <div class="avatar av-green" style="width:22px;height:22px;font-size:0.6rem;">JU</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="kanban-col">
+                    <div class="kanban-col-header">
+                      <div class="kanban-col-title">Screening</div>
+                      <div class="kanban-count">18</div>
+                    </div>
+                    <div class="kanban-card">
+                      <div class="kanban-card-title">Sadia Islam</div>
+                      <div class="kanban-card-meta"><span>Product Mgr</span>
+                        <div class="avatar av-purple" style="width:22px;height:22px;font-size:0.6rem;">SI</div>
+                      </div>
+                    </div>
+                    <div class="kanban-card">
+                      <div class="kanban-card-title">Rafi Ahmed</div>
+                      <div class="kanban-card-meta"><span>Data Analyst</span>
+                        <div class="avatar av-cyan" style="width:22px;height:22px;font-size:0.6rem;">RA</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="kanban-col">
+                    <div class="kanban-col-header">
+                      <div class="kanban-col-title">Interview</div>
+                      <div class="kanban-count">8</div>
+                    </div>
+                    <div class="kanban-card">
+                      <div class="kanban-card-title">Mehzabin Chowdhury</div>
+                      <div class="kanban-card-meta"><span>HR Business Partner</span>
+                        <div class="avatar av-amber" style="width:22px;height:22px;font-size:0.6rem;">MC</div>
+                      </div>
+                    </div>
+                    <div class="kanban-card">
+                      <div class="kanban-card-title">Imran Hossain</div>
+                      <div class="kanban-card-meta"><span>Backend Dev</span>
+                        <div class="avatar av-red" style="width:22px;height:22px;font-size:0.6rem;">IH</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-6">
+                  <div class="kanban-col">
+                    <div class="kanban-col-header">
+                      <div class="kanban-col-title">Offer</div>
+                      <div class="kanban-count">4</div>
+                    </div>
+                    <div class="kanban-card" style="border-left:3px solid var(--success);">
+                      <div class="kanban-card-title">Rezaul Karim</div>
+                      <div class="kanban-card-meta"><span>DevOps Eng</span><span class="badge-custom badge-success"
+                          style="font-size:0.6rem;">Offer Sent</span></div>
+                    </div>
+                    <div class="kanban-card" style="border-left:3px solid var(--warning);">
+                      <div class="kanban-card-title">Sumaiya Begum</div>
+                      <div class="kanban-card-meta"><span>Marketing Mgr</span><span class="badge-custom badge-warning"
+                          style="font-size:0.6rem;">Negotiating</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Open Jobs -->
+          <div class="card-custom">
+            <div class="card-header-custom">
+              <div class="card-header-title">Open Job Postings</div>
+              <div class="d-flex gap-2 align-items-center">
+                <select id="jobs-filter-status" style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;">
+                  <option value="">All Status</option>
+                  <option value="active">Active</option>
+                  <option value="draft">Draft</option>
+                  <option value="on_hold">On Hold</option>
+                  <option value="closed">Closed</option>
+                </select>
+                <input id="jobs-filter-search" type="text" placeholder="Search jobs..." style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:150px;" />
+                <button class="btn-primary-custom" style="padding:6px 14px;font-size:0.75rem;" onclick="loadJobs(1)"><i class="bi bi-funnel"></i> Filter</button>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Job Title</th>
+                    <th>Department</th>
+                    <th>Location</th>
+                    <th>Deadline</th>
+                    <th>Applicants</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="jobs-tbody"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">Loading job postings...</td></tr></tbody>
+              </table>
+            </div>
+            <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px;">
+              <span id="jobs-pagination-info" style="font-size:0.72rem;color:var(--text-muted);"></span>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <select id="jobs-page-size" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="loadJobs(1)">
+                  <option value="5">5 per page</option>
+                  <option value="10" selected>10 per page</option>
+                  <option value="25">25 per page</option>
+                  <option value="50">50 per page</option>
+                </select>
+                <div id="jobs-pagination" style="display:flex;gap:4px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Candidates -->
+          <div class="card-custom mb-3">
+            <div class="card-header-custom">
+              <div class="card-header-title">Candidates</div>
+              <div class="d-flex gap-2 align-items-center">
+                <select id="candidate-filter-stage" style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;">
+                  <option value="">All Stages</option>
+                  <option value="applied">Applied</option>
+                  <option value="screening">Screening</option>
+                  <option value="interview">Interview</option>
+                  <option value="offer">Offer</option>
+                  <option value="hired">Hired</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <input id="candidate-filter-search" type="text" placeholder="Search candidates..." style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:150px;" />
+                <button class="btn-primary-custom" style="padding:6px 14px;font-size:0.75rem;" onclick="loadCandidates(1)"><i class="bi bi-funnel"></i> Filter</button>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="table-custom">
+                <thead>
+                  <tr>
+                    <th>Full Name</th>
+                    <th>Applied For</th>
+                    <th>Source</th>
+                    <th>Experience</th>
+                    <th>Stage</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="candidates-tbody"><tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">Loading candidates...</td></tr></tbody>
+              </table>
+            </div>
+            <div style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px;">
+              <span id="candidates-pagination-info" style="font-size:0.72rem;color:var(--text-muted);"></span>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <select id="candidates-page-size" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="loadCandidates(1)">
+                  <option value="5">5 per page</option>
+                  <option value="10" selected>10 per page</option>
+                  <option value="25">25 per page</option>
+                  <option value="50">50 per page</option>
+                </select>
+                <div id="candidates-pagination" style="display:flex;gap:4px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+         PAGE 6: PERFORMANCE
+    ══════════════════════════════════════ -->
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ modalEmployee ═══ -->
+  <div class="modal fade" id="modalEmployee" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#dbeafe">👤</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Add / Edit Employee</div>
+              <div style="font-size:0.78rem;color:#64748b;">Fill all required fields</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="form-section">Personal Information</div>
+            <div class="fg"><div class="fl">First Name *</div><input class="fi" placeholder="e.g. Kabir"/></div>
+            <div class="fg"><div class="fl">Last Name *</div><input class="fi" placeholder="e.g. Hossain"/></div>
+            <div class="fg"><div class="fl">Date of Birth</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Gender</div><select class="fi"><option>Male</option><option>Female</option><option>Other</option></select></div>
+            <div class="fg"><div class="fl">National ID / Passport</div><input class="fi" placeholder="NID Number"/></div>
+            <div class="fg"><div class="fl">Blood Group</div><select class="fi"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+            <div class="form-section">Contact Information</div>
+            <div class="fg"><div class="fl">Personal Email *</div><input class="fi" type="email" placeholder="personal@email.com"/></div>
+            <div class="fg"><div class="fl">Work Email</div><input class="fi" type="email" placeholder="work@company.com"/></div>
+            <div class="fg"><div class="fl">Phone Number</div><input class="fi" placeholder="+880 1XXX XXXXXX"/></div>
+            <div class="fg"><div class="fl">Emergency Contact</div><input class="fi" placeholder="Name & Phone"/></div>
+            <div class="fg full"><div class="fl">Current Address</div><textarea class="fi" rows="3" placeholder="Full address..."></textarea></div>
+            <div class="form-section">Employment Details</div>
+            <div class="fg"><div class="fl">Employee ID</div><input class="fi" id="emp-empid" placeholder="Auto-generated"/></div>
+            <div class="fg"><div class="fl">Join Date *</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Department *</div><select class="fi"><option>Engineering</option><option>Sales & Marketing</option><option>Finance</option><option>HR & Admin</option><option>Operations</option><option>Product</option><option>Legal</option></select></div>
+            <div class="fg"><div class="fl">Designation *</div><input class="fi" id="emp-designation" placeholder="e.g. Senior Developer"/></div>
+            <div class="fg"><div class="fl">Reporting Manager</div><select class="fi"><option>Ahmed Rahman</option><option>Sara Ahmed</option><option>Mizan Khan</option></select></div>
+            <div class="fg"><div class="fl">Office Location</div><select class="fi"><option>Dhaka HQ</option><option>Chittagong</option><option>Sylhet</option><option>London</option><option>Dubai</option><option>Remote</option></select></div>
+            <div class="fg"><div class="fl">Employment Type</div><select class="fi"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Intern</option></select></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Probation</option><option>Resigned</option><option>Terminated</option></select></div>
+            <div class="form-section">Salary (Basic)</div>
+            <div class="fg"><div class="fl">Basic Salary ($)</div><input class="fi" type="number" placeholder="0.00"/></div>
+            <div class="fg"><div class="fl">Pay Frequency</div><select class="fi"><option>Monthly</option><option>Bi-weekly</option><option>Weekly</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Employee</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalViewEmployee ═══ -->
+  <div class="modal fade" id="modalViewEmployee" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-body p-0">
+          <div class="profile-banner"></div>
+          <div class="profile-avatar-wrap d-flex align-items-end gap-3 px-4" style="margin-top:-30px;">
+            <div class="profile-avatar-lg" id="view-emp-avatar">AR</div>
+            <div class="pb-2">
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;" id="view-emp-name">Employee Name</div>
+              <div style="font-size:0.78rem;color:#64748b;" id="view-emp-sub">Designation · Department</div>
+            </div>
+            <button type="button" class="btn-close ms-auto mb-2" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="p-4">
+            <div class="d-flex gap-2 mb-3 flex-wrap">
+              <span class="badge rounded-pill" style="background:#dbeafe;color:#1e40af;font-size:0.7rem;" id="view-emp-id">EMP-0000</span>
+              <span class="badge rounded-pill" style="background:#d1fae5;color:#065f46;font-size:0.7rem;">✓ Active</span>
+              <span class="badge rounded-pill" style="background:#fef3c7;color:#92400e;font-size:0.7rem;">3 yrs tenure</span>
+            </div>
+            <div class="detail-grid mb-3">
+              <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value" id="view-emp-email">—</div></div>
+              <div class="detail-item"><div class="detail-label">Phone</div><div class="detail-value">+880 1700-123456</div></div>
+              <div class="detail-item"><div class="detail-label">Department</div><div class="detail-value" id="view-emp-dept">—</div></div>
+              <div class="detail-item"><div class="detail-label">Designation</div><div class="detail-value" id="view-emp-desig">—</div></div>
+              <div class="detail-item"><div class="detail-label">Join Date</div><div class="detail-value">Jan 10, 2022</div></div>
+              <div class="detail-item"><div class="detail-label">Location</div><div class="detail-value">Dhaka HQ</div></div>
+              <div class="detail-item"><div class="detail-label">Manager</div><div class="detail-value">Ahmed Rahman</div></div>
+              <div class="detail-item"><div class="detail-label">Basic Salary</div><div class="detail-value">$3,200 / mo</div></div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+              <button type="button" class="btn btn-primary btn-sm fw-bold" data-bs-dismiss="modal" onclick="$('#modalEmployee').modal('show')">✏️ Edit Profile</button>
+              <button type="button" class="btn btn-sm fw-semibold" style="background:#f0fdf4;color:#16a34a;border:none;" data-bs-dismiss="modal" onclick="$('#modalIdCard').modal('show')">🪪 ID Card</button>
+              <button type="button" class="btn btn-sm fw-semibold" style="background:#fdf4ff;color:#7c3aed;border:none;" data-bs-dismiss="modal" onclick="$('#modalDocuments').modal('show')">📄 Documents</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalIdCard ═══ -->
+  <div class="modal fade" id="modalIdCard" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#dbeafe">🪪</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Employee ID Card</div>
+              <div style="font-size:0.78rem;color:#64748b;">Preview & Print</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div style="background:linear-gradient(135deg,#0f1623,#1e2a45);border-radius:14px;padding:24px;color:#fff;max-width:320px;margin:0 auto;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div style="font-size:0.7rem;font-weight:800;color:rgba(255,255,255,0.5);letter-spacing:0.12em;">HRMS PRO ENTERPRISE</div>
+              <div style="background:linear-gradient(135deg,#2563eb,#7c3aed);width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;">💼</div>
+            </div>
+            <div class="d-flex align-items-center gap-3 mb-3">
+              <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;border:2px solid rgba(255,255,255,0.2);" id="idcard-avatar">KH</div>
+              <div>
+                <div style="font-size:1rem;font-weight:800;" id="idcard-name">Kabir Hossain</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.6);margin-top:2px;">Senior Developer · Engineering</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:rgba(255,255,255,0.05);border-radius:8px;padding:12px;">
+              <div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;">Employee ID</div><div style="font-size:0.8rem;font-weight:700;margin-top:2px;">EMP-0142</div></div>
+              <div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;">Join Date</div><div style="font-size:0.8rem;font-weight:700;margin-top:2px;">Jan 10, 2022</div></div>
+              <div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;">Department</div><div style="font-size:0.8rem;font-weight:700;margin-top:2px;">Engineering</div></div>
+              <div><div style="font-size:0.6rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;">Blood Group</div><div style="font-size:0.8rem;font-weight:700;margin-top:2px;">B+</div></div>
+            </div>
+            <div style="margin-top:14px;text-align:center;font-size:0.6rem;color:rgba(255,255,255,0.3);">Valid for 2026 · Not transferable</div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">🖨️ Print ID Card</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalDocuments ═══ -->
+  <div class="modal fade" id="modalDocuments" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fdf4ff">📄</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Employee Documents</div>
+              <div style="font-size:0.78rem;color:#64748b;">Document management</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+            <thead><tr style="background:#f8fafc;">
+              <th style="padding:8px 12px;font-size:0.68rem;font-weight:700;text-transform:uppercase;color:#94a3b8;text-align:left;">Document</th>
+              <th style="padding:8px 12px;font-size:0.68rem;font-weight:700;text-transform:uppercase;color:#94a3b8;text-align:left;">Status</th>
+              <th style="padding:8px 12px;font-size:0.68rem;font-weight:700;text-transform:uppercase;color:#94a3b8;text-align:left;">Date</th>
+              <th style="padding:8px 12px;font-size:0.68rem;font-weight:700;text-transform:uppercase;color:#94a3b8;text-align:left;">Action</th>
+            </tr></thead>
+            <tbody><tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">Loading...</td></tr></tbody>
+          </table>
+          <div style="border:2px dashed #e2e8f0;border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:#f8fafc;" onclick="showToast('📎','File selected!')">
+            <div style="font-size:1.5rem;margin-bottom:6px;">📎</div>
+            <div style="font-size:0.82rem;font-weight:600;color:#475569;">Drop files here or click to upload</div>
+            <div style="font-size:0.72rem;color:#94a3b8;margin-top:3px;">PDF, JPG, PNG up to 10MB</div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Documents</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalAttendance ═══ -->
+  <div class="modal fade" id="modalAttendance" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#d1fae5">🕒</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Mark Attendance</div>
+              <div style="font-size:0.78rem;color:#64748b;">Manual attendance entry</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Kabir Hossain</option><option>Sara Ahmed</option><option>Mehedi Rahman</option><option>Nadia Jahan</option></select></div>
+            <div class="fg"><div class="fl">Date *</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Check-in Time</div><input class="fi" type="time" value="09:00"/></div>
+            <div class="fg"><div class="fl">Check-out Time</div><input class="fi" type="time" value="18:00"/></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Present</option><option>Absent</option><option>Half Day</option><option>Late</option><option>On Leave</option><option>Work From Home</option></select></div>
+            <div class="fg"><div class="fl">Shift</div><select class="fi"><option>Morning (6AM–2PM)</option><option>Day (8AM–5PM)</option><option>Night (10PM–6AM)</option></select></div>
+            <div class="fg"><div class="fl">Overtime Hours</div><input class="fi" type="number" placeholder="0.0" min="0" step="0.5"/></div>
+            <div class="fg"><div class="fl">Work Location</div><select class="fi"><option>Office</option><option>Remote</option><option>Field</option></select></div>
+            <div class="fg full"><div class="fl">Remarks</div><input class="fi" placeholder="Optional notes..."/></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Attendance</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalLeave ═══ -->
+  <div class="modal fade" id="modalLeave" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">📅</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Apply for Leave</div>
+              <div style="font-size:0.78rem;color:#64748b;">Submit leave application</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Leave Type *</div><select class="fi"><option>Annual Leave</option><option>Sick Leave</option><option>Casual Leave</option><option>Maternity Leave</option><option>Paternity Leave</option><option>Emergency Leave</option><option>Unpaid Leave</option></select></div>
+            <div class="fg"><div class="fl">From Date *</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">To Date *</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Total Days</div><input class="fi" value="3" readonly="" style="background:#f8fafc;"/></div>
+            <div class="fg full"><div class="fl">Reason *</div><textarea class="fi" rows="3" placeholder="Describe the reason for leave..."></textarea></div>
+            <div class="fg full"><div class="fl">Attach Document (if any)</div><input class="fi" type="file" style="padding:7px 10px;"/></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Submit Leave</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalShift ═══ -->
+  <div class="modal fade" id="modalShift" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#cffafe">🔄</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Shift</div>
+              <div style="font-size:0.78rem;color:#64748b;">Manage shift schedule</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Shift Name *</div><input class="fi" placeholder="e.g. Morning Shift"/></div>
+            <div class="fg"><div class="fl">Shift Code</div><input class="fi" placeholder="e.g. MORN"/></div>
+            <div class="fg"><div class="fl">Start Time *</div><input class="fi" type="time" value="08:00"/></div>
+            <div class="fg"><div class="fl">End Time *</div><input class="fi" type="time" value="17:00"/></div>
+            <div class="fg"><div class="fl">Break Duration (min)</div><input class="fi" type="number" value="60"/></div>
+            <div class="fg"><div class="fl">Grace Period (min)</div><input class="fi" type="number" value="15"/></div>
+            <div class="fg"><div class="fl">Department</div><select class="fi"><option>All Departments</option><option>Engineering</option><option>Sales</option><option>Operations</option></select></div>
+            <div class="fg"><div class="fl">Working Days</div><select class="fi"><option>Sun–Thu</option><option>Mon–Fri</option><option>Mon–Sat</option></select></div>
+            <div class="fg"><div class="fl">Overtime Eligible</div><select class="fi"><option>Yes</option><option>No</option></select></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Inactive</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Shift</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalSalaryStructure ═══ -->
+  <div class="modal fade" id="modalSalaryStructure" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#d1fae5">💰</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Salary Structure</div>
+              <div style="font-size:0.78rem;color:#64748b;">Define pay components</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Structure Name *</div><input class="fi" placeholder="e.g. Senior Engineer Grade A"/></div>
+            <div class="fg"><div class="fl">Grade/Level</div><input class="fi" placeholder="e.g. Grade 5"/></div>
+            <div class="form-section">Earnings</div>
+            <div class="fg"><div class="fl">Basic Salary ($) *</div><input class="fi" type="number" placeholder="0.00"/></div>
+            <div class="fg"><div class="fl">House Rent Allowance (%)</div><input class="fi" type="number" value="20"/></div>
+            <div class="fg"><div class="fl">Transport Allowance ($)</div><input class="fi" type="number" value="100"/></div>
+            <div class="fg"><div class="fl">Medical Allowance ($)</div><input class="fi" type="number" value="80"/></div>
+            <div class="fg"><div class="fl">Food Allowance ($)</div><input class="fi" type="number" value="50"/></div>
+            <div class="fg"><div class="fl">Other Allowance ($)</div><input class="fi" type="number" value="0"/></div>
+            <div class="form-section">Deductions</div>
+            <div class="fg"><div class="fl">Income Tax (%)</div><input class="fi" type="number" value="10"/></div>
+            <div class="fg"><div class="fl">Provident Fund (%)</div><input class="fi" type="number" value="8"/></div>
+            <div class="fg"><div class="fl">Insurance Premium ($)</div><input class="fi" type="number" value="30"/></div>
+            <div class="fg"><div class="fl">Other Deductions ($)</div><input class="fi" type="number" value="0"/></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Structure</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalPayslip ═══ -->
+  <div class="modal fade" id="modalPayslip" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#d1fae5">🧾</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Payslip</div>
+              <div style="font-size:0.78rem;color:#64748b;">March 2026</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div style="background:#f8fafc;border-radius:10px;padding:16px;margin-bottom:16px;">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
+              <div><div style="font-size:0.68rem;color:#94a3b8;font-weight:700;text-transform:uppercase;">Employee</div><div style="font-size:0.88rem;font-weight:800;color:#0f172a;" id="payslip-name">Kabir Hossain</div></div>
+              <div><div style="font-size:0.68rem;color:#94a3b8;font-weight:700;text-transform:uppercase;">Employee ID</div><div style="font-size:0.88rem;font-weight:700;">EMP-0142</div></div>
+              <div><div style="font-size:0.68rem;color:#94a3b8;font-weight:700;text-transform:uppercase;">Pay Period</div><div style="font-size:0.88rem;font-weight:700;">March 2026</div></div>
+              <div><div style="font-size:0.68rem;color:#94a3b8;font-weight:700;text-transform:uppercase;">Pay Date</div><div style="font-size:0.88rem;font-weight:700;">Mar 28, 2026</div></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#10b981;margin-bottom:8px;">EARNINGS</div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">Basic Salary</span><span class="fw-semibold">$3,200</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">House Rent (20%)</span><span class="fw-semibold">$640</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">Transport</span><span class="fw-semibold">$100</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">Medical</span><span class="fw-semibold">$80</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:0.82rem;font-weight:800;color:#10b981;"><span>Gross</span><span>$4,070</span></div>
+            </div>
+            <div>
+              <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#ef4444;margin-bottom:8px;">DEDUCTIONS</div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">Income Tax (10%)</span><span class="fw-semibold;color:#ef4444;">-$407</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">Provident Fund</span><span class="fw-semibold;color:#ef4444;">-$256</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">Insurance</span><span class="fw-semibold;color:#ef4444;">-$30</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.78rem;"><span style="color:#475569;">Loan EMI</span><span class="fw-semibold;color:#ef4444;">-$250</span></div>
+              <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:0.82rem;font-weight:800;color:#ef4444;"><span>Total Deductions</span><span>-$943</span></div>
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:10px;padding:16px;margin-top:12px;display:flex;justify-content:space-between;align-items:center;color:#fff;">
+            <div style="font-size:0.88rem;font-weight:700;">Net Pay</div>
+            <div style="font-size:1.4rem;font-weight:900;">$3,127</div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">📥 Download PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalLoan ═══ -->
+  <div class="modal fade" id="modalLoan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">💳</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">New Loan / Advance</div>
+              <div style="font-size:0.78rem;color:#64748b;">Employee financial assistance</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Kabir Hossain</option><option>Sara Ahmed</option><option>Nadia Jahan</option></select></div>
+            <div class="fg"><div class="fl">Loan Type *</div><select class="fi"><option>Personal Loan</option><option>Medical Advance</option><option>Salary Advance</option><option>Education Loan</option></select></div>
+            <div class="fg"><div class="fl">Loan Amount ($) *</div><input class="fi" type="number" placeholder="0.00"/></div>
+            <div class="fg"><div class="fl">Disbursement Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Repayment Period (months)</div><input class="fi" type="number" value="12"/></div>
+            <div class="fg"><div class="fl">Monthly EMI ($)</div><input class="fi" value="Auto-calculated" readonly="" style="background:#f8fafc;"/></div>
+            <div class="fg"><div class="fl">Interest Rate (%)</div><input class="fi" type="number" value="0" placeholder="0 = no interest"/></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Completed</option><option>Pending Approval</option></select></div>
+            <div class="fg full"><div class="fl">Purpose / Notes</div><textarea class="fi" rows="3" placeholder="Reason for loan..."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Loan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalBonus ═══ -->
+  <div class="modal fade" id="modalBonus" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">🎁</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Add Bonus / Incentive</div>
+              <div style="font-size:0.78rem;color:#64748b;">One-time payment management</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Kabir Hossain</option><option>Sara Ahmed</option><option>Nadia Jahan</option><option>All Employees</option></select></div>
+            <div class="fg"><div class="fl">Bonus Type</div><select class="fi"><option>Performance Bonus</option><option>Festival Bonus</option><option>Referral Bonus</option><option>Retention Bonus</option><option>Commission</option></select></div>
+            <div class="fg"><div class="fl">Amount ($) *</div><input class="fi" type="number" placeholder="0.00"/></div>
+            <div class="fg"><div class="fl">Pay Month</div><input class="fi" type="month"/></div>
+            <div class="fg full"><div class="fl">Remarks</div><input class="fi" placeholder="Reason for bonus..."/></div>
+            <div class="fg"><div class="fl">Taxable</div><select class="fi"><option>Yes</option><option>No</option></select></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Pending</option><option>Approved</option><option>Paid</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Add Bonus</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalJob ═══ -->
+  <div class="modal fade" id="modalJob" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#cffafe">📝</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Post New Job</div>
+              <div style="font-size:0.78rem;color:#64748b;">Define job requirements</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">Job Title *</div><input class="fi" placeholder="e.g. Senior Backend Developer"/></div>
+            <div class="fg"><div class="fl">Department *</div><select class="fi"><option>Engineering</option><option>Sales</option><option>Finance</option><option>HR</option><option>Operations</option></select></div>
+            <div class="fg"><div class="fl">Job Type</div><select class="fi"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Internship</option></select></div>
+            <div class="fg"><div class="fl">Location</div><select class="fi"><option>Dhaka</option><option>Remote</option><option>Hybrid</option><option>Chittagong</option></select></div>
+            <div class="fg"><div class="fl">Salary Range (Min)</div><input class="fi" type="number" placeholder="Min salary"/></div>
+            <div class="fg"><div class="fl">Salary Range (Max)</div><input class="fi" type="number" placeholder="Max salary"/></div>
+            <div class="fg"><div class="fl">Vacancies</div><input class="fi" type="number" value="1"/></div>
+            <div class="fg"><div class="fl">Application Deadline</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Experience Required</div><select class="fi"><option>Fresher</option><option>1-2 years</option><option>3-5 years</option><option>5+ years</option><option>10+ years</option></select></div>
+            <div class="fg"><div class="fl">Education Level</div><select class="fi"><option>Any</option><option>HSC</option><option>Bachelor's</option><option>Master's</option><option>PhD</option></select></div>
+            <div class="fg full"><div class="fl">Job Description *</div><textarea class="fi" rows="4" placeholder="Describe responsibilities and requirements..."></textarea></div>
+            <div class="fg full"><div class="fl">Skills Required</div><input class="fi" placeholder="e.g. React, Node.js, PostgreSQL (comma separated)"/></div>
+            <div class="fg"><div class="fl">Publish on Job Boards</div><select class="fi"><option>LinkedIn + BDJobs</option><option>LinkedIn only</option><option>Internal only</option></select></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Draft</option><option>On Hold</option><option>Closed</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Post Job</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalCandidate ═══ -->
+  <div class="modal fade" id="modalCandidate" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#cffafe">🙋</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Add Candidate</div>
+              <div style="font-size:0.78rem;color:#64748b;">Talent pipeline management</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Full Name *</div><input class="fi" placeholder="Candidate name"/></div>
+            <div class="fg"><div class="fl">Email *</div><input class="fi" type="email" placeholder="candidate@email.com"/></div>
+            <div class="fg"><div class="fl">Phone</div><input class="fi" placeholder="+880..."/></div>
+            <div class="fg"><div class="fl">Applied For *</div><select class="fi"><option>Senior Backend Developer</option><option>UX Designer</option><option>Sales Manager</option></select></div>
+            <div class="fg"><div class="fl">Source</div><select class="fi"><option>LinkedIn</option><option>BDJobs</option><option>Referral</option><option>Direct</option><option>Glassdoor</option></select></div>
+            <div class="fg"><div class="fl">Current Stage</div><select class="fi"><option>Applied</option><option>Screening</option><option>Interview</option><option>Offer</option><option>Hired</option><option>Rejected</option></select></div>
+            <div class="fg"><div class="fl">Experience (yrs)</div><input class="fi" type="number" placeholder="Years of experience"/></div>
+            <div class="fg"><div class="fl">Current Salary ($)</div><input class="fi" type="number" placeholder="0"/></div>
+            <div class="fg"><div class="fl">Expected Salary ($)</div><input class="fi" type="number" placeholder="0"/></div>
+            <div class="fg"><div class="fl">Notice Period</div><select class="fi"><option>Immediate</option><option>1 week</option><option>2 weeks</option><option>1 month</option><option>2 months</option></select></div>
+            <div class="fg full"><div class="fl">Resume / CV</div><input class="fi" type="file" style="padding:7px 10px;"/></div>
+            <div class="fg full"><div class="fl">Notes</div><textarea class="fi" rows="3" placeholder="Recruiter notes..."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Candidate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalInterview ═══ -->
+  <div class="modal fade" id="modalInterview" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#ede9fe">🎥</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Schedule Interview</div>
+              <div style="font-size:0.78rem;color:#64748b;">Coordinate interview logistics</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Candidate *</div><select class="fi"><option>Arif Hossain</option><option>Tasnim Akter</option><option>Sadia Islam</option></select></div>
+            <div class="fg"><div class="fl">Job Position</div><select class="fi"><option>Senior Backend Developer</option><option>UX Designer</option><option>Sales Manager</option></select></div>
+            <div class="fg"><div class="fl">Interview Round</div><select class="fi"><option>Round 1 - HR Screening</option><option>Round 2 - Technical</option><option>Round 3 - Final</option></select></div>
+            <div class="fg"><div class="fl">Interview Type</div><select class="fi"><option>Video Call</option><option>In-Person</option><option>Phone</option><option>Written Test</option></select></div>
+            <div class="fg"><div class="fl">Interview Date *</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Interview Time *</div><input class="fi" type="time"/></div>
+            <div class="fg"><div class="fl">Duration (minutes)</div><input class="fi" type="number" value="60"/></div>
+            <div class="fg"><div class="fl">Interviewer(s) *</div><select class="fi"><option>Ahmed Rahman</option><option>Sara Ahmed</option><option>Kabir Hossain</option></select></div>
+            <div class="fg full"><div class="fl">Meeting Link / Venue</div><input class="fi" placeholder="Zoom link or room number"/></div>
+            <div class="fg full"><div class="fl">Notes for Interviewer</div><textarea class="fi" rows="3" placeholder="Interview instructions or focus areas..."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Schedule Interview</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalOffer ═══ -->
+  <div class="modal fade" id="modalOffer" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#d1fae5">📃</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Generate Offer Letter</div>
+              <div style="font-size:0.78rem;color:#64748b;">Formal employment offer</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Candidate *</div><select class="fi"><option>Rezaul Karim</option><option>Sumaiya Begum</option></select></div>
+            <div class="fg"><div class="fl">Position Offered</div><input class="fi" value="DevOps Engineer"/></div>
+            <div class="fg"><div class="fl">Department</div><select class="fi"><option>Engineering</option><option>Sales</option></select></div>
+            <div class="fg"><div class="fl">Proposed Joining Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Offered Salary ($)</div><input class="fi" type="number" placeholder="0.00"/></div>
+            <div class="fg"><div class="fl">Offer Valid Until</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Probation Period</div><select class="fi"><option>3 months</option><option>6 months</option><option>None</option></select></div>
+            <div class="fg"><div class="fl">Employment Type</div><select class="fi"><option>Full-time Permanent</option><option>Contract</option></select></div>
+            <div class="fg full"><div class="fl">Additional Benefits</div><textarea class="fi" rows="3" placeholder="Health insurance, flexible hours, etc..."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Generate & Send Offer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalKPI ═══ -->
+  <div class="modal fade" id="modalKPI" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#ede9fe">🎯</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Set KPI / Goal</div>
+              <div style="font-size:0.78rem;color:#64748b;">Define measurable objectives</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Kabir Hossain</option><option>Sara Ahmed</option><option>Nadia Jahan</option></select></div>
+            <div class="fg"><div class="fl">Review Period</div><select class="fi"><option>Q1 2026</option><option>Q2 2026</option><option>Annual 2026</option></select></div>
+            <div class="fg full"><div class="fl">Goal Title *</div><input class="fi" placeholder="e.g. Deliver Project Alpha on time"/></div>
+            <div class="fg full"><div class="fl">Description</div><textarea class="fi" rows="3" placeholder="Detailed description of the goal..."></textarea></div>
+            <div class="fg"><div class="fl">Category</div><select class="fi"><option>Revenue</option><option>Quality</option><option>Efficiency</option><option>Learning</option><option>Leadership</option></select></div>
+            <div class="fg"><div class="fl">Weight (%)</div><input class="fi" type="number" value="20" min="5" max="100"/></div>
+            <div class="fg"><div class="fl">Target Value</div><input class="fi" placeholder="e.g. 95% uptime / $100K revenue"/></div>
+            <div class="fg"><div class="fl">Measurement Unit</div><select class="fi"><option>Percentage</option><option>Number</option><option>Currency</option><option>Yes/No</option></select></div>
+            <div class="fg"><div class="fl">Start Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Target Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Current Progress (%)</div><input class="fi" type="number" value="0" min="0" max="100"/></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Not Started</option><option>In Progress</option><option>Completed</option><option>Overdue</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save KPI</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalAppraisal ═══ -->
+  <div class="modal fade" id="modalAppraisal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fce7f3">📋</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Appraisal</div>
+              <div style="font-size:0.78rem;color:#64748b;">Performance evaluation form</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Kabir Hossain</option><option>Sara Ahmed</option><option>Mehedi Rahman</option></select></div>
+            <div class="fg"><div class="fl">Appraisal Period</div><select class="fi"><option>Q4 2025</option><option>Q1 2026</option><option>Annual 2025</option></select></div>
+            <div class="fg"><div class="fl">Appraiser</div><select class="fi"><option>Ahmed Rahman</option><option>Sara Ahmed</option></select></div>
+            <div class="fg"><div class="fl">Appraisal Type</div><select class="fi"><option>Mid-Year Review</option><option>Annual Review</option><option>Probation Review</option><option>360° Review</option></select></div>
+            <div class="form-section">Ratings (1=Poor, 5=Exceptional)</div>
+            <div class="fg"><div class="fl">Job Knowledge</div><select class="fi"><option>5 - Exceptional</option><option>4 - Exceeds</option><option>3 - Meets</option><option>2 - Below</option><option>1 - Poor</option></select></div>
+            <div class="fg"><div class="fl">Work Quality</div><select class="fi"><option>5 - Exceptional</option><option>4 - Exceeds</option><option>3 - Meets</option><option>2 - Below</option><option>1 - Poor</option></select></div>
+            <div class="fg"><div class="fl">Teamwork</div><select class="fi"><option>4 - Exceeds</option><option>5 - Exceptional</option><option>3 - Meets</option><option>2 - Below</option><option>1 - Poor</option></select></div>
+            <div class="fg"><div class="fl">Communication</div><select class="fi"><option>4 - Exceeds</option><option>5 - Exceptional</option><option>3 - Meets</option></select></div>
+            <div class="fg"><div class="fl">Initiative</div><select class="fi"><option>5 - Exceptional</option><option>4 - Exceeds</option><option>3 - Meets</option></select></div>
+            <div class="fg"><div class="fl">Overall Rating</div><select class="fi"><option>92% — Exceptional</option><option>80% — Exceeds Expectations</option><option>70% — Meets Expectations</option></select></div>
+            <div class="fg full"><div class="fl">Strengths</div><textarea class="fi" rows="3" placeholder="Key strengths observed..."></textarea></div>
+            <div class="fg full"><div class="fl">Areas for Improvement</div><textarea class="fi" rows="3" placeholder="Development areas..."></textarea></div>
+            <div class="fg full"><div class="fl">Manager Comments</div><textarea class="fi" rows="3" placeholder="Overall assessment..."></textarea></div>
+            <div class="fg"><div class="fl">Promotion Recommended</div><select class="fi"><option>Yes</option><option>No</option><option>Under Review</option></select></div>
+            <div class="fg"><div class="fl">Salary Increment (%)</div><input class="fi" type="number" value="0" placeholder="0"/></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Submit Appraisal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalCourse ═══ -->
+  <div class="modal fade" id="modalCourse" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">🎓</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Add Training Course</div>
+              <div style="font-size:0.78rem;color:#64748b;">Learning & development program</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">Course Title *</div><input class="fi" placeholder="e.g. Leadership Excellence Program"/></div>
+            <div class="fg"><div class="fl">Category</div><select class="fi"><option>Technical</option><option>Soft Skills</option><option>Management</option><option>Compliance</option><option>Safety</option><option>Product</option></select></div>
+            <div class="fg"><div class="fl">Delivery Method</div><select class="fi"><option>Online (LMS)</option><option>Classroom</option><option>Blended</option><option>Workshop</option><option>On-the-job</option></select></div>
+            <div class="fg"><div class="fl">Duration</div><input class="fi" placeholder="e.g. 8 hours / 3 weeks"/></div>
+            <div class="fg"><div class="fl">Trainer / Provider</div><input class="fi" placeholder="Internal or external trainer"/></div>
+            <div class="fg"><div class="fl">Max Participants</div><input class="fi" type="number" value="30"/></div>
+            <div class="fg"><div class="fl">Start Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">End Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Cost per Person ($)</div><input class="fi" type="number" value="0"/></div>
+            <div class="fg"><div class="fl">Certification Awarded</div><select class="fi"><option>Yes</option><option>No</option></select></div>
+            <div class="fg"><div class="fl">Mandatory</div><select class="fi"><option>Optional</option><option>Mandatory - All</option><option>Mandatory - Dept</option></select></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Draft</option><option>Completed</option><option>Cancelled</option></select></div>
+            <div class="fg full"><div class="fl">Description</div><textarea class="fi" rows="3" placeholder="Course overview and objectives..."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Course</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalEnrollment ═══ -->
+  <div class="modal fade" id="modalEnrollment" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">📚</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Enroll Employees</div>
+              <div style="font-size:0.78rem;color:#64748b;">Assign training courses</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Course *</div><select class="fi"><option>Leadership Excellence</option><option>Data Privacy & GDPR</option><option>Advanced Excel</option><option>Fire Safety</option></select></div>
+            <div class="fg"><div class="fl">Enroll Type</div><select class="fi"><option>Individual</option><option>Department</option><option>All Employees</option></select></div>
+            <div class="fg full"><div class="fl">Select Employees / Department</div><select class="fi"><option>Engineering Department</option><option>All Employees</option><option>Kabir Hossain</option><option>Sara Ahmed</option></select></div>
+            <div class="fg"><div class="fl">Enrollment Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Completion Deadline</div><input class="fi" type="date"/></div>
+            <div class="fg full"><div class="fl">Notes</div><input class="fi" placeholder="Optional message to participants..."/></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Enroll Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalOnboarding ═══ -->
+  <div class="modal fade" id="modalOnboarding" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#d1fae5">🤝</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Onboarding Process</div>
+              <div style="font-size:0.78rem;color:#64748b;">New joiner setup</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Kabir Hossain</option><option>Tasnim Akter</option></select></div>
+            <div class="fg"><div class="fl">Joining Date</div><input class="fi" type="date"/></div>
+            <div class="form-section">Checklist Items</div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;"><option>✅ Done</option><option>⏳ Pending</option><option>⬜ To Do</option></select><span style="font-size:0.8rem;font-weight:500;">Offer Letter Signed</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;"><option>✅ Done</option><option>⏳ Pending</option><option>⬜ To Do</option></select><span style="font-size:0.8rem;font-weight:500;">Background Check</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#fffbeb;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#d97706;cursor:pointer;"><option>⏳ Pending</option><option>✅ Done</option><option>⬜ To Do</option></select><span style="font-size:0.8rem;font-weight:500;">IT Equipment Setup</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#fffbeb;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#d97706;cursor:pointer;"><option>⏳ Pending</option><option>✅ Done</option><option>⬜ To Do</option></select><span style="font-size:0.8rem;font-weight:500;">Email & System Access</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f8fafc;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#94a3b8;cursor:pointer;"><option>⬜ To Do</option><option>✅ Done</option><option>⏳ Pending</option></select><span style="font-size:0.8rem;font-weight:500;">Office Tour & Introduction</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f8fafc;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#94a3b8;cursor:pointer;"><option>⬜ To Do</option><option>✅ Done</option><option>⏳ Pending</option></select><span style="font-size:0.8rem;font-weight:500;">Orientation Session</span></div>
+            <div class="fg full"><div class="fl">Assigned Buddy / Mentor</div><select class="fi"><option>Sara Ahmed</option><option>Ahmed Rahman</option><option>Kabir Hossain</option></select></div>
+            <div class="fg full"><div class="fl">Notes</div><textarea class="fi" rows="3" placeholder="Onboarding notes..."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Update Onboarding</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalExit ═══ -->
+  <div class="modal fade" id="modalExit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fee2e2">🚪</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Exit Process</div>
+              <div style="font-size:0.78rem;color:#64748b;">Employee offboarding</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Farhan Rahim</option><option>Ritu Sharma</option></select></div>
+            <div class="fg"><div class="fl">Last Working Day *</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Reason for Exit</div><select class="fi"><option>Resignation</option><option>Termination</option><option>Retirement</option><option>Contract End</option><option>Layoff</option></select></div>
+            <div class="fg"><div class="fl">Notice Period</div><select class="fi"><option>1 month</option><option>2 months</option><option>Waived</option></select></div>
+            <div class="form-section">Clearance Checklist</div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;"><option>✅ Done</option><option>⏳ Pending</option><option>⬜ To Do</option></select><span style="font-size:0.8rem;font-weight:500;">IT Equipment Returned</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;"><option>✅ Done</option><option>⏳ Pending</option><option>⬜ To Do</option></select><span style="font-size:0.8rem;font-weight:500;">ID Card Returned</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#fffbeb;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#d97706;cursor:pointer;"><option>⏳ Pending</option><option>✅ Done</option><option>⬜ To Do</option></select><span style="font-size:0.8rem;font-weight:500;">Final Salary Processed</span></div>
+            <div class="fg" style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f8fafc;border-radius:7px;"><select style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#94a3b8;cursor:pointer;"><option>⬜ To Do</option><option>✅ Done</option><option>⏳ Pending</option></select><span style="font-size:0.8rem;font-weight:500;">Knowledge Transfer</span></div>
+            <div class="fg full"><div class="fl">Exit Interview Notes</div><textarea class="fi" rows="3" placeholder="Key feedback from exit interview..."></textarea></div>
+            <div class="fg full"><div class="fl">Eligible for Rehire</div><select class="fi"><option>Yes</option><option>No</option><option>Under Review</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Update Exit Process</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalPolicy ═══ -->
+  <div class="modal fade" id="modalPolicy" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#e0e7ff">⚖️</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Add New Policy</div>
+              <div style="font-size:0.78rem;color:#64748b;">Company policy management</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">Policy Name *</div><input class="fi" placeholder="e.g. Remote Work Policy"/></div>
+            <div class="fg"><div class="fl">Category *</div><select class="fi"><option>Governance</option><option>HR Policy</option><option>IT & Security</option><option>Legal & Compliance</option><option>Operations</option><option>Safety</option></select></div>
+            <div class="fg"><div class="fl">Version</div><input class="fi" placeholder="e.g. v1.0"/></div>
+            <div class="fg"><div class="fl">Effective Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Review Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Policy Owner</div><select class="fi"><option>HR Department</option><option>Legal</option><option>Management</option><option>IT</option></select></div>
+            <div class="fg"><div class="fl">Acknowledgement Required</div><select class="fi"><option>Yes - All Employees</option><option>Yes - Specific Dept</option><option>No</option></select></div>
+            <div class="fg"><div class="fl">Access Level</div><select class="fi"><option>All Staff</option><option>Managers Only</option><option>HR Only</option><option>Confidential</option></select></div>
+            <div class="fg full"><div class="fl">Description / Summary</div><textarea class="fi" rows="3" placeholder="Brief summary of the policy..."></textarea></div>
+            <div class="fg full"><div class="fl">Upload Document (PDF)</div><input class="fi" type="file" style="padding:7px 10px;" accept=".pdf,.doc,.docx"/></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Draft</option><option>Under Review</option><option>Archived</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Publish Policy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalRecognition ═══ -->
+  <div class="modal fade" id="modalRecognition" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">🏆</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Recognize an Employee</div>
+              <div style="font-size:0.78rem;color:#64748b;">Show appreciation publicly</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Recognize *</div><select class="fi"><option>Kabir Hossain</option><option>Sara Ahmed</option><option>Nadia Jahan</option><option>Mizan Khan</option></select></div>
+            <div class="fg"><div class="fl">Award Type</div><select class="fi"><option>🏅 Employee of the Month</option><option>🌟 Star Performer</option><option>💡 Innovation Award</option><option>🤝 Team Player</option><option>🎯 Target Achiever</option><option>❤️ Culture Champion</option></select></div>
+            <div class="fg"><div class="fl">Recognition Month</div><input class="fi" type="month"/></div>
+            <div class="fg"><div class="fl">Points Awarded</div><input class="fi" type="number" value="100"/></div>
+            <div class="fg full"><div class="fl">Recognition Message *</div><textarea class="fi" rows="4" placeholder="Write a meaningful appreciation message..."></textarea></div>
+            <div class="fg"><div class="fl">Notify via</div><select class="fi"><option>Email + Dashboard</option><option>Slack + Dashboard</option><option>Dashboard only</option></select></div>
+            <div class="fg"><div class="fl">Visibility</div><select class="fi"><option>Company-wide</option><option>Department only</option><option>Private</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Send Recognition</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalSurvey ═══ -->
+  <div class="modal fade" id="modalSurvey" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#f0fdf4">📊</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Survey</div>
+              <div style="font-size:0.78rem;color:#64748b;">Employee feedback collection</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">Survey Title *</div><input class="fi" placeholder="e.g. Q1 2026 Employee Engagement Survey"/></div>
+            <div class="fg"><div class="fl">Survey Type</div><select class="fi"><option>Engagement Survey</option><option>Exit Survey</option><option>Pulse Check</option><option>Training Feedback</option><option>360° Feedback</option></select></div>
+            <div class="fg"><div class="fl">Target Audience</div><select class="fi"><option>All Employees</option><option>Specific Department</option><option>New Joiners</option><option>Managers</option></select></div>
+            <div class="fg"><div class="fl">Start Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">End Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Anonymous</div><select class="fi"><option>Yes - Fully Anonymous</option><option>No - Identified</option></select></div>
+            <div class="fg full"><div class="fl">Questions (one per line)</div><textarea class="fi" rows="5" placeholder="Q1: How satisfied are you with work-life balance? (1-5)"></textarea></div>
+            <div class="fg"><div class="fl">Reminder Email</div><select class="fi"><option>3 days before deadline</option><option>Weekly</option><option>No reminder</option></select></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Draft</option><option>Active</option><option>Closed</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Publish Survey</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalBenefit ═══ -->
+  <div class="modal fade" id="modalBenefit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#d1fae5">🏥</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Add Benefit Plan</div>
+              <div style="font-size:0.78rem;color:#64748b;">Employee benefits configuration</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">Plan Name *</div><input class="fi" placeholder="e.g. Family Medical Insurance"/></div>
+            <div class="fg"><div class="fl">Benefit Type *</div><select class="fi"><option>Health/Medical</option><option>Dental</option><option>Vision</option><option>Life Insurance</option><option>Disability</option><option>Pension/Provident Fund</option><option>Childcare</option><option>Wellness</option></select></div>
+            <div class="fg"><div class="fl">Provider</div><input class="fi" placeholder="Insurance company name"/></div>
+            <div class="fg"><div class="fl">Coverage Amount ($)</div><input class="fi" type="number" placeholder="Annual coverage limit"/></div>
+            <div class="fg"><div class="fl">Employee Cost/Month ($)</div><input class="fi" type="number" value="0"/></div>
+            <div class="fg"><div class="fl">Company Cost/Month ($)</div><input class="fi" type="number" placeholder="0.00"/></div>
+            <div class="fg"><div class="fl">Eligibility</div><select class="fi"><option>All Full-time Employees</option><option>Permanent Staff Only</option><option>After 6 months probation</option></select></div>
+            <div class="fg"><div class="fl">Coverage Type</div><select class="fi"><option>Employee Only</option><option>Employee + Spouse</option><option>Employee + Family</option></select></div>
+            <div class="fg"><div class="fl">Effective Date</div><input class="fi" type="date"/></div>
+            <div class="fg"><div class="fl">Renewal Date</div><input class="fi" type="date"/></div>
+            <div class="fg full"><div class="fl">Plan Details</div><textarea class="fi" rows="3" placeholder="Coverage inclusions and exclusions..."></textarea></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Inactive</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Benefit Plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalSafety ═══ -->
+  <div class="modal fade" id="modalSafety" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">⚠️</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Report Safety Incident</div>
+              <div style="font-size:0.78rem;color:#64748b;">Workplace safety management</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Incident Type *</div><select class="fi"><option>Slip/Fall</option><option>Equipment Hazard</option><option>Near Miss</option><option>Chemical Exposure</option><option>Ergonomic Issue</option><option>Fire/Emergency</option><option>Violence/Threat</option></select></div>
+            <div class="fg"><div class="fl">Severity</div><select class="fi"><option>Near Miss</option><option>Minor Injury</option><option>Major Injury</option><option>Fatality</option><option>Property Damage</option></select></div>
+            <div class="fg"><div class="fl">Date & Time *</div><input class="fi" type="datetime-local"/></div>
+            <div class="fg"><div class="fl">Location</div><input class="fi" placeholder="e.g. Warehouse Floor 2"/></div>
+            <div class="fg"><div class="fl">Persons Involved</div><select class="fi"><option>Kabir Hossain</option><option>Sara Ahmed</option><option>External Visitor</option></select></div>
+            <div class="fg"><div class="fl">Witnesses</div><input class="fi" placeholder="Witness names..."/></div>
+            <div class="fg full"><div class="fl">Incident Description *</div><textarea class="fi" rows="3" placeholder="Describe what happened in detail..."></textarea></div>
+            <div class="fg full"><div class="fl">Corrective Action Taken</div><textarea class="fi" rows="3" placeholder="Immediate actions and preventive measures..."></textarea></div>
+            <div class="fg"><div class="fl">Reported By</div><input class="fi" value="Ahmed Rahman"/></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Open</option><option>Under Investigation</option><option>Closed</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Submit Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalCareerPath ═══ -->
+  <div class="modal fade" id="modalCareerPath" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#ede9fe">🚀</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Career Path</div>
+              <div style="font-size:0.78rem;color:#64748b;">Employee development roadmap</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Employee *</div><select class="fi"><option>Kabir Hossain</option><option>Nadia Jahan</option><option>Mizan Khan</option></select></div>
+            <div class="fg"><div class="fl">Current Position</div><input class="fi" value="Senior Developer"/></div>
+            <div class="fg"><div class="fl">Current Grade</div><select class="fi"><option>Grade 4</option><option>Grade 5</option><option>Grade 6</option></select></div>
+            <div class="fg"><div class="fl">Potential Rating</div><select class="fi"><option>High Potential</option><option>Medium Potential</option><option>Solid Performer</option></select></div>
+            <div class="form-section">Career Milestones</div>
+            <div class="fg full"><div class="fl">Short-term Goal (1 year)</div><input class="fi" placeholder="e.g. Become Tech Lead"/></div>
+            <div class="fg full"><div class="fl">Mid-term Goal (3 years)</div><input class="fi" placeholder="e.g. Engineering Manager"/></div>
+            <div class="fg full"><div class="fl">Long-term Goal (5+ years)</div><input class="fi" placeholder="e.g. Director of Engineering"/></div>
+            <div class="fg full"><div class="fl">Development Actions Required</div><textarea class="fi" rows="3" placeholder="Training, certifications, rotations..."></textarea></div>
+            <div class="fg"><div class="fl">Mentor Assigned</div><select class="fi"><option>Ahmed Rahman (CTO)</option><option>Sara Ahmed (HR Director)</option></select></div>
+            <div class="fg"><div class="fl">Review Date</div><input class="fi" type="date"/></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Career Path</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalSuccession ═══ -->
+  <div class="modal fade" id="modalSuccession" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#ede9fe">🔮</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Succession Plan</div>
+              <div style="font-size:0.78rem;color:#64748b;">Key position succession planning</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Critical Position *</div><input class="fi" placeholder="e.g. CTO, Sales Director"/></div>
+            <div class="fg"><div class="fl">Current Holder</div><select class="fi"><option>Ahmed Rahman</option><option>Sara Ahmed</option></select></div>
+            <div class="fg full"><div class="fl">Primary Successor</div><select class="fi"><option>Kabir Hossain (Ready: 1 yr)</option><option>Nadia Jahan (Ready: 2 yrs)</option></select></div>
+            <div class="fg full"><div class="fl">Secondary Successor</div><select class="fi"><option>Mizan Khan (Ready: 3 yrs)</option><option>Other Employee</option></select></div>
+            <div class="fg"><div class="fl">Risk Level</div><select class="fi"><option>High Risk</option><option>Medium Risk</option><option>Low Risk</option></select></div>
+            <div class="fg"><div class="fl">Timeline</div><select class="fi"><option>Immediate</option><option>1 Year</option><option>2-3 Years</option><option>5+ Years</option></select></div>
+            <div class="fg full"><div class="fl">Development Plan for Successor</div><textarea class="fi" rows="3" placeholder="Actions needed to prepare successor..."></textarea></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Succession Plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalOffice ═══ -->
+  <div class="modal fade" id="modalOffice" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#cffafe">🌍</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Add Office Location</div>
+              <div style="font-size:0.78rem;color:#64748b;">Multi-location setup</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg"><div class="fl">Office Name *</div><input class="fi" placeholder="e.g. London Office"/></div>
+            <div class="fg"><div class="fl">Country *</div><select class="fi"><option>Bangladesh</option><option>India</option><option>UK</option><option>UAE</option><option>USA</option><option>Singapore</option><option>Australia</option></select></div>
+            <div class="fg"><div class="fl">City *</div><input class="fi" placeholder="City"/></div>
+            <div class="fg"><div class="fl">Office Type</div><select class="fi"><option>Headquarters</option><option>Regional Office</option><option>Branch</option><option>Remote Hub</option></select></div>
+            <div class="fg full"><div class="fl">Full Address</div><textarea class="fi" rows="3" placeholder="Complete office address..."></textarea></div>
+            <div class="fg"><div class="fl">Local Currency</div><select class="fi"><option>BDT - Bangladeshi Taka</option><option>USD - US Dollar</option><option>GBP - British Pound</option><option>AED - UAE Dirham</option><option>INR - Indian Rupee</option></select></div>
+            <div class="fg"><div class="fl">Timezone</div><select class="fi"><option>Asia/Dhaka (UTC+6)</option><option>Europe/London (UTC+0/+1)</option><option>Asia/Dubai (UTC+4)</option><option>America/New_York (UTC-5/-4)</option></select></div>
+            <div class="fg"><div class="fl">HR Contact</div><select class="fi"><option>Ahmed Rahman</option><option>Sara Ahmed</option></select></div>
+            <div class="fg"><div class="fl">Applicable Tax Law</div><input class="fi" placeholder="e.g. Bangladesh Income Tax Ordinance"/></div>
+            <div class="fg"><div class="fl">Labor Law Reference</div><input class="fi" placeholder="e.g. Bangladesh Labor Act 2006"/></div>
+            <div class="fg"><div class="fl">Office Capacity</div><input class="fi" type="number" placeholder="Max headcount"/></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Inactive</option><option>Planned</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Office</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalIntegration ═══ -->
+  <div class="modal fade" id="modalIntegration" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#e0e7ff">⚙️</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Configure Integration</div>
+              <div style="font-size:0.78rem;color:#64748b;">External system connection</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div style="background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+            <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">⚙️</div>
+            <div><div style="font-size:0.88rem;font-weight:700;" id="integration-name">Integration</div><div style="font-size:0.72rem;color:#64748b;">Configure connection settings</div></div>
+            <span style="margin-left:auto;background:#d1fae5;color:#065f46;font-size:0.68rem;font-weight:700;padding:4px 10px;border-radius:20px;">● Connected</span>
+          </div>
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">API Endpoint URL</div><input class="fi" value="https://api.example.com/v2/hrms" placeholder="API URL"/></div>
+            <div class="fg"><div class="fl">API Key / Token</div><input class="fi" type="password" value="●●●●●●●●●●●●" placeholder="API Key"/></div>
+            <div class="fg"><div class="fl">Authentication Type</div><select class="fi"><option>Bearer Token</option><option>API Key</option><option>OAuth 2.0</option><option>Basic Auth</option></select></div>
+            <div class="fg"><div class="fl">Sync Frequency</div><select class="fi"><option>Real-time</option><option>Every 15 min</option><option>Hourly</option><option>Daily</option></select></div>
+            <div class="fg"><div class="fl">Data Direction</div><select class="fi"><option>Bidirectional</option><option>HRMS → External</option><option>External → HRMS</option></select></div>
+            <div class="fg"><div class="fl">Timeout (seconds)</div><input class="fi" type="number" value="30"/></div>
+            <div class="fg full"><div class="fl">Webhook URL (for callbacks)</div><input class="fi" placeholder="https://yourhrms.com/webhook/..."/></div>
+            <div class="fg full"><div class="fl">Sync Modules</div>
+              <div class="d-flex gap-3 flex-wrap mt-1">
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Employees</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Attendance</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Payroll</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Leave</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Performance</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Configuration</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalAutomation ═══ -->
+  <div class="modal fade" id="modalAutomation" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#ede9fe">🤖</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Automation Rule</div>
+              <div style="font-size:0.78rem;color:#64748b;">Workflow automation setup</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">Rule Name *</div><input class="fi" placeholder="e.g. Auto-approve short leaves"/></div>
+            <div class="fg full"><div class="fl">Description</div><input class="fi" placeholder="What does this automation do?"/></div>
+            <div class="form-section">Trigger (WHEN)</div>
+            <div class="fg"><div class="fl">Trigger Event *</div><select class="fi"><option>Leave Request Submitted</option><option>Employee Birthday</option><option>Probation End Date</option><option>New Employee Joined</option><option>Payroll Cycle Start</option><option>Certification Expiry</option><option>Performance Review Due</option></select></div>
+            <div class="fg"><div class="fl">Trigger Condition</div><input class="fi" placeholder="e.g. Duration < 1 day"/></div>
+            <div class="form-section">Action (DO THIS)</div>
+            <div class="fg"><div class="fl">Action Type *</div><select class="fi"><option>Send Email Notification</option><option>Send Slack Message</option><option>Auto-Approve Request</option><option>Create Task</option><option>Update Record Status</option><option>Generate Report</option></select></div>
+            <div class="fg"><div class="fl">Action Target</div><select class="fi"><option>Employee</option><option>Manager</option><option>HR Team</option><option>Finance Team</option></select></div>
+            <div class="fg full"><div class="fl">Message Template</div><textarea class="fi" rows="3" placeholder="Hi {{employee_name}}, your {{type}} has been automatically processed..."></textarea></div>
+            <div class="fg"><div class="fl">Run Frequency</div><select class="fi"><option>One-time</option><option>Every time triggered</option><option>Daily</option><option>Weekly</option></select></div>
+            <div class="fg"><div class="fl">Status</div><select class="fi"><option>Active</option><option>Inactive</option><option>Test Mode</option></select></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Automation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalReport ═══ -->
+  <div class="modal fade" id="modalReport" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#ede9fe">📊</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Generate Custom Report</div>
+              <div style="font-size:0.78rem;color:#64748b;">Build and export reports</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+
+          <div class="form-grid">
+            <div class="fg full"><div class="fl">Report Name *</div><input class="fi" placeholder="e.g. Monthly Attrition Report"/></div>
+            <div class="fg"><div class="fl">Report Module *</div><select class="fi"><option>Attendance</option><option>Payroll</option><option>Recruitment</option><option>Performance</option><option>Attrition</option><option>Training</option><option>Benefits</option></select></div>
+            <div class="fg"><div class="fl">Date Range</div><select class="fi"><option>This Month</option><option>Last Month</option><option>This Quarter</option><option>This Year</option><option>Custom Range</option></select></div>
+            <div class="fg"><div class="fl">Department Filter</div><select class="fi"><option>All Departments</option><option>Engineering</option><option>Sales</option><option>Finance</option></select></div>
+            <div class="fg"><div class="fl">Group By</div><select class="fi"><option>Department</option><option>Location</option><option>Month</option><option>Employee</option></select></div>
+            <div class="fg"><div class="fl">Export Format</div><select class="fi"><option>Excel (.xlsx)</option><option>PDF</option><option>CSV</option><option>Dashboard Widget</option></select></div>
+            <div class="fg full"><div class="fl">Columns to Include</div>
+              <div class="d-flex gap-3 flex-wrap mt-1">
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Name</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Department</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Date</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Status</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" checked/> Amount</label>
+              </div>
+            </div>
+            <div class="fg"><div class="fl">Schedule (Auto-send)</div><select class="fi"><option>Don't schedule</option><option>Weekly</option><option>Monthly</option></select></div>
+            <div class="fg"><div class="fl">Send to Email</div><input class="fi" placeholder="report@company.com"/></div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">📊 Generate Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalDelete ═══ -->
+  <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+      <div class="modal-content" style="border-radius:14px;border:none;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+        <div style="width:60px;height:60px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;">🗑️</div>
+        <div style="font-size:1.05rem;font-weight:800;color:#0f172a;margin-bottom:8px;" id="delete-title">Delete Record</div>
+        <div style="font-size:0.82rem;color:#64748b;margin-bottom:24px;" id="delete-desc">This action cannot be undone. Are you sure?</div>
+        <div class="d-flex gap-2 justify-content-center">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm fw-bold" onclick="confirmDelete()">Yes, Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
+  </script>
+  <script>
+
+// ── Bootstrap 5 + jQuery ──
+// Modals are triggered directly from HTML via:
+//   data-bs-toggle="modal" data-bs-target="#modalId"
+// No openXxxModal() JS functions needed.
+
+// Populate integration name from data attribute on the trigger button
+$(document).on('show.bs.modal', '#modalIntegration', function(e) {
+  var name = $(e.relatedTarget).data('integration-name');
+  if (name) $('#integration-name').text(name);
+});
+
+function showToast(icon, msg, duration) {
+  duration = duration || 3000;
+  $('#toast-icon').text(icon);
+  $('#toast-msg').text(msg);
+  $('#toast').addClass('show');
+  setTimeout(function() { $('#toast').removeClass('show'); }, duration);
+}
+function saveForm() {
+  $('.modal.show').modal('hide');
+  showToast('\u2705', 'Record saved successfully!');
+}
+function confirmDelete() {
+  $('#modalDelete').modal('hide');
+  showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
+}
+// ── End ──
+
+      // SUB-MODULE TABS
+      function showSubTab(tabGroup, tabId) {
+        document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
+          t.classList.toggle('active', t.dataset.tabid === tabId);
+        });
+        document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
+          p.classList.toggle('active', p.dataset.panelid === tabId);
+        });
+      }
+
+      // ═══════════════════════════════════════
+      // PAGE TITLE / DATE UPDATE
+      // ═══════════════════════════════════════
+      const pageTitles = {
+        dashboard: 'Dashboard Overview',
+        employee: 'Employee Management',
+        attendance: 'Attendance & Leave',
+        payroll: 'Payroll Management',
+        recruitment: 'Recruitment & Hiring',
+        performance: 'Performance Management',
+        training: 'Training & Development',
+        onboarding: 'Onboarding & Offboarding',
+        ess: 'Employee Self-Service',
+        reports: 'Reports & Analytics',
+        compliance: 'Compliance & Policies',
+        engagement: 'Engagement & Recognition',
+        health: 'Health, Safety & Benefits',
+        talent: 'Talent & Succession',
+        branding: 'Recruitment Marketing',
+        global: 'Global HR',
+        integrations: 'Integrations & Automation'
+      };
+
+      function showPage(id, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById('page-' + id);
+        if (target) target.classList.add('active');
+        document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById('topbar-title').textContent = pageTitles[id] || id;
+        document.getElementById('sidebar').classList.remove('open');
+        window.scrollTo(0, 0);
+      }
+
+      const d = new Date();
+      const dateEl = document.getElementById('topbar-date');
+      if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+      document.querySelectorAll('.toggle').forEach(t => {
+        t.addEventListener('click', () => t.classList.toggle('on'));
+      });
+
+
+    function showPage(id) { var m={dashboard:'../index.html',employee:'employee.html',attendance:'attendance.html',payroll:'payroll.html',recruitment:'recruitment.html',performance:'performance.html',training:'training.html',onboarding:'onboarding.html',ess:'ess.html',reports:'reports.html',compliance:'compliance.html',engagement:'engagement.html',health:'health.html',talent:'talent.html',branding:'branding.html',global:'global.html',integrations:'integrations.html'}; if(m[id]) location.href=m[id]; }
+
+    // ═══════════════════════════════════════════
+    // API INTEGRATION — Recruitment & Hiring
+    // ═══════════════════════════════════════════
+    const API = {
+      job: '/core-module/recruitment/api/job/',
+      candidate: '/core-module/recruitment/api/candidate/',
+      interview: '/core-module/recruitment/api/interview/',
+      pipeline: '/core-module/recruitment/api/candidate/pipeline/',
+    };
+
+    async function apiGet(url) {
+      try { const res = await fetch(url); return await res.json(); }
+      catch(e) { console.error('GET error:', e); return null; }
+    }
+
+    async function apiPost(url, data) {
+      try {
+        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        return { ok: res.ok, status: res.status, data: await res.json() };
+      } catch(e) { return { ok: false, data: { errors: [e.message] } }; }
+    }
+
+    async function apiPut(url, data) {
+      try {
+        const res = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+        return { ok: res.ok, status: res.status, data: await res.json() };
+      } catch(e) { return { ok: false, data: { errors: [e.message] } }; }
+    }
+
+    async function apiDelete(url) {
+      try { const res = await fetch(url, { method: 'DELETE' }); return { ok: res.ok, status: res.status }; }
+      catch(e) { return { ok: false }; }
+    }
+
+    async function loadJobs(page) {
+      const pageSize = document.getElementById('jobs-page-size')?.value || 10;
+      page = page || 1;
+      const status = document.getElementById('jobs-filter-status')?.value || '';
+      const search = document.getElementById('jobs-filter-search')?.value || '';
+      let url = API.job + `?page=${page}&page_size=${pageSize}`;
+      if (status) url += `&status=${status}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      const result = await apiGet(url);
+      if (!result || !result.data) return;
+      const tbody = document.getElementById('jobs-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (result.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No job postings found</td></tr>';
+      } else {
+        result.data.forEach(j => {
+          const statusBadge = j.status === 'active' ? 'badge-success' : j.status === 'draft' ? 'badge-warning' : 'badge-gray';
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-id', j.id);
+          tr.innerHTML = `
+            <td style="font-weight:600;">${j.job_title}</td>
+            <td>${j.department_name || '—'}</td>
+            <td>${j.location_name || '—'}</td>
+            <td>${j.application_deadline ? new Date(j.application_deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—'}</td>
+            <td><span class="badge-custom badge-info">${j.candidate_count || 0}</span></td>
+            <td><span class="badge-custom ${statusBadge}">${j.status}</span></td>
+            <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editJob(${j.id})">✏ Edit</button><button class="btn-del" onclick="deleteJob(${j.id})">🗑</button></div></td>`;
+          tbody.appendChild(tr);
+        });
+      }
+      renderPagination(result, 'jobs-pagination-info', 'jobs-pagination', 'loadJobs');
+    }
+
+    async function loadCandidates(page) {
+      const pageSize = document.getElementById('candidates-page-size')?.value || 10;
+      page = page || 1;
+      const stage = document.getElementById('candidate-filter-stage')?.value || '';
+      const search = document.getElementById('candidate-filter-search')?.value || '';
+      let url = API.candidate + `?page=${page}&page_size=${pageSize}`;
+      if (stage) url += `&stage=${stage}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      const result = await apiGet(url);
+      if (!result || !result.data) return;
+      const tbody = document.getElementById('candidates-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (result.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No candidates found</td></tr>';
+      } else {
+        result.data.forEach(c => {
+          const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-id', c.id);
+          tr.innerHTML = `
+            <td style="font-weight:600;">${c.full_name}</td>
+            <td>${c.applied_for_title || '—'}</td>
+            <td>${c.source || '—'}</td>
+            <td>${c.experience_yrs || 0} yrs</td>
+            <td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td>
+            <td><div style="display:flex;gap:3px;">
+              <button class="btn-view" onclick="viewCandidate(${c.id})">👁 View</button>
+              ${c.current_stage !== 'rejected' && c.current_stage !== 'hired' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="advanceCandidate(${c.id})">▶ Advance</button>` : ''}
+            </div></td>`;
+          tbody.appendChild(tr);
+        });
+      }
+      renderPagination(result, 'candidates-pagination-info', 'candidates-pagination', 'loadCandidates');
+    }
+
+    function renderPagination(result, infoId, containerId, fnName) {
+      const totalPages = result.total_pages || 1;
+      const page = result.page || 1;
+      const start = (page - 1) * (result.page_size || 10) + 1;
+      const end = Math.min(page * (result.page_size || 10), result.count);
+      const info = document.getElementById(infoId);
+      if (info) {
+        info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
+      }
+      const container = document.getElementById(containerId);
+      if (container) {
+        let html = '';
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+            html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
+          } else if (i === page - 2 || i === page + 2) {
+            html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
+          }
+        }
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
+        container.innerHTML = html;
+      }
+    }
+
+    async function editJob(id) {
+      const result = await apiGet(API.job + id + '/');
+      if (!result) return;
+      const modal = document.getElementById('modalJob');
+      if (!modal) return;
+      const inputs = modal.querySelectorAll('.fi');
+      const selects = modal.querySelectorAll('select.fi');
+      if (inputs[0]) inputs[0].value = result.job_title || '';
+      if (selects[0]) selects[0].value = result.job_type || 'full_time';
+      if (inputs[3]) inputs[3].value = result.vacancies || 1;
+      if (inputs[4]) inputs[4].value = result.salary_range_min || '';
+      if (inputs[5]) inputs[5].value = result.salary_range_max || '';
+      if (inputs[6]) inputs[6].value = result.application_deadline || '';
+      if (selects[1]) selects[1].value = result.experience_required || '';
+      if (selects[2]) selects[2].value = result.education_level || '';
+      if (inputs[7]) inputs[7].value = result.job_description || '';
+      if (inputs[8]) inputs[8].value = result.skills_required || '';
+      if (selects[3]) selects[3].value = result.status || 'draft';
+      modal.setAttribute('data-edit-id', id);
+      new bootstrap.Modal(modal).show();
+    }
+
+    async function deleteJob(id) {
+      if (!confirm('Delete this job posting?')) return;
+      const res = await apiDelete(API.job + id + '/');
+      if (res.ok) { showToast('🗑️', 'Job deleted'); loadJobs(); }
+      else showToast('❌', 'Failed to delete job');
+    }
+
+    async function viewCandidate(id) {
+      const result = await apiGet(API.candidate + id + '/');
+      if (!result) return;
+      const modal = document.getElementById('modalCandidate');
+      if (!modal) return;
+      const inputs = modal.querySelectorAll('.fi');
+      const selects = modal.querySelectorAll('select.fi');
+      if (inputs[0]) inputs[0].value = result.full_name || '';
+      if (inputs[1]) inputs[1].value = result.email || '';
+      if (inputs[2]) inputs[2].value = result.phone || '';
+      if (selects[0]) selects[0].value = result.source || '';
+      if (selects[1]) selects[1].value = result.current_stage || 'applied';
+      if (inputs[3]) inputs[3].value = result.experience_yrs || '';
+      if (inputs[4]) inputs[4].value = result.current_salary || '';
+      if (inputs[5]) inputs[5].value = result.expected_salary || '';
+      if (selects[2]) selects[2].value = result.notice_period || '';
+      modal.setAttribute('data-edit-id', id);
+      new bootstrap.Modal(modal).show();
+    }
+
+    async function loadPipeline() {
+      const result = await apiGet(API.pipeline);
+      if (result) {
+        const counts = document.querySelectorAll('#page-recruitment .kanban-count');
+        if (counts[0]) counts[0].textContent = result.applied || 0;
+        if (counts[1]) counts[1].textContent = result.screening || 0;
+        if (counts[2]) counts[2].textContent = result.interview || 0;
+        if (counts[3]) counts[3].textContent = result.offer || 0;
+      }
+    }
+
+    async function advanceCandidate(id) {
+      const res = await apiPost(API.candidate + id + '/advance/', {});
+      if (res.ok) { showToast('✅', 'Candidate advanced'); loadCandidates(); }
+      else showToast('❌', 'Failed to advance candidate');
+    }
+
+    async function saveJob() {
+      const modal = document.getElementById('modalJob');
+      const editId = modal.getAttribute('data-edit-id');
+      const inputs = modal.querySelectorAll('.fi');
+      const selects = modal.querySelectorAll('select.fi');
+      const data = {
+        job_title: inputs[0]?.value || '',
+        job_type: selects[0]?.value || 'full_time',
+        vacancies: inputs[3]?.value || 1,
+        salary_range_min: inputs[4]?.value || null,
+        salary_range_max: inputs[5]?.value || null,
+        application_deadline: inputs[6]?.value || null,
+        experience_required: selects[1]?.value || '',
+        education_level: selects[2]?.value || '',
+        job_description: inputs[7]?.value || '',
+        skills_required: inputs[8]?.value || '',
+        status: selects[3]?.value || 'draft',
+      };
+      let result;
+      if (editId) {
+        result = await apiPut(API.job + editId + '/', data);
+        modal.removeAttribute('data-edit-id');
+      } else {
+        result = await apiPost(API.job, data);
+      }
+      if (result.ok) { showToast('✅', 'Job saved!'); bootstrap.Modal.getInstance(modal).hide(); loadJobs(); }
+      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+    }
+
+    async function saveCandidate() {
+      const modal = document.getElementById('modalCandidate');
+      const editId = modal.getAttribute('data-edit-id');
+      const inputs = modal.querySelectorAll('.fi');
+      const selects = modal.querySelectorAll('select.fi');
+      const data = {
+        full_name: inputs[0]?.value || '',
+        email: inputs[1]?.value || '',
+        phone: inputs[2]?.value || '',
+        source: selects[0]?.value || '',
+        current_stage: selects[1]?.value || 'applied',
+        experience_yrs: inputs[3]?.value || null,
+        current_salary: inputs[4]?.value || null,
+        expected_salary: inputs[5]?.value || null,
+        notice_period: selects[2]?.value || '',
+      };
+      let result;
+      if (editId) {
+        result = await apiPut(API.candidate + editId + '/', data);
+        modal.removeAttribute('data-edit-id');
+      } else {
+        result = await apiPost(API.candidate, data);
+      }
+      if (result.ok) { showToast('✅', 'Candidate saved!'); bootstrap.Modal.getInstance(modal).hide(); loadCandidates(); }
+      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+    }
+
+    async function saveInterview() {
+      const modal = document.getElementById('modalInterview');
+      const inputs = modal.querySelectorAll('.fi');
+      const selects = modal.querySelectorAll('select.fi');
+      const data = {
+        interview_type: selects[0]?.value || 'phone',
+        scheduled_at: inputs[0]?.value || '',
+        duration_mins: inputs[1]?.value || 60,
+        feedback: inputs[2]?.value || '',
+      };
+      const result = await apiPost(API.interview, data);
+      if (result.ok) { showToast('✅', 'Interview scheduled!'); bootstrap.Modal.getInstance(modal).hide(); }
+      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+    }
+
+    $(function() {
+      loadJobs();
+      loadCandidates();
+      loadPipeline();
+    });
+
+    $(function() {
+      var d = new Date();
+      $('#topbar-date').text(d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}));
+      $('.toggle').on('click', function() { $(this).toggleClass('on'); });
+    });
+
+  </script></body>
+</html>
+

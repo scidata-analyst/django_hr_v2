@@ -1,0 +1,9 @@
+"""
+Integration Validation Constants
+"""
+
+# Validation Rules
+SYNC_RETRY_ATTEMPTS = 3
+SYNC_TIMEOUT_SECONDS = 300
+MAX_BATCH_SIZE = 1000
+CONNECTION_TEST_TIMEOUT_SECONDS = 10

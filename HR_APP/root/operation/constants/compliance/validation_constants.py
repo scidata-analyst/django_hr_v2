@@ -1,0 +1,9 @@
+"""
+Compliance Validation Constants
+"""
+
+# Validation Rules
+CERTIFICATION_VALIDITY_MONTHS = 12
+AUDIT_FREQUENCY_MONTHS = 3
+MIN_COMPLIANCE_SCORE = 0
+MAX_COMPLIANCE_SCORE = 100

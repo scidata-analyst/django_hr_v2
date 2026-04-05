@@ -1,0 +1,17 @@
+"""
+Talent Management Error Constants
+"""
+
+# Error Codes
+TALENT_PROFILE_NOT_FOUND = "TALENT_PROFILE_NOT_FOUND"
+SUCCESSION_PLAN_NOT_FOUND = "SUCCESSION_PLAN_NOT_FOUND"
+INVALID_SKILL_LEVEL = "INVALID_SKILL_LEVEL"
+DUPLICATE_TALENT_ENTRY = "DUPLICATE_TALENT_ENTRY"
+
+# Error Messages
+ERROR_MESSAGES = {
+    TALENT_PROFILE_NOT_FOUND: "Talent profile not found",
+    SUCCESSION_PLAN_NOT_FOUND: "Succession plan not found",
+    INVALID_SKILL_LEVEL: "Invalid skill level",
+    DUPLICATE_TALENT_ENTRY: "Talent entry already exists",
+}

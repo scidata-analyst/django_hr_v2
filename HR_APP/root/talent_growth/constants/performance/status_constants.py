@@ -1,0 +1,31 @@
+"""
+Performance Status Constants
+"""
+
+# Performance Status
+UNDER_REVIEW = "UNDER_REVIEW"
+SATISFACTORY = "SATISFACTORY"
+NEEDS_IMPROVEMENT = "NEEDS_IMPROVEMENT"
+EXCEEDS_EXPECTATIONS = "EXCEEDS_EXPECTATIONS"
+OUTSTANDING = "OUTSTANDING"
+
+PERFORMANCE_STATUS_CHOICES = [
+    (UNDER_REVIEW, "Under Review"),
+    (SATISFACTORY, "Satisfactory"),
+    (NEEDS_IMPROVEMENT, "Needs Improvement"),
+    (EXCEEDS_EXPECTATIONS, "Exceeds Expectations"),
+    (OUTSTANDING, "Outstanding"),
+]
+
+# Review Cycle
+MONTHLY = "MONTHLY"
+QUARTERLY = "QUARTERLY"
+HALF_YEARLY = "HALF_YEARLY"
+ANNUAL = "ANNUAL"
+
+REVIEW_CYCLE_CHOICES = [
+    (MONTHLY, "Monthly"),
+    (QUARTERLY, "Quarterly"),
+    (HALF_YEARLY, "Half Yearly"),
+    (ANNUAL, "Annual"),
+]

@@ -1,0 +1,10 @@
+"""
+Talent Management Validation Constants
+"""
+
+# Validation Rules
+MIN_SKILL_LEVEL = 1
+MAX_SKILL_LEVEL = 5
+MIN_POTENTIAL_SCORE = 0
+MAX_POTENTIAL_SCORE = 100
+SUCCESSION_PLANNING_HORIZON_YEARS = 3

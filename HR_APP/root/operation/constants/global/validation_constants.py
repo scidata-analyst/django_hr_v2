@@ -1,0 +1,10 @@
+"""
+Global Validation Constants
+"""
+
+# Common Validation Rules
+MAX_STRING_LENGTH = 255
+MAX_TEXT_LENGTH = 10000
+MIN_REQUIRED_LENGTH = 1
+PAGINATION_LIMIT = 50
+MAX_PAGINATION_LIMIT = 1000

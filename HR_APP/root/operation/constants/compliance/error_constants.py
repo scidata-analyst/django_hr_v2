@@ -1,0 +1,17 @@
+"""
+Compliance Error Constants
+"""
+
+# Error Codes
+COMPLIANCE_NOT_FOUND = "COMPLIANCE_NOT_FOUND"
+INVALID_COMPLIANCE_TYPE = "INVALID_COMPLIANCE_TYPE"
+MISSING_DOCUMENTATION = "MISSING_DOCUMENTATION"
+CERTIFICATION_EXPIRED = "CERTIFICATION_EXPIRED"
+
+# Error Messages
+ERROR_MESSAGES = {
+    COMPLIANCE_NOT_FOUND: "Compliance record not found",
+    INVALID_COMPLIANCE_TYPE: "Invalid compliance type",
+    MISSING_DOCUMENTATION: "Required documentation is missing",
+    CERTIFICATION_EXPIRED: "Certification has expired",
+}

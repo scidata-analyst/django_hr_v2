@@ -1,0 +1,8 @@
+"""
+Health & Safety Validation Constants
+"""
+
+# Validation Rules
+MAX_INCIDENT_DESCRIPTION = 5000
+INVESTIGATION_TIMELINE_DAYS = 30
+SAFETY_AUDIT_FREQUENCY_MONTHS = 6

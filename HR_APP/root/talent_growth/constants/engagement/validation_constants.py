@@ -1,0 +1,10 @@
+"""
+Engagement Validation Constants
+"""
+
+# Validation Rules
+SURVEY_RESPONSE_TIMEOUT_HOURS = 24
+MIN_SAMPLE_SIZE = 10
+MAX_SURVEY_QUESTIONS = 100
+MIN_RATING_SCALE = 1
+MAX_RATING_SCALE = 5

@@ -1,0 +1,11 @@
+"""
+Performance Validation Constants
+"""
+
+# Validation Rules
+MIN_GOALS = 1
+MAX_GOALS = 10
+GOAL_REVIEW_INTERVAL_DAYS = 30
+MIN_RATING = 1
+MAX_RATING = 5
+FEEDBACK_CHARACTER_LIMIT = 5000
