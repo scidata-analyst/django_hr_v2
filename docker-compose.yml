@@ -18,11 +18,11 @@ services:
   web:
     build: .
     container_name: django_web_app
-    command: python root/manage.py runserver 0.0.0.0:8000
+    command: python root/manage.py runserver 0.0.0.0:8003
     volumes:
       - .:/app
     ports:
-      - "8082:8000"
+      - "8082:8003"
     depends_on:
       - db
     environment:
