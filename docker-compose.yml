@@ -22,7 +22,7 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8082:8003"
+      - "9003:8003"
     depends_on:
       - db
     environment:
