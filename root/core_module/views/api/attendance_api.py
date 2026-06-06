@@ -142,19 +142,19 @@ def leave_list(request):
         employee = request.GET.get('employee')
         page = int(request.GET.get('page', 1))
         page_size = int(request.GET.get('page_size', 10))
-        
+
         if status:
             qs = leave_service.repository.get_by_status(status)
         elif employee:
             qs = leave_service.get_by_employee(employee)
         else:
             qs = leave_service.get_all()
-        
+
         total = qs.count()
         start_idx = (page - 1) * page_size
         end_idx = start_idx + page_size
         page_qs = qs[start_idx:end_idx]
-        
+
         return JsonResponse({
             'data': LeaveRequestSerializer.serialize_list(page_qs),
             'count': total,
