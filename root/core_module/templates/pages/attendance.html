@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 
 <head>
     <meta charset="UTF-8" />
@@ -4766,8 +4767,8 @@
         </div>
     </div>
     <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
-    <script src="{{ asset('js/constants.js') }}"></script>
-    <script src="{{ asset('js/APIClient.js') }}"></script>
+    <script src="{% static 'js/constants.js' %}"></script>
+    <script src="{% static 'js/APIClient.js' %}"></script>
     <script>
         const api = new APIClient({
             baseURL: API_CONFIG.BASE_URL,
@@ -4782,7 +4783,7 @@
         window.API_ENDPOINTS = API_ENDPOINTS;
     </script>
 
-    {{-- completion crud api implementation --}}
+    <!-- completion crud api implementation -->
     <script>
         /* ========================================================================
          *  Completion CRUD
@@ -5410,7 +5411,7 @@
             }
         }
     </script>
-    {{-- completion crud api implementation end --}}
+    <!-- completion crud api implementation end -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
@@ -5484,14 +5485,6 @@
         document.querySelectorAll('.toggle').forEach(t => {
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
-
-        const api = new APIClient({
-            baseURL: API_CONFIG.BASE_URL,
-            timeout: API_CONFIG.TIMEOUT,
-            headers: { ...API_CONFIG.HEADERS }
-        });
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
 
         let attPage = 1;
         const attPageSize = 10;
@@ -5704,8 +5697,8 @@
             if (employee) params.employee = employee;
             if (status) params.status = status;
 
-            const url = API_ENDPOINTS.ATTENDANCE.RECORDS.INDEX + '?' + new URLSearchParams(params).toString();
-            const result = await apiGet(url);
+            const url = API_ENDPOINTS.ATTENDANCE.RECORDS.INDEX;
+            const result = await api.index(url, params);
             if (!result?.data) return;
 
             const tbody = document.getElementById('attendance-tbody');
@@ -5763,7 +5756,7 @@
 
         async function loadAttendanceStats() {
             try {
-                const result = await apiGet(API_ENDPOINTS.ATTENDANCE.STATS.INDEX);
+                const result = await api.all(API_ENDPOINTS.ATTENDANCE.STATS.INDEX);
                 if (!result) return;
                 const stats = result.data || result;
                 const cards = document.querySelectorAll('#page-attendance .stat-card .stat-value');

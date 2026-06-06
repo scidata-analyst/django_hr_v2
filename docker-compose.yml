@@ -18,7 +18,8 @@ services:
   web:
     build: .
     container_name: django_web_app
-    command: python root/manage.py runserver 0.0.0.0:8003
+    restart: always
+    command: sh -c "until python root/manage.py migrate --noinput; do echo Waiting for database...; sleep 2; done && python root/manage.py runserver 0.0.0.0:8003"
     volumes:
       - .:/app
     ports:

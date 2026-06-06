@@ -1,4 +1,6 @@
 import json
+import traceback
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -16,6 +18,16 @@ designation_service = DesignationService()
 document_service = DocumentService()
 
 
+def safe_json_handler(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        try:
+            return view_func(request, *args, **kwargs)
+        except Exception as exc:
+            tb = traceback.format_exc()
+            return JsonResponse({'error': str(exc), 'traceback': tb}, status=500)
+    return _wrapped_view
+
+
 def parse_body(request):
     try:
         return json.loads(request.body)
@@ -26,6 +38,7 @@ def parse_body(request):
 # Department APIs
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
+@safe_json_handler
 def department_list(request):
     if request.method == "GET":
         search = request.GET.get('search', '')
