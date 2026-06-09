@@ -361,10 +361,7 @@
                     <div class="form-grid">
                         <div class="fg">
                             <div class="fl">Employee *</div><select class="fi">
-                                <option>Kabir Hossain</option>
-                                <option>Sara Ahmed</option>
-                                <option>Mehedi Rahman</option>
-                                <option>Nadia Jahan</option>
+                                <option value="" disabled selected>Select Employee</option>
                             </select>
                         </div>
                         <div class="fg">
@@ -378,6 +375,7 @@
                         </div>
                         <div class="fg">
                             <div class="fl">Status</div><select class="fi">
+                                <option value="">Select Status</option>
                                 <option>Present</option>
                                 <option>Absent</option>
                                 <option>Half Day</option>
@@ -388,9 +386,7 @@
                         </div>
                         <div class="fg">
                             <div class="fl">Shift</div><select class="fi">
-                                <option>Morning (6AM–2PM)</option>
-                                <option>Day (8AM–5PM)</option>
-                                <option>Night (10PM–6AM)</option>
+                                <option value="">Select Shift</option>
                             </select>
                         </div>
                         <div class="fg">
@@ -589,6 +585,226 @@
         window.API_ENDPOINTS = API_ENDPOINTS;
     </script>
 
+    <script>
+        /**
+         * @namespace Shifts CRUD operations
+         * @description REST API wrapper functions for shift management.
+         * @see API_ENDPOINTS.ATTENDANCE.SHIFTS in constants.js
+         */
+        async function allShifts() {
+            try {
+                return await api.all(API_ENDPOINTS.ATTENDANCE.SHIFTS.INDEX);
+            } catch (error) {
+                console.error('Error fetching all shifts:', error);
+                throw error;
+            }
+        }
+
+        async function indexShifts(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ATTENDANCE.SHIFTS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing shifts:', error);
+                throw error;
+            }
+        }
+
+        async function createShift(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ATTENDANCE.SHIFTS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating shift:', error);
+                throw error;
+            }
+        }
+
+        async function getShift(id) {
+            try {
+                return await api.show(API_ENDPOINTS.ATTENDANCE.SHIFTS.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching shift:', error);
+                throw error;
+            }
+        }
+
+        async function updateShiftAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.ATTENDANCE.SHIFTS.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating shift:', error);
+                throw error;
+            }
+        }
+
+        async function deleteShiftAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.ATTENDANCE.SHIFTS.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting shift:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * @namespace Attendance Records CRUD operations
+         * @description REST API wrapper functions for attendance records.
+         * @see API_ENDPOINTS.ATTENDANCE.RECORDS in constants.js
+         */
+        async function allAttendanceRecords() {
+            try {
+                return await api.all(API_ENDPOINTS.ATTENDANCE.RECORDS.INDEX);
+            } catch (error) {
+                console.error('Error fetching all attendance records:', error);
+                throw error;
+            }
+        }
+
+        async function indexAttendanceRecords(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ATTENDANCE.RECORDS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing attendance records:', error);
+                throw error;
+            }
+        }
+
+        async function createAttendanceRecord(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ATTENDANCE.RECORDS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating attendance record:', error);
+                throw error;
+            }
+        }
+
+        async function getAttendanceRecord(id) {
+            try {
+                return await api.show(API_ENDPOINTS.ATTENDANCE.RECORDS.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching attendance record:', error);
+                throw error;
+            }
+        }
+
+        async function updateAttendanceRecordAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.ATTENDANCE.RECORDS.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating attendance record:', error);
+                throw error;
+            }
+        }
+
+        async function deleteAttendanceRecordAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.ATTENDANCE.RECORDS.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting attendance record:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * @namespace Leaves CRUD operations
+         * @description REST API wrapper functions for leave management.
+         * @see API_ENDPOINTS.ATTENDANCE.LEAVES in constants.js
+         */
+        async function allLeaves() {
+            try {
+                return await api.all(API_ENDPOINTS.ATTENDANCE.LEAVES.INDEX);
+            } catch (error) {
+                console.error('Error fetching all leaves:', error);
+                throw error;
+            }
+        }
+
+        async function indexLeaves(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ATTENDANCE.LEAVES.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing leaves:', error);
+                throw error;
+            }
+        }
+
+        async function createLeave(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ATTENDANCE.LEAVES.STORE, payload);
+            } catch (error) {
+                console.error('Error creating leave:', error);
+                throw error;
+            }
+        }
+
+        async function getLeave(id) {
+            try {
+                return await api.show(API_ENDPOINTS.ATTENDANCE.LEAVES.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching leave:', error);
+                throw error;
+            }
+        }
+
+        async function updateLeaveAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.ATTENDANCE.LEAVES.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating leave:', error);
+                throw error;
+            }
+        }
+
+        async function deleteLeaveAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.ATTENDANCE.LEAVES.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting leave:', error);
+                throw error;
+            }
+        }
+
+        async function approveLeaveAPI(id) {
+            try {
+                return await api.update(API_ENDPOINTS.ATTENDANCE.LEAVES.APPROVE(id), { status: 'approved' });
+            } catch (error) {
+                console.error('Error approving leave:', error);
+                throw error;
+            }
+        }
+
+        async function denyLeaveAPI(id) {
+            try {
+                return await api.update(API_ENDPOINTS.ATTENDANCE.LEAVES.DENY(id), { status: 'denied' });
+            } catch (error) {
+                console.error('Error denying leave:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * @namespace Attendance Stats operations
+         * @description REST API wrapper functions for attendance statistics.
+         * @see API_ENDPOINTS.ATTENDANCE.STATS in constants.js
+         */
+        async function allAttendanceStats() {
+            try {
+                return await api.all(API_ENDPOINTS.ATTENDANCE.STATS.INDEX);
+            } catch (error) {
+                console.error('Error fetching attendance stats:', error);
+                throw error;
+            }
+        }
+
+        async function getEmployeeAttendanceStats(employeeId) {
+            try {
+                return await api.show(API_ENDPOINTS.ATTENDANCE.STATS.EMPLOYEE_STATS, employeeId);
+            } catch (error) {
+                console.error('Error fetching employee attendance stats:', error);
+                throw error;
+            }
+        }
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -598,6 +814,12 @@
             if (name) $('#integration-name').text(name);
         });
 
+        /**
+         * Displays a toast notification with an icon and message.
+         * @param {string} icon - Emoji or icon character.
+         * @param {string} msg - Message to display.
+         * @param {number} [duration=3000] - Auto-hide duration in ms.
+         */
         function showToast(icon, msg, duration) {
             duration = duration || 3000;
             $('#toast-icon').text(icon);
@@ -605,15 +827,21 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-        function saveForm() {
-            $('.modal.show').modal('hide');
-            showToast('\u2705', 'Record saved successfully!');
-        }
+
+        /**
+         * Handles delete confirmation modal close and feedback.
+         * Triggered by the delete modal's confirm button.
+         */
         function confirmDelete() {
             $('#modalDelete').modal('hide');
             showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
         }
 
+        /**
+         * Switches the active tab within a tab group.
+         * @param {string} tabGroup - Matches data-tabgroup attribute.
+         * @param {string} tabId - Matches data-tabid attribute to activate.
+         */
         function showSubTab(tabGroup, tabId) {
             document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
                 t.classList.toggle('active', t.dataset.tabid === tabId);
@@ -623,6 +851,7 @@
             });
         }
 
+        /** Page title lookup for topbar updates. */
         const pageTitles = {
             dashboard: 'Dashboard Overview',
             employee: 'Employee Management',
@@ -643,6 +872,11 @@
             integrations: 'Integrations & Automation'
         };
 
+        /**
+         * Navigates to a page section and updates navigation state.
+         * @param {string} id - Page identifier matching `page-{id}` element.
+         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
+         */
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + id);
@@ -664,12 +898,19 @@
 
         let attPage = 1;
         const attPageSize = 10;
-
         let currentPage = 1;
         const pageSize = 10;
         let allLeavesData = [];
         let allShiftsData = [];
 
+        /**
+         * Renders paginated table data with page info and navigation.
+         * @param {Array} data - Array of items to paginate.
+         * @param {string} tbodyId - ID of the tbody element to render rows into.
+         * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
+         * @param {string} containerId - ID of the pagination buttons container.
+         * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
+         */
         function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
             const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
             if (currentPage > totalPages) currentPage = totalPages;
@@ -710,46 +951,59 @@
             }
         }
 
+        /**
+         * Updates current page and triggers render for the active paginated table.
+         * @param {string} tbodyId - ID of the tbody being paginated.
+         * @param {string} infoId - ID of the pagination info element.
+         * @param {string} containerId - ID of the pagination container.
+         * @param {number} page - Target page number.
+         */
         function goPage(tbodyId, infoId, containerId, page) {
             currentPage = page;
             if (tbodyId === 'leaves-tbody') renderLeavesPage();
             if (tbodyId === 'shifts-tbody') renderShiftsPage();
         }
 
+        /** Renders the current page of leave records. */
         function renderLeavesPage() {
             renderPagination(allLeavesData, 'leaves-tbody', 'leaves-pagination-info', 'leaves-pagination', (l) => {
                 const statusBadge = l.status === 'approved' ? 'badge-success' : l.status === 'denied' ? 'badge-danger' : 'badge-warning';
                 return `<tr data-id="${l.id}">
-          <td>${l.employee_name || '—'}</td>
-          <td><span class="badge-custom badge-info">${l.leave_type}</span></td>
-          <td>${l.from_date}</td>
-          <td>${l.to_date}</td>
-          <td>${l.total_days || '—'}</td>
-          <td>${l.reason || '—'}</td>
-          <td><span class="badge-custom ${statusBadge}">${l.status}</span></td>
-          <td><div style="display:flex;gap:3px;">${l.status === 'pending' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="approveLeave(${l.id})">Approve</button><button class="btn-danger-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="denyLeave(${l.id})">Deny</button>` : `<button class="btn-outline-custom" style="padding:3px 8px;font-size:0.65rem;"><i class="bi bi-eye"></i></button>`}</div></td>
-        </tr>`;
+                    <td>${l.employee_name || '—'}</td>
+                    <td><span class="badge-custom badge-info">${l.leave_type}</span></td>
+                    <td>${l.from_date}</td>
+                    <td>${l.to_date}</td>
+                    <td>${l.total_days || '—'}</td>
+                    <td>${l.reason || '—'}</td>
+                    <td><span class="badge-custom ${statusBadge}">${l.status}</span></td>
+                    <td><div style="display:flex;gap:3px;">${l.status === 'pending' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="approveLeave(${l.id})">Approve</button><button class="btn-danger-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="denyLeave(${l.id})">Deny</button>` : `<button class="btn-outline-custom" style="padding:3px 8px;font-size:0.65rem;"><i class="bi bi-eye"></i></button>`}</div></td>
+                </tr>`;
             });
         }
 
+        /** Renders the current page of shift records. */
         function renderShiftsPage() {
             renderPagination(allShiftsData, 'shifts-tbody', 'shifts-pagination-info', 'shifts-pagination', (s) => {
                 return `<tr data-id="${s.id}">
-          <td style="font-weight:600;">${s.shift_name}</td>
-          <td>${s.shift_code}</td>
-          <td>${s.start_time}</td>
-          <td>${s.end_time}</td>
-          <td>${s.department_name || 'All'}</td>
-          <td><span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
-          <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editShift(${s.id})">✏ Edit</button><button class="btn-del" onclick="deleteShift(${s.id})">🗑</button></div></td>
-        </tr>`;
+                    <td style="font-weight:600;">${s.shift_name}</td>
+                    <td>${s.shift_code}</td>
+                    <td>${s.start_time}</td>
+                    <td>${s.end_time}</td>
+                    <td>${s.department_name || 'All'}</td>
+                    <td><span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
+                    <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editShift(${s.id})">✏ Edit</button><button class="btn-del" onclick="deleteShift(${s.id})">🗑</button></div></td>
+                </tr>`;
             });
         }
 
+        /**
+         * Fetches all shifts and renders the shift table.
+         * @async
+         */
         async function loadShifts() {
             currentPage = 1;
             try {
-                const result = await api.index(API_ENDPOINTS.ATTENDANCE.SHIFTS.INDEX, { per_page: 500 });
+                const result = await indexShifts({ per_page: 500 });
                 allShiftsData = result.data || [];
                 renderShiftsPage();
             } catch (e) {
@@ -757,10 +1011,14 @@
             }
         }
 
+        /**
+         * Fetches all leave records and renders the leave table.
+         * @async
+         */
         async function loadLeaves() {
             currentPage = 1;
             try {
-                const result = await api.index(API_ENDPOINTS.ATTENDANCE.LEAVES.INDEX, { per_page: 500 });
+                const result = await indexLeaves({ per_page: 500 });
                 allLeavesData = result.data || [];
                 renderLeavesPage();
             } catch (e) {
@@ -768,9 +1026,14 @@
             }
         }
 
+        /**
+         * Approves a leave request and refreshes the leave list.
+         * @param {number} id - Leave record ID.
+         * @async
+         */
         async function approveLeave(id) {
             try {
-                await api.update(API_ENDPOINTS.ATTENDANCE.LEAVES.APPROVE(id), { status: 'approved' });
+                await approveLeaveAPI(id);
                 showToast('✅', 'Leave approved');
                 loadLeaves();
             } catch (e) {
@@ -778,9 +1041,14 @@
             }
         }
 
+        /**
+         * Denies a leave request and refreshes the leave list.
+         * @param {number} id - Leave record ID.
+         * @async
+         */
         async function denyLeave(id) {
             try {
-                await api.update(API_ENDPOINTS.ATTENDANCE.LEAVES.DENY(id), { status: 'denied' });
+                await denyLeaveAPI(id);
                 showToast('✅', 'Leave denied');
                 loadLeaves();
             } catch (e) {
@@ -788,6 +1056,10 @@
             }
         }
 
+        /**
+         * Reads shift modal inputs, creates a shift via API, and refreshes the list.
+         * @async
+         */
         async function saveShift() {
             const modal = document.getElementById('modalShift');
             const inputs = modal.querySelectorAll('.fi');
@@ -804,7 +1076,7 @@
                 is_active: selects[2]?.value === 'Active',
             };
             try {
-                await api.store(API_ENDPOINTS.ATTENDANCE.SHIFTS.STORE, data);
+                await createShift(data);
                 showToast('✅', 'Shift created!');
                 bootstrap.Modal.getInstance(modal).hide();
                 loadShifts();
@@ -813,6 +1085,10 @@
             }
         }
 
+        /**
+         * Reads attendance modal inputs, creates a record via API, and refreshes data.
+         * @async
+         */
         async function saveAttendance() {
             const modal = document.getElementById('modalAttendance');
             const fields = modal.querySelectorAll('.fi');
@@ -828,7 +1104,7 @@
                 remarks: fields[8]?.value || '',
             };
             try {
-                await api.store(API_ENDPOINTS.ATTENDANCE.RECORDS.STORE, data);
+                await createAttendanceRecord(data);
                 showToast('✅', 'Attendance saved!');
                 bootstrap.Modal.getInstance(modal).hide();
                 loadAttendanceRecords(1);
@@ -838,6 +1114,10 @@
             }
         }
 
+        /**
+         * Reads leave modal inputs, submits via API, and refreshes related data.
+         * @async
+         */
         async function saveLeave() {
             const modal = document.getElementById('modalLeave');
             const inputs = modal.querySelectorAll('.fi');
@@ -850,7 +1130,7 @@
                 reason: inputs[3]?.value || '',
             };
             try {
-                await api.store(API_ENDPOINTS.ATTENDANCE.LEAVES.STORE, data);
+                await createLeave(data);
                 showToast('✅', 'Leave submitted!');
                 bootstrap.Modal.getInstance(modal).hide();
                 loadLeaves();
@@ -860,6 +1140,11 @@
             }
         }
 
+        /**
+         * Loads paginated attendance records with optional filters.
+         * @param {number} [page] - Page number to fetch. Defaults to 1.
+         * @async
+         */
         async function loadAttendanceRecords(page) {
             attPage = page || 1;
             const startDate = document.getElementById('att-start-date')?.value || '';
@@ -873,8 +1158,7 @@
             if (employee) params.employee = employee;
             if (status) params.status = status;
 
-            const url = API_ENDPOINTS.ATTENDANCE.RECORDS.INDEX;
-            const result = await api.index(url, params);
+            const result = await indexAttendanceRecords(params);
             if (!result?.data) return;
 
             const tbody = document.getElementById('attendance-tbody');
@@ -894,15 +1178,15 @@
                 tbody.innerHTML = result.data.map(a => {
                     const badge = statusMap[a.status] || 'badge-gray';
                     return `<tr>
-              <td>${a.employee_name || '—'}</td>
-              <td>${a.date || '—'}</td>
-              <td>${a.check_in_time || '—'}</td>
-              <td>${a.check_out_time || '—'}</td>
-              <td><span class="badge-custom ${badge}">${a.status || '—'}</span></td>
-              <td>${a.overtime_hours ? a.overtime_hours + 'h' : '—'}</td>
-              <td>${a.work_location || '—'}</td>
-              <td>${a.shift_name || '—'}</td>
-            </tr>`;
+                        <td>${a.employee_name || '—'}</td>
+                        <td>${a.date || '—'}</td>
+                        <td>${a.check_in_time || '—'}</td>
+                        <td>${a.check_out_time || '—'}</td>
+                        <td><span class="badge-custom ${badge}">${a.status || '—'}</span></td>
+                        <td>${a.overtime_hours ? a.overtime_hours + 'h' : '—'}</td>
+                        <td>${a.work_location || '—'}</td>
+                        <td>${a.shift_name || '—'}</td>
+                    </tr>`;
                 }).join('');
             }
 
@@ -930,9 +1214,13 @@
             }
         }
 
+        /**
+         * Loads attendance statistics and updates the stat cards.
+         * @async
+         */
         async function loadAttendanceStats() {
             try {
-                const result = await api.all(API_ENDPOINTS.ATTENDANCE.STATS.INDEX);
+                const result = await allAttendanceStats();
                 if (!result) return;
                 const stats = result.data || result;
                 const cards = document.querySelectorAll('#page-attendance .stat-card .stat-value');
@@ -945,6 +1233,10 @@
             }
         }
 
+        /**
+         * Populates the employee filter dropdown via the API.
+         * @async
+         */
         async function loadEmployeeFilter() {
             try {
                 const result = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { per_page: 500 });
@@ -969,13 +1261,6 @@
             loadAttendanceStats();
             loadEmployeeFilter();
         });
-
-        $(function () {
-            var d = new Date();
-            $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
-            $('.toggle').on('click', function () { $(this).toggleClass('on'); });
-        });
-
     </script>
 </body>
 
