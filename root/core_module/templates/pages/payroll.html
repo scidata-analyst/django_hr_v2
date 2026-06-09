@@ -796,18 +796,189 @@
     </div>
     <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
 
+    <script src="{% static 'js/constants.js' %}"></script>
+    <script src="{% static 'js/APIClient.js' %}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
     </script>
     <script>
-        // ── Bootstrap 5 + jQuery ──
-        // Modals are triggered directly from HTML via:
-        //   data-bs-toggle="modal" data-bs-target="#modalId"
-        // No openXxxModal() JS functions needed.
+        const api = new APIClient({
+            baseURL: API_CONFIG.BASE_URL,
+            timeout: API_CONFIG.TIMEOUT,
+            headers: API_CONFIG.HEADERS
+        });
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (csrfToken) {
+            api.headers['X-CSRF-TOKEN'] = csrfToken;
+        }
 
-        // Populate integration name from data attribute on the trigger button
+        /**
+         * @namespace SALARY_STRUCTURES CRUD operations
+         * @description REST API wrapper functions for salary structures.
+         * @see API_ENDPOINTS.PAYROLL.SALARY_STRUCTURES in constants.js
+         */
+        async function indexStructures(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.PAYROLL.SALARY_STRUCTURES.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing structures:', error);
+                throw error;
+            }
+        }
+
+        async function getStructure(id) {
+            try {
+                return await api.show(API_ENDPOINTS.PAYROLL.SALARY_STRUCTURES.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching structure:', error);
+                throw error;
+            }
+        }
+
+        async function createStructure(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.PAYROLL.SALARY_STRUCTURES.STORE, payload);
+            } catch (error) {
+                console.error('Error creating structure:', error);
+                throw error;
+            }
+        }
+
+        async function updateStructureAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.PAYROLL.SALARY_STRUCTURES.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating structure:', error);
+                throw error;
+            }
+        }
+
+        async function deleteStructureAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.PAYROLL.SALARY_STRUCTURES.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting structure:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * @namespace PAYSLIPS CRUD operations
+         * @description REST API wrapper functions for payslips.
+         * @see API_ENDPOINTS.PAYROLL.PAYSLIPS in constants.js
+         */
+        async function indexPayslips(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.PAYROLL.PAYSLIPS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing payslips:', error);
+                throw error;
+            }
+        }
+
+        async function getPayslip(id) {
+            try {
+                return await api.show(API_ENDPOINTS.PAYROLL.PAYSLIPS.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching payslip:', error);
+                throw error;
+            }
+        }
+
+        async function createPayslip(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.PAYROLL.PAYSLIPS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating payslip:', error);
+                throw error;
+            }
+        }
+
+        async function bulkGeneratePayslips(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.PAYROLL.PAYSLIPS.BULK_GENERATE, payload);
+            } catch (error) {
+                console.error('Error generating payslips:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * @namespace LOANS CRUD operations
+         * @description REST API wrapper functions for loans/advances.
+         * @see API_ENDPOINTS.PAYROLL.LOANS in constants.js
+         */
+        async function indexLoans(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.PAYROLL.LOANS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing loans:', error);
+                throw error;
+            }
+        }
+
+        async function getLoan(id) {
+            try {
+                return await api.show(API_ENDPOINTS.PAYROLL.LOANS.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching loan:', error);
+                throw error;
+            }
+        }
+
+        async function createLoan(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.PAYROLL.LOANS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating loan:', error);
+                throw error;
+            }
+        }
+
+        async function approveLoanAPI(id) {
+            try {
+                return await api.update(API_ENDPOINTS.PAYROLL.LOANS.APPROVE(id), id);
+            } catch (error) {
+                console.error('Error approving loan:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * @namespace BONUSES CRUD operations
+         * @description REST API wrapper functions for bonuses.
+         * @see API_ENDPOINTS.PAYROLL.BONUSES in constants.js
+         */
+        async function indexBonuses(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.PAYROLL.BONUSES.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing bonuses:', error);
+                throw error;
+            }
+        }
+
+        async function getBonus(id) {
+            try {
+                return await api.show(API_ENDPOINTS.PAYROLL.BONUSES.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching bonus:', error);
+                throw error;
+            }
+        }
+
+        async function createBonus(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.PAYROLL.BONUSES.STORE, payload);
+            } catch (error) {
+                console.error('Error creating bonus:', error);
+                throw error;
+            }
+        }
+
+        // ── Bootstrap 5 + jQuery ──
         $(document).on('show.bs.modal', '#modalIntegration', function (e) {
             var name = $(e.relatedTarget).data('integration-name');
             if (name) $('#integration-name').text(name);
@@ -820,15 +991,6 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-        function saveForm() {
-            $('.modal.show').modal('hide');
-            showToast('\u2705', 'Record saved successfully!');
-        }
-        function confirmDelete() {
-            $('#modalDelete').modal('hide');
-            showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
-        }
-        // ── End ──
 
         // SUB-MODULE TABS
         function showSubTab(tabGroup, tabId) {
@@ -840,40 +1002,6 @@
             });
         }
 
-        // ═══════════════════════════════════════
-        // PAGE TITLE / DATE UPDATE
-        // ═══════════════════════════════════════
-        const pageTitles = {
-            dashboard: 'Dashboard Overview',
-            employee: 'Employee Management',
-            attendance: 'Attendance & Leave',
-            payroll: 'Payroll Management',
-            recruitment: 'Recruitment & Hiring',
-            performance: 'Performance Management',
-            training: 'Training & Development',
-            onboarding: 'Onboarding & Offboarding',
-            ess: 'Employee Self-Service',
-            reports: 'Reports & Analytics',
-            compliance: 'Compliance & Policies',
-            engagement: 'Engagement & Recognition',
-            health: 'Health, Safety & Benefits',
-            talent: 'Talent & Succession',
-            branding: 'Recruitment Marketing',
-            global: 'Global HR',
-            integrations: 'Integrations & Automation'
-        };
-
-        function showPage(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById('page-' + id);
-            if (target) target.classList.add('active');
-            document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-            document.getElementById('sidebar').classList.remove('open');
-            window.scrollTo(0, 0);
-        }
-
         const d = new Date();
         const dateEl = document.getElementById('topbar-date');
         if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
@@ -882,302 +1010,153 @@
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
 
-
-        function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
-
-        // ═══════════════════════════════════════════
-        // API INTEGRATION — Payroll Management
-        // ═══════════════════════════════════════════
-        const API = {
-            structure: '/core-module/payroll/api/structure/',
-            payslip: '/core-module/payroll/api/payslip/',
-            loan: '/core-module/payroll/api/loan/',
-            bonus: '/core-module/payroll/api/bonus/',
-        };
-
-        async function apiGet(url) {
-            try { const res = await fetch(url); return await res.json(); }
-            catch (e) { console.error('GET error:', e); return null; }
-        }
-
-        async function apiPost(url, data) {
-            try {
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                return { ok: res.ok, status: res.status, data: await res.json() };
-            } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-        }
-
-        async function apiPut(url, data) {
-            try {
-                const res = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                return { ok: res.ok, status: res.status, data: await res.json() };
-            } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-        }
-
-        async function apiDelete(url) {
-            try { const res = await fetch(url, { method: 'DELETE' }); return { ok: res.ok, status: res.status }; }
-            catch (e) { return { ok: false }; }
-        }
+        let payrollPageSize = parseInt((document.getElementById('structures-page-size') || {}).value || '10', 10) || 10;
 
         async function loadStructures(page) {
-            const pageSize = document.getElementById('structures-page-size')?.value || 10;
-            page = page || 1;
-            const result = await apiGet(API.structure + `?page=${page}&page_size=${pageSize}`);
-            if (!result || !result.data) return;
-            const tbody = document.querySelector('#page-payroll .card-custom:nth-of-type(4) .table-custom tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No salary structures found</td></tr>';
-            } else {
-                result.data.forEach(s => {
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', s.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${s.structure_name}</td>
-            <td>${s.grade_level || '—'}</td>
-            <td>$${Number(s.basic_salary || 0).toLocaleString()}</td>
-            <td>${s.house_rent_percent}%</td>
-            <td><span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
-            <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editStructure(${s.id})">✏ Edit</button><button class="btn-del" onclick="deleteStructure(${s.id})">🗑</button></div></td>`;
-                    tbody.appendChild(tr);
+            const params = { page, page_size: payrollPageSize };
+            try {
+                const result = await indexStructures(params);
+                if (!result?.data) return;
+                renderPagination(result.data, 'structures-tbody', 'structures-pagination-info', 'structures-pagination', 'loadStructures', (item) => {
+                    const badge = item.status === 'active' ? 'badge-success' : 'badge-gray';
+                    return `<tr data-id="${item.id}">
+                        <td>${item.structure_name || ''}</td>
+                        <td>${item.grade_level || ''}</td>
+                        <td>${item.basic_salary ?? ''}</td>
+                        <td>${item.house_rent_allowance ?? ''}</td>
+                        <td><span class="badge-custom ${badge}">${item.status || ''}</span></td>
+                        <td>
+                            <div style="display:flex;gap:5px;">
+                                <button class="btn-view" onclick="viewStructure(${item.id})">Notice</button>
+                                <button class="btn-edit" onclick="editStructure(${item.id})">Edit</button>
+                                <button class="btn-del" onclick="deleteStructure(${item.id})">Delete</button>
+                            </div>
+                        </td>
+                    </tr>`;
                 });
+                document.getElementById('structures-pagination-info').textContent = `Showing ${page} of ${result.data.length}`;
+            } catch (e) {
+                console.error('Failed to load structures:', e);
+                showToast('❌', 'Failed to load salary structures');
             }
-            renderPagination(result, 'structures-pagination-info', 'structures-pagination', 'loadStructures');
         }
 
         async function loadPayslips(page) {
-            const pageSize = document.getElementById('payslips-page-size')?.value || 10;
-            page = page || 1;
             const month = document.getElementById('payslip-filter-month')?.value || '';
-            let url = API.payslip + `?page=${page}&page_size=${pageSize}`;
-            if (month) url += `&month=${month}`;
-            const result = await apiGet(url);
-            if (!result || !result.data) return;
-            const tbody = document.querySelector('#page-payroll .card-custom:nth-of-type(5) .table-custom tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No payslips found</td></tr>';
-            } else {
-                result.data.forEach(p => {
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', p.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${p.employee_name || '—'}</td>
-            <td>${p.pay_period || '—'}</td>
-            <td>$${Number(p.gross_salary || 0).toLocaleString()}</td>
-            <td>$${Number(p.total_deductions || 0).toLocaleString()}</td>
-            <td style="font-weight:700;color:var(--success);">$${Number(p.net_pay || 0).toLocaleString()}</td>
-            <td><span class="badge-custom badge-success">Processed</span></td>
-            <td><button class="btn-outline-custom" style="padding:4px 8px;font-size:0.7rem;" onclick="viewPayslip(${p.id})">📥 Download</button></td>`;
-                    tbody.appendChild(tr);
+            const pageSize = parseInt((document.getElementById('payslips-page-size') || {}).value || '10', 10) || 10;
+            const params = { page, page_size: pageSize };
+            if (month) params.month = month;
+            try {
+                const result = await indexPayslips(params);
+                if (!result?.data) return;
+                renderPagination(result.data, 'payslips-tbody', 'payslips-pagination-info', 'payslips-pagination', 'loadPayslips', (item) => {
+                    const badge = item.status === 'paid' ? 'badge-success' : 'badge-warning';
+                    return `<tr data-id="${item.id}">
+                        <td>${item.employee_name || ''}</td>
+                        <td>${item.pay_period || ''}</td>
+                        <td>${item.gross_salary ?? ''}</td>
+                        <td>${item.total_deductions ?? ''}</td>
+                        <td>${item.net_pay ?? ''}</td>
+                        <td><span class="badge-custom ${badge}">${item.status || ''}</span></td>
+                        <td><button class="btn-view" onclick="viewPayslip(${item.id})">View</button></td>
+                    </tr>`;
                 });
+            } catch (e) {
+                console.error('Failed to load payslips:', e);
+                showToast('❌', 'Failed to load payslips');
             }
-            renderPagination(result, 'payslips-pagination-info', 'payslips-pagination', 'loadPayslips');
         }
 
         async function loadLoans(page) {
-            const pageSize = document.getElementById('loans-page-size')?.value || 10;
-            page = page || 1;
-            const result = await apiGet(API.loan + `?page=${page}&page_size=${pageSize}`);
-            if (!result || !result.data) return;
-            const tbody = document.querySelector('#page-payroll .card-custom:nth-of-type(6) .table-custom tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No loans found</td></tr>';
-            } else {
-                result.data.forEach(l => {
-                    const statusBadge = l.status === 'active' ? 'badge-success' : l.status === 'completed' ? 'badge-primary' : 'badge-warning';
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', l.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${l.employee_name || '—'}</td>
-            <td>${l.loan_type}</td>
-            <td>$${Number(l.loan_amount || 0).toLocaleString()}</td>
-            <td>${l.repayment_period} mo</td>
-            <td>$${Number(l.monthly_emi || 0).toLocaleString()}</td>
-            <td><span class="badge-custom ${statusBadge}">${l.status}</span></td>
-            <td>${l.status === 'pending' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="approveLoan(${l.id})">Approve</button>` : '—'}</td>`;
-                    tbody.appendChild(tr);
+            const pageSize = parseInt((document.getElementById('loans-page-size') || {}).value || '10', 10) || 10;
+            const params = { page, page_size: pageSize };
+            try {
+                const result = await indexLoans(params);
+                if (!result?.data) return;
+                renderPagination(result.data, 'loans-tbody', 'loans-pagination-info', 'loans-pagination', 'loadLoans', (item) => {
+                    const badge = item.status === 'active' ? 'badge-success' : 'badge-warning';
+                    return `<tr data-id="${item.id}">
+                        <td>${item.employee_name || ''}</td>
+                        <td>${item.loan_type || ''}</td>
+                        <td>${item.loan_amount ?? ''}</td>
+                        <td>${item.repayment_period_months ?? ''}</td>
+                        <td>${item.monthly_emi ?? ''}</td>
+                        <td><span class="badge-custom ${badge}">${item.status || ''}</span></td>
+                        <td>
+                            <div style="display:flex;gap:5px;">
+                                <button class="btn-view" onclick="viewLoan(${item.id})">View</button>
+                                ${item.status === 'pending' ? `<button class="btn-success-custom" onclick="approveLoan(${item.id})">Approve</button>` : ''}
+                            </div>
+                        </td>
+                    </tr>`;
                 });
+            } catch (e) {
+                console.error('Failed to load loans:', e);
+                showToast('❌', 'Failed to load loans');
             }
-            renderPagination(result, 'loans-pagination-info', 'loans-pagination', 'loadLoans');
         }
 
         async function loadBonuses(page) {
-            const pageSize = document.getElementById('bonuses-page-size')?.value || 10;
-            page = page || 1;
-            const result = await apiGet(API.bonus + `?page=${page}&page_size=${pageSize}`);
-            if (!result || !result.data) return;
-            const tbody = document.querySelector('#page-payroll .card-custom:nth-of-type(7) .table-custom tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No bonuses found</td></tr>';
-            } else {
-                result.data.forEach(b => {
-                    const statusBadge = b.status === 'paid' ? 'badge-success' : b.status === 'approved' ? 'badge-primary' : 'badge-warning';
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', b.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${b.employee_name || '—'}</td>
-            <td>${b.bonus_type}</td>
-            <td>$${Number(b.amount || 0).toLocaleString()}</td>
-            <td>${b.pay_month || '—'}</td>
-            <td><span class="badge-custom ${statusBadge}">${b.status}</span></td>`;
-                    tbody.appendChild(tr);
+            const pageSize = parseInt((document.getElementById('bonuses-page-size') || {}).value || '10', 10) || 10;
+            const params = { page, page_size: pageSize };
+            try {
+                const result = await indexBonuses(params);
+                if (!result?.data) return;
+                renderPagination(result.data, 'bonuses-tbody', 'bonuses-pagination-info', 'bonuses-pagination', 'loadBonuses', (item) => {
+                    const badge = item.status === 'paid' ? 'badge-success' : item.status === 'approved' ? 'badge-info' : 'badge-gray';
+                    return `<tr data-id="${item.id}">
+                        <td>${item.employee_name || ''}</td>
+                        <td>${item.bonus_type || ''}</td>
+                        <td>${item.amount ?? ''}</td>
+                        <td>${item.pay_month || ''}</td>
+                        <td><span class="badge-custom ${badge}">${item.status || ''}</span></td>
+                        <td><button class="btn-view" onclick="viewBonus(${item.id})">View</button></td>
+                    </tr>`;
                 });
+            } catch (e) {
+                console.error('Failed to load bonuses:', e);
+                showToast('❌', 'Failed to load bonuses');
             }
-            renderPagination(result, 'bonuses-pagination-info', 'bonuses-pagination', 'loadBonuses');
         }
 
-        function renderPagination(result, infoId, containerId, fnName) {
-            const totalPages = result.total_pages || 1;
-            const page = result.page || 1;
-            const start = (page - 1) * (result.page_size || 10) + 1;
-            const end = Math.min(page * (result.page_size || 10), result.count);
+        function renderPagination(data, tbodyId, infoId, containerId, loadFn, renderRowFn) {
+            const totalItems = Array.isArray(data) ? data.length : 0;
+            const totalPages = totalItems ? Math.ceil(totalItems / payrollPageSize) : 0;
+            const currentPage = Number(document.getElementById('payroll-page') || 0) || 1;
+            const start = totalItems ? (currentPage - 1) * payrollPageSize + 1 : 0;
+            const end = Math.min(currentPage * payrollPageSize, totalItems);
             const info = document.getElementById(infoId);
-            if (info) {
-                info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
-            }
+            if (info) info.textContent = totalItems > 0 ? `Showing ${start}–${end} of ${totalItems}` : 'No records found';
             const container = document.getElementById(containerId);
-            if (container) {
-                let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
-                        html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
-                    } else if (i === page - 2 || i === page + 2) {
-                        html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-                    }
-                }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
-                container.innerHTML = html;
+            if (!container || totalPages <= 1) {
+                if (container) container.innerHTML = '';
+                return;
             }
-        }
-
-        async function approveLoan(id) {
-            const res = await apiPost(API.loan + id + '/approve/', {});
-            if (res.ok) { showToast('✅', 'Loan approved'); loadLoans(); }
-            else showToast('❌', 'Failed to approve loan');
-        }
-
-        async function editStructure(id) {
-            const result = await apiGet(API.structure + id + '/');
-            if (!result) return;
-            const modal = document.getElementById('modalSalaryStructure');
-            if (!modal) return;
-            const inputs = modal.querySelectorAll('.fi');
-            if (inputs[0]) inputs[0].value = result.structure_name || '';
-            if (inputs[1]) inputs[1].value = result.grade_level || '';
-            if (inputs[2]) inputs[2].value = result.basic_salary || 0;
-            if (inputs[3]) inputs[3].value = result.house_rent_percent || 0;
-            if (inputs[4]) inputs[4].value = result.transport_allowance || 0;
-            if (inputs[5]) inputs[5].value = result.medical_allowance || 0;
-            if (inputs[6]) inputs[6].value = result.food_allowance || 0;
-            if (inputs[7]) inputs[7].value = result.other_allowance || 0;
-            if (inputs[8]) inputs[8].value = result.income_tax_percent || 0;
-            if (inputs[9]) inputs[9].value = result.provident_fund_percent || 0;
-            if (inputs[10]) inputs[10].value = result.insurance_premium || 0;
-            if (inputs[11]) inputs[11].value = result.other_deductions || 0;
-            modal.setAttribute('data-edit-id', id);
-            new bootstrap.Modal(modal).show();
+            let html = `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="document.__payrollPage=${currentPage - 1};${loadFn}(${currentPage - 1})">Prev</button>`;
+            html += Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                const active = page === currentPage ? 'btn-primary-custom' : 'btn-outline-custom';
+                return `<button class="${active}" style="padding:5px 10px;" onclick="${loadFn}(${page})">${page}</button>`;
+            }).join('');
+            html += `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${loadFn}(${currentPage + 1})">Next</button>`;
+            container.innerHTML = html;
         }
 
         async function deleteStructure(id) {
             if (!confirm('Delete this salary structure?')) return;
-            const res = await apiDelete(API.structure + id + '/');
-            if (res.ok) { showToast('🗑️', 'Structure deleted'); loadStructures(); }
-            else showToast('❌', 'Failed to delete structure');
-        }
-
-        async function viewPayslip(id) {
-            const result = await apiGet(API.payslip + id + '/');
-            if (!result) return;
-            const modal = document.getElementById('modalPayslip');
-            if (!modal) return;
-            const nameEl = document.getElementById('payslip-name');
-            if (nameEl) nameEl.textContent = result.employee_name || '—';
-            new bootstrap.Modal(modal).show();
-        }
-
-        async function saveStructure() {
-            const modal = document.getElementById('modalSalaryStructure');
-            const editId = modal.getAttribute('data-edit-id');
-            const inputs = modal.querySelectorAll('.fi');
-            const data = {
-                structure_name: inputs[0]?.value || '',
-                grade_level: inputs[1]?.value || '',
-                basic_salary: inputs[2]?.value || 0,
-                house_rent_percent: inputs[3]?.value || 0,
-                transport_allowance: inputs[4]?.value || 0,
-                medical_allowance: inputs[5]?.value || 0,
-                food_allowance: inputs[6]?.value || 0,
-                other_allowance: inputs[7]?.value || 0,
-                income_tax_percent: inputs[8]?.value || 0,
-                provident_fund_percent: inputs[9]?.value || 0,
-                insurance_premium: inputs[10]?.value || 0,
-                other_deductions: inputs[11]?.value || 0,
-            };
-            let result;
-            if (editId) {
-                result = await apiPut(API.structure + editId + '/', data);
-                modal.removeAttribute('data-edit-id');
-            } else {
-                result = await apiPost(API.structure, data);
+            try {
+                await deleteStructureAPI(id);
+                showToast('✅', 'Structure deleted');
+                loadStructures(1);
+            } catch (e) {
+                showToast('❌', 'Failed to delete structure');
             }
-            if (result.ok) { showToast('✅', 'Structure saved!'); bootstrap.Modal.getInstance(modal).hide(); loadStructures(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
-        }
-
-        async function savePayslip() {
-            const modal = document.getElementById('modalPayslip');
-            showToast('📥', 'Payslip downloaded');
-            bootstrap.Modal.getInstance(modal).hide();
-        }
-
-        async function saveLoan() {
-            const modal = document.getElementById('modalLoan');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                loan_type: selects[0]?.value || 'personal',
-                loan_amount: inputs[1]?.value || 0,
-                disbursement_date: inputs[2]?.value || null,
-                repayment_period: inputs[3]?.value || 12,
-                interest_rate: inputs[5]?.value || 0,
-                status: selects[1]?.value || 'pending',
-                purpose_notes: inputs[6]?.value || '',
-            };
-            const result = await apiPost(API.loan, data);
-            if (result.ok) { showToast('✅', 'Loan created!'); bootstrap.Modal.getInstance(modal).hide(); loadLoans(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
-        }
-
-        async function saveBonus() {
-            const modal = document.getElementById('modalBonus');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                bonus_type: selects[0]?.value || 'festival',
-                amount: inputs[1]?.value || 0,
-                pay_month: inputs[2]?.value || null,
-                taxable: selects[1]?.value === 'Yes',
-                status: selects[2]?.value || 'pending',
-                remarks: inputs[3]?.value || '',
-            };
-            const result = await apiPost(API.bonus, data);
-            if (result.ok) { showToast('✅', 'Bonus added!'); bootstrap.Modal.getInstance(modal).hide(); loadBonuses(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
         }
 
         $(function () {
-            loadStructures();
-            loadPayslips();
-            loadLoans();
-            loadBonuses();
+            loadStructures(1);
+            loadPayslips(1);
+            loadLoans(1);
+            loadBonuses(1);
         });
 
         $(function () {
@@ -1187,6 +1166,3 @@
         });
 
     </script>
-</body>
-
-</html>

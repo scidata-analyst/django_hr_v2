@@ -528,23 +528,175 @@
     <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
 
 
+    <script src="{% static 'js/constants.js' %}"></script>
+    <script src="{% static 'js/APIClient.js' %}"></script>
+    <script>
+        const api = new APIClient({
+            baseURL: API_CONFIG.BASE_URL,
+            timeout: API_CONFIG.TIMEOUT,
+            headers: { ...API_CONFIG.HEADERS }
+        });
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+
+        /**
+         * @namespace Onboarding CRUD operations
+         * @description REST API wrapper functions for onboarding management.
+         * @see API_ENDPOINTS.ONBOARDING in constants.js
+         */
+        async function allOnboardingTasks() {
+            try {
+                return await api.all(API_ENDPOINTS.ONBOARDING.TASKS.INDEX);
+            } catch (error) {
+                console.error('Error fetching all onboarding tasks:', error);
+                throw error;
+            }
+        }
+
+        async function indexOnboardingTasks(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ONBOARDING.TASKS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing onboarding tasks:', error);
+                throw error;
+            }
+        }
+
+        async function createOnboardingTask(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ONBOARDING.TASKS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating onboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function getOnboardingTask(id) {
+            try {
+                return await api.show(API_ENDPOINTS.ONBOARDING.TASKS.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching onboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function updateOnboardingTask(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.ONBOARDING.TASKS.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating onboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function deleteOnboardingTask(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.ONBOARDING.TASKS.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting onboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function allOffboardingTasks() {
+            try {
+                return await api.all(API_ENDPOINTS.ONBOARDING.OFFBOARDING.INDEX);
+            } catch (error) {
+                console.error('Error fetching all offboarding tasks:', error);
+                throw error;
+            }
+        }
+
+        async function indexOffboardingTasks(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ONBOARDING.OFFBOARDING.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing offboarding tasks:', error);
+                throw error;
+            }
+        }
+
+        async function createOffboardingTask(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ONBOARDING.OFFBOARDING.STORE, payload);
+            } catch (error) {
+                console.error('Error creating offboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function getOffboardingTask(id) {
+            try {
+                return await api.show(API_ENDPOINTS.ONBOARDING.OFFBOARDING.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching offboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function updateOffboardingTaskAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.ONBOARDING.OFFBOARDING.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating offboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function deleteOffboardingTaskAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.ONBOARDING.OFFBOARDING.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting offboarding task:', error);
+                throw error;
+            }
+        }
+
+        async function allExitInterviews() {
+            try {
+                return await api.all(API_ENDPOINTS.ONBOARDING.EXIT_INTERVIEWS.INDEX);
+            } catch (error) {
+                console.error('Error fetching all exit interviews:', error);
+                throw error;
+            }
+        }
+
+        async function indexExitInterviews(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ONBOARDING.EXIT_INTERVIEWS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing exit interviews:', error);
+                throw error;
+            }
+        }
+
+        async function createExitInterview(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ONBOARDING.EXIT_INTERVIEWS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating exit interview:', error);
+                throw error;
+            }
+        }
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
     </script>
     <script>
 
-        // ── Bootstrap 5 + jQuery ──
-        // Modals are triggered directly from HTML via:
-        //   data-bs-toggle="modal" data-bs-target="#modalId"
-        // No openXxxModal() JS functions needed.
-
-        // Populate integration name from data attribute on the trigger button
         $(document).on('show.bs.modal', '#modalIntegration', function (e) {
             var name = $(e.relatedTarget).data('integration-name');
             if (name) $('#integration-name').text(name);
         });
 
+        /**
+         * Displays a toast notification with an icon and message.
+         * @param {string} icon - Emoji or icon character.
+         * @param {string} msg - Message to display.
+         * @param {number} [duration=3000] - Auto-hide duration in ms.
+         */
         function showToast(icon, msg, duration) {
             duration = duration || 3000;
             $('#toast-icon').text(icon);
@@ -552,17 +704,20 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-        function saveForm() {
-            $('.modal.show').modal('hide');
-            showToast('\u2705', 'Record saved successfully!');
-        }
+
+        /**
+         * Handles delete confirmation modal close and feedback.
+         */
         function confirmDelete() {
             $('#modalDelete').modal('hide');
             showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
         }
-        // ── End ──
 
-        // SUB-MODULE TABS
+        /**
+         * Switches the active tab within a tab group.
+         * @param {string} tabGroup - Matches data-tabgroup attribute.
+         * @param {string} tabId - Matches data-tabid attribute to activate.
+         */
         function showSubTab(tabGroup, tabId) {
             document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
                 t.classList.toggle('active', t.dataset.tabid === tabId);
@@ -572,9 +727,7 @@
             });
         }
 
-        // ═══════════════════════════════════════
-        // PAGE TITLE / DATE UPDATE
-        // ═══════════════════════════════════════
+        /** Page title lookup for topbar updates. */
         const pageTitles = {
             dashboard: 'Dashboard Overview',
             employee: 'Employee Management',
@@ -595,6 +748,11 @@
             integrations: 'Integrations & Automation'
         };
 
+        /**
+         * Navigates to a page section and updates navigation state.
+         * @param {string} id - Page identifier matching `page-{id}` element.
+         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
+         */
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + id);
@@ -614,139 +772,182 @@
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
 
+        let onboardingPage = 1;
+        const onboardingPageSize = 10;
 
-        function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
+        /**
+         * Renders paginated table data with page info and navigation.
+         * @param {Array} data - Array of items to paginate.
+         * @param {string} tbodyId - ID of the tbody element to render rows into.
+         * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
+         * @param {string} containerId - ID of the pagination buttons container.
+         * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
+         */
+        function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
+            const totalPages = Math.max(1, Math.ceil(data.length / onboardingPageSize));
+            if (onboardingPage > totalPages) onboardingPage = totalPages;
+            const start = (onboardingPage - 1) * onboardingPageSize;
+            const end = Math.min(start + onboardingPageSize, data.length);
+            const pageData = data.slice(start, end);
 
-        // ═══════════════════════════════════════════
-        // API INTEGRATION — Onboarding & Offboarding
-        // ═══════════════════════════════════════════
-        const API = {
-            task: '/core-module/onboarding/api/task/',
-            offboarding: '/core-module/onboarding/api/offboarding/',
-            exitInterview: '/core-module/onboarding/api/exit-interview/',
-        };
-
-        async function apiGet(url) {
-            try { const res = await fetch(url); return await res.json(); }
-            catch (e) { console.error('GET error:', e); return null; }
-        }
-
-        async function apiPost(url, data) {
-            try {
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                return { ok: res.ok, status: res.status, data: await res.json() };
-            } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-        }
-
-        async function apiPut(url, data) {
-            try {
-                const res = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                return { ok: res.ok, status: res.status, data: await res.json() };
-            } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-        }
-
-        async function loadOnboardingTasks(page) {
-            const pageSize = document.getElementById('onboarding-page-size')?.value || 10;
-            page = page || 1;
-            const search = document.getElementById('onboarding-search')?.value || '';
-            const status = document.getElementById('onboarding-filter-status')?.value || '';
-            let url = API.task + `?page=${page}&page_size=${pageSize}`;
-            if (search) url += `&search=${encodeURIComponent(search)}`;
-            if (status) url += `&status=${status}`;
-            const result = await apiGet(url);
-            if (!result || !result.data) return;
-            const tbody = document.getElementById('onboarding-tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">No onboarding tasks found</td></tr>';
-            } else {
-                result.data.forEach(t => {
-                    const statusBadge = t.status === 'completed' ? 'badge-success' : t.status === 'in_progress' ? 'badge-warning' : 'badge-gray';
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', t.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${t.employee_name || '—'}</td>
-            <td>${t.joining_date || '—'}</td>
-            <td>${t.department_name || '—'}</td>
-            <td>${t.offer_letter ? '✅' : '❌'}</td>
-            <td>${t.document_verified ? '✅' : '❌'}</td>
-            <td>${t.orientation_done ? '✅' : '❌'}</td>
-            <td>${t.it_setup_done ? '✅' : '❌'}</td>
-            <td><span class="badge-custom ${statusBadge}">${t.status}</span></td>`;
-                    tbody.appendChild(tr);
-                });
+            const tbody = document.getElementById(tbodyId);
+            if (tbody) {
+                tbody.innerHTML = '';
+                if (pageData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">No data found</td></tr>';
+                } else {
+                    pageData.forEach((item, i) => {
+                        tbody.innerHTML += renderRowFn(item, i);
+                    });
+                }
             }
-            renderPagination(result, 'onboarding-pagination-info', 'onboarding-pagination', 'loadOnboardingTasks');
-        }
 
-        function renderPagination(result, infoId, containerId, fnName) {
-            const totalPages = result.total_pages || 1;
-            const page = result.page || 1;
-            const start = (page - 1) * (result.page_size || 10) + 1;
-            const end = Math.min(page * (result.page_size || 10), result.count);
             const info = document.getElementById(infoId);
             if (info) {
-                info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
+                info.textContent = data.length > 0 ? `Showing ${start + 1}–${end} of ${data.length}` : 'No data found';
             }
+
             const container = document.getElementById(containerId);
             if (container) {
                 let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
+                html += `<button class="btn-outline-custom" style="padding:5px 10px;${onboardingPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${onboardingPage - 1})">‹ Prev</button>`;
                 for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
-                        html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
-                    } else if (i === page - 2 || i === page + 2) {
+                    if (i === 1 || i === totalPages || (i >= onboardingPage - 1 && i <= onboardingPage + 1)) {
+                        html += `<button class="${i === onboardingPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${i})">${i}</button>`;
+                    } else if (i === onboardingPage - 2 || i === onboardingPage + 2) {
                         html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
                     }
                 }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
+                html += `<button class="btn-outline-custom" style="padding:5px 10px;${onboardingPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${onboardingPage + 1})">Next ›</button>`;
                 container.innerHTML = html;
             }
         }
 
+        /**
+         * Updates current page and triggers render for the active paginated table.
+         * @param {string} tbodyId - ID of the tbody being paginated.
+         * @param {string} infoId - ID of the pagination info element.
+         * @param {string} containerId - ID of the pagination container.
+         * @param {number} page - Target page number.
+         */
+        function goPage(tbodyId, infoId, containerId, page) {
+            onboardingPage = page;
+        }
+
+        /**
+         * Loads onboarding tasks from the API and renders them.
+         * @param {number} [page] - Page number to load. Defaults to 1.
+         * @async
+         */
+        async function loadOnboardingTasks(page) {
+            onboardingPage = page || 1;
+            const search = document.getElementById('onboarding-search')?.value || '';
+            const status = document.getElementById('onboarding-filter-status')?.value || '';
+
+            const params = { page: onboardingPage, page_size: onboardingPageSize };
+            if (search) params.search = search;
+            if (status) params.status = status;
+
+            try {
+                const result = await indexOnboardingTasks(params);
+                const tbody = document.getElementById('onboarding-tbody');
+                if (!tbody || !result?.data) return;
+                tbody.innerHTML = '';
+                if (result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">No onboarding tasks found</td></tr>';
+                } else {
+                    result.data.forEach(t => {
+                        const statusBadge = t.status === 'completed' ? 'badge-success' : t.status === 'in_progress' ? 'badge-warning' : 'badge-gray';
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('data-id', t.id);
+                        tr.innerHTML = `
+                            <td style="font-weight:600;">${t.employee_name || '—'}</td>
+                            <td>${t.joining_date || '—'}</td>
+                            <td>${t.department_name || '—'}</td>
+                            <td>${t.offer_letter ? '✅' : '❌'}</td>
+                            <td>${t.document_verified ? '✅' : '❌'}</td>
+                            <td>${t.orientation_done ? '✅' : '❌'}</td>
+                            <td>${t.it_setup_done ? '✅' : '❌'}</td>
+                            <td><span class="badge-custom ${statusBadge}">${t.status}</span></td>`;
+                        tbody.appendChild(tr);
+                    });
+                }
+                renderPagination(result.data, 'onboarding-tbody', 'onboarding-pagination-info', 'onboarding-pagination', (item) => {
+                    const statusBadge = item.status === 'completed' ? 'badge-success' : item.status === 'in_progress' ? 'badge-warning' : 'badge-gray';
+                    return `<tr data-id="${item.id}">
+                        <td style="font-weight:600;">${item.employee_name || '—'}</td>
+                        <td>${item.joining_date || '—'}</td>
+                        <td>${item.department_name || '—'}</td>
+                        <td>${item.offer_letter ? '✅' : '❌'}</td>
+                        <td>${item.document_verified ? '✅' : '❌'}</td>
+                        <td>${item.orientation_done ? '✅' : '❌'}</td>
+                        <td>${item.it_setup_done ? '✅' : '❌'}</td>
+                        <td><span class="badge-custom ${statusBadge}">${item.status}</span></td>
+                    </tr>`;
+                });
+            } catch (e) {
+                console.error('Failed to load onboarding tasks:', e);
+            }
+        }
+
+        /**
+         * Loads offboarding tasks from the API and renders them.
+         * @async
+         */
         async function loadOffboardingTasks() {
-            const result = await apiGet(API.offboarding);
-            if (result && result.data) {
+            try {
+                const result = await indexOffboardingTasks();
                 const tbody = document.querySelectorAll('#page-onboarding .table-custom tbody')[1];
-                if (!tbody) return;
+                if (!tbody || !result?.data) return;
                 tbody.innerHTML = '';
                 result.data.forEach(t => {
                     const statusBadge = t.status === 'completed' ? 'badge-success' : t.status === 'in_progress' ? 'badge-warning' : 'badge-gray';
                     const tr = document.createElement('tr');
                     tr.setAttribute('data-id', t.id);
                     tr.innerHTML = `
-            <td style="font-weight:600;">${t.employee_name || '—'}</td>
-            <td>${t.task_name}</td>
-            <td>${t.task_type}</td>
-            <td>${t.due_date || '—'}</td>
-            <td><span class="badge-custom ${statusBadge}">${t.status}</span></td>
-            <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editOffboarding(${t.id})">✏ Edit</button></div></td>`;
+                        <td style="font-weight:600;">${t.employee_name || '—'}</td>
+                        <td>${t.task_name}</td>
+                        <td>${t.task_type}</td>
+                        <td>${t.due_date || '—'}</td>
+                        <td><span class="badge-custom ${statusBadge}">${t.status}</span></td>
+                        <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editOffboarding(${t.id})">✏ Edit</button></div></td>`;
                     tbody.appendChild(tr);
                 });
+            } catch (e) {
+                console.error('Failed to load offboarding tasks:', e);
             }
         }
 
+        /**
+         * Loads exit interviews from the API and renders them.
+         * @async
+         */
         async function loadExitInterviews() {
-            const result = await apiGet(API.exitInterview);
-            if (result && result.data) {
+            try {
+                const result = await indexExitInterviews();
                 const tbody = document.querySelectorAll('#page-onboarding .table-custom tbody')[2];
-                if (!tbody) return;
+                if (!tbody || !result?.data) return;
                 tbody.innerHTML = '';
                 result.data.forEach(ei => {
                     const tr = document.createElement('tr');
                     tr.setAttribute('data-id', ei.id);
                     tr.innerHTML = `
-            <td style="font-weight:600;">${ei.employee_name || '—'}</td>
-            <td>${ei.interview_date || '—'}</td>
-            <td>${ei.reason_for_leaving ? ei.reason_for_leaving.substring(0, 50) + '...' : '—'}</td>
-            <td>${ei.rating ? '⭐'.repeat(ei.rating) : '—'}</td>
-            <td><span class="badge-custom badge-info">Completed</span></td>`;
+                        <td style="font-weight:600;">${ei.employee_name || '—'}</td>
+                        <td>${ei.interview_date || '—'}</td>
+                        <td>${ei.reason_for_leaving ? ei.reason_for_leaving.substring(0, 50) + '...' : '—'}</td>
+                        <td>${ei.rating ? '⭐'.repeat(ei.rating) : '—'}</td>
+                        <td><span class="badge-custom badge-info">Completed</span></td>`;
                     tbody.appendChild(tr);
                 });
+            } catch (e) {
+                console.error('Failed to load exit interviews:', e);
             }
         }
 
+        /**
+         * Reads onboarding modal inputs, creates a task via API, and refreshes the list.
+         * @async
+         */
         async function saveOnboarding() {
             const modal = document.getElementById('modalOnboarding');
             const inputs = modal.querySelectorAll('.fi');
@@ -759,11 +960,20 @@
                 status: selects[1]?.value || 'pending',
                 notes: inputs[4]?.value || '',
             };
-            const result = await apiPost(API.task, data);
-            if (result.ok) { showToast('✅', 'Onboarding task created!'); bootstrap.Modal.getInstance(modal).hide(); loadOnboardingTasks(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+            try {
+                await createOnboardingTask(data);
+                showToast('✅', 'Onboarding task created!');
+                bootstrap.Modal.getInstance(modal).hide();
+                loadOnboardingTasks(1);
+            } catch (e) {
+                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+            }
         }
 
+        /**
+         * Reads exit process modal inputs, creates offboarding task via API, and refreshes the list.
+         * @async
+         */
         async function saveExitProcess() {
             const modal = document.getElementById('modalExit');
             const inputs = modal.querySelectorAll('.fi');
@@ -776,13 +986,18 @@
                 status: selects[1]?.value || 'pending',
                 notes: inputs[4]?.value || '',
             };
-            const result = await apiPost(API.offboarding, data);
-            if (result.ok) { showToast('✅', 'Exit process created!'); bootstrap.Modal.getInstance(modal).hide(); loadOffboardingTasks(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+            try {
+                await createOffboardingTask(data);
+                showToast('✅', 'Exit process created!');
+                bootstrap.Modal.getInstance(modal).hide();
+                loadOffboardingTasks();
+            } catch (e) {
+                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+            }
         }
 
         $(function () {
-            loadOnboardingTasks();
+            loadOnboardingTasks(1);
             loadOffboardingTasks();
             loadExitInterviews();
         });

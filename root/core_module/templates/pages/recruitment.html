@@ -607,23 +607,202 @@
     <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
 
 
+    <script src="{% static 'js/constants.js' %}"></script>
+    <script src="{% static 'js/APIClient.js' %}"></script>
+    <script>
+        const api = new APIClient({
+            baseURL: API_CONFIG.BASE_URL,
+            timeout: API_CONFIG.TIMEOUT,
+            headers: { ...API_CONFIG.HEADERS }
+        });
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+
+        /**
+         * @namespace Recruitment CRUD operations
+         * @description REST API wrapper functions for Recruitment & Hiring.
+         * @see API_ENDPOINTS.RECRUITMENT in constants.js
+         */
+        async function allJobs() {
+            try {
+                return await api.all(API_ENDPOINTS.RECRUITMENT.JOBS.INDEX);
+            } catch (error) {
+                console.error('Error fetching all jobs:', error);
+                throw error;
+            }
+        }
+
+        async function indexJobs(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.RECRUITMENT.JOBS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing jobs:', error);
+                throw error;
+            }
+        }
+
+        async function createJob(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.RECRUITMENT.JOBS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating job:', error);
+                throw error;
+            }
+        }
+
+        async function getJob(id) {
+            try {
+                return await api.show(API_ENDPOINTS.RECRUITMENT.JOBS.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching job:', error);
+                throw error;
+            }
+        }
+
+        async function updateJobAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.RECRUITMENT.JOBS.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating job:', error);
+                throw error;
+            }
+        }
+
+        async function deleteJobAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.RECRUITMENT.JOBS.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting job:', error);
+                throw error;
+            }
+        }
+
+        async function allCandidates() {
+            try {
+                return await api.all(API_ENDPOINTS.RECRUITMENT.CANDIDATES.INDEX);
+            } catch (error) {
+                console.error('Error fetching all candidates:', error);
+                throw error;
+            }
+        }
+
+        async function indexCandidates(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.RECRUITMENT.CANDIDATES.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing candidates:', error);
+                throw error;
+            }
+        }
+
+        async function createCandidate(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.RECRUITMENT.CANDIDATES.STORE, payload);
+            } catch (error) {
+                console.error('Error creating candidate:', error);
+                throw error;
+            }
+        }
+
+        async function getCandidate(id) {
+            try {
+                return await api.show(API_ENDPOINTS.RECRUITMENT.CANDIDATES.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching candidate:', error);
+                throw error;
+            }
+        }
+
+        async function updateCandidateAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating candidate:', error);
+                throw error;
+            }
+        }
+
+        async function deleteCandidateAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.RECRUITMENT.CANDIDATES.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting candidate:', error);
+                throw error;
+            }
+        }
+
+        async function advanceCandidateAPI(id) {
+            try {
+                return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.ADVANCE(id));
+            } catch (error) {
+                console.error('Error advancing candidate:', error);
+                throw error;
+            }
+        }
+
+        async function rejectCandidateAPI(id) {
+            try {
+                return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.REJECT(id));
+            } catch (error) {
+                console.error('Error rejecting candidate:', error);
+                throw error;
+            }
+        }
+
+        async function getPipeline() {
+            try {
+                return await api.all(API_ENDPOINTS.RECRUITMENT.PIPELINE.INDEX);
+            } catch (error) {
+                console.error('Error fetching pipeline:', error);
+                throw error;
+            }
+        }
+
+        async function indexInterviews(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.RECRUITMENT.INTERVIEWS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing interviews:', error);
+                throw error;
+            }
+        }
+
+        async function createInterview(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.RECRUITMENT.INTERVIEWS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating interview:', error);
+                throw error;
+            }
+        }
+
+        async function getInterviewResult(id) {
+            try {
+                return await api.show(API_ENDPOINTS.RECRUITMENT.INTERVIEWS.RESULT(id));
+            } catch (error) {
+                console.error('Error fetching interview result:', error);
+                throw error;
+            }
+        }
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
     </script>
     <script>
 
-        // ── Bootstrap 5 + jQuery ──
-        // Modals are triggered directly from HTML via:
-        //   data-bs-toggle="modal" data-bs-target="#modalId"
-        // No openXxxModal() JS functions needed.
-
-        // Populate integration name from data attribute on the trigger button
         $(document).on('show.bs.modal', '#modalIntegration', function (e) {
             var name = $(e.relatedTarget).data('integration-name');
             if (name) $('#integration-name').text(name);
         });
 
+        /**
+         * Displays a toast notification with an icon and message.
+         * @param {string} icon - Emoji or icon character.
+         * @param {string} msg - Message to display.
+         * @param {number} [duration=3000] - Auto-hide duration in ms.
+         */
         function showToast(icon, msg, duration) {
             duration = duration || 3000;
             $('#toast-icon').text(icon);
@@ -631,17 +810,20 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-        function saveForm() {
-            $('.modal.show').modal('hide');
-            showToast('\u2705', 'Record saved successfully!');
-        }
+
+        /**
+         * Handles delete confirmation modal close and feedback.
+         */
         function confirmDelete() {
             $('#modalDelete').modal('hide');
             showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
         }
-        // ── End ──
 
-        // SUB-MODULE TABS
+        /**
+         * Switches the active tab within a tab group.
+         * @param {string} tabGroup - Matches data-tabgroup attribute.
+         * @param {string} tabId - Matches data-tabid attribute to activate.
+         */
         function showSubTab(tabGroup, tabId) {
             document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
                 t.classList.toggle('active', t.dataset.tabid === tabId);
@@ -651,9 +833,7 @@
             });
         }
 
-        // ═══════════════════════════════════════
-        // PAGE TITLE / DATE UPDATE
-        // ═══════════════════════════════════════
+        /** Page title lookup for topbar updates. */
         const pageTitles = {
             dashboard: 'Dashboard Overview',
             employee: 'Employee Management',
@@ -674,6 +854,11 @@
             integrations: 'Integrations & Automation'
         };
 
+        /**
+         * Navigates to a page section and updates navigation state.
+         * @param {string} id - Page identifier matching `page-{id}` element.
+         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
+         */
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + id);
@@ -693,204 +878,310 @@
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
 
+        let recruitmentPage = 1;
+        const recruitmentPageSize = 10;
 
-        function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
+        /**
+         * Renders paginated table data with page info and navigation.
+         * @param {Array} data - Array of items to paginate.
+         * @param {string} tbodyId - ID of the tbody element to render rows into.
+         * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
+         * @param {string} containerId - ID of the pagination buttons container.
+         * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
+         */
+        function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
+            const totalPages = Math.max(1, Math.ceil(data.length / recruitmentPageSize));
+            if (recruitmentPage > totalPages) recruitmentPage = totalPages;
+            const start = (recruitmentPage - 1) * recruitmentPageSize;
+            const end = Math.min(start + recruitmentPageSize, data.length);
+            const pageData = data.slice(start, end);
 
-        // ═══════════════════════════════════════════
-        // API INTEGRATION — Recruitment & Hiring
-        // ═══════════════════════════════════════════
-        const API = {
-            job: '/core-module/recruitment/api/job/',
-            candidate: '/core-module/recruitment/api/candidate/',
-            interview: '/core-module/recruitment/api/interview/',
-            pipeline: '/core-module/recruitment/api/candidate/pipeline/',
-        };
-
-        async function apiGet(url) {
-            try { const res = await fetch(url); return await res.json(); }
-            catch (e) { console.error('GET error:', e); return null; }
-        }
-
-        async function apiPost(url, data) {
-            try {
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                return { ok: res.ok, status: res.status, data: await res.json() };
-            } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-        }
-
-        async function apiPut(url, data) {
-            try {
-                const res = await fetch(url, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                return { ok: res.ok, status: res.status, data: await res.json() };
-            } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-        }
-
-        async function apiDelete(url) {
-            try { const res = await fetch(url, { method: 'DELETE' }); return { ok: res.ok, status: res.status }; }
-            catch (e) { return { ok: false }; }
-        }
-
-        async function loadJobs(page) {
-            const pageSize = document.getElementById('jobs-page-size')?.value || 10;
-            page = page || 1;
-            const status = document.getElementById('jobs-filter-status')?.value || '';
-            const search = document.getElementById('jobs-filter-search')?.value || '';
-            let url = API.job + `?page=${page}&page_size=${pageSize}`;
-            if (status) url += `&status=${status}`;
-            if (search) url += `&search=${encodeURIComponent(search)}`;
-            const result = await apiGet(url);
-            if (!result || !result.data) return;
-            const tbody = document.getElementById('jobs-tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No job postings found</td></tr>';
-            } else {
-                result.data.forEach(j => {
-                    const statusBadge = j.status === 'active' ? 'badge-success' : j.status === 'draft' ? 'badge-warning' : 'badge-gray';
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', j.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${j.job_title}</td>
-            <td>${j.department_name || '—'}</td>
-            <td>${j.location_name || '—'}</td>
-            <td>${j.application_deadline ? new Date(j.application_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}</td>
-            <td><span class="badge-custom badge-info">${j.candidate_count || 0}</span></td>
-            <td><span class="badge-custom ${statusBadge}">${j.status}</span></td>
-            <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editJob(${j.id})">✏ Edit</button><button class="btn-del" onclick="deleteJob(${j.id})">🗑</button></div></td>`;
-                    tbody.appendChild(tr);
-                });
+            const tbody = document.getElementById(tbodyId);
+            if (tbody) {
+                tbody.innerHTML = '';
+                if (pageData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">No data found</td></tr>';
+                } else {
+                    pageData.forEach((item, i) => {
+                        tbody.innerHTML += renderRowFn(item, i);
+                    });
+                }
             }
-            renderPagination(result, 'jobs-pagination-info', 'jobs-pagination', 'loadJobs');
-        }
 
-        async function loadCandidates(page) {
-            const pageSize = document.getElementById('candidates-page-size')?.value || 10;
-            page = page || 1;
-            const stage = document.getElementById('candidate-filter-stage')?.value || '';
-            const search = document.getElementById('candidate-filter-search')?.value || '';
-            let url = API.candidate + `?page=${page}&page_size=${pageSize}`;
-            if (stage) url += `&stage=${stage}`;
-            if (search) url += `&search=${encodeURIComponent(search)}`;
-            const result = await apiGet(url);
-            if (!result || !result.data) return;
-            const tbody = document.getElementById('candidates-tbody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No candidates found</td></tr>';
-            } else {
-                result.data.forEach(c => {
-                    const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', c.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${c.full_name}</td>
-            <td>${c.applied_for_title || '—'}</td>
-            <td>${c.source || '—'}</td>
-            <td>${c.experience_yrs || 0} yrs</td>
-            <td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td>
-            <td><div style="display:flex;gap:3px;">
-              <button class="btn-view" onclick="viewCandidate(${c.id})">👁 View</button>
-              ${c.current_stage !== 'rejected' && c.current_stage !== 'hired' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="advanceCandidate(${c.id})">▶ Advance</button>` : ''}
-            </div></td>`;
-                    tbody.appendChild(tr);
-                });
-            }
-            renderPagination(result, 'candidates-pagination-info', 'candidates-pagination', 'loadCandidates');
-        }
-
-        function renderPagination(result, infoId, containerId, fnName) {
-            const totalPages = result.total_pages || 1;
-            const page = result.page || 1;
-            const start = (page - 1) * (result.page_size || 10) + 1;
-            const end = Math.min(page * (result.page_size || 10), result.count);
             const info = document.getElementById(infoId);
             if (info) {
-                info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
+                info.textContent = data.length > 0 ? `Showing ${start + 1}–${end} of ${data.length}` : 'No data found';
             }
+
             const container = document.getElementById(containerId);
             if (container) {
                 let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
+                html += `<button class="btn-outline-custom" style="padding:5px 10px;${recruitmentPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${recruitmentPage - 1})">‹ Prev</button>`;
                 for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
-                        html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
-                    } else if (i === page - 2 || i === page + 2) {
+                    if (i === 1 || i === totalPages || (i >= recruitmentPage - 1 && i <= recruitmentPage + 1)) {
+                        html += `<button class="${i === recruitmentPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${i})">${i}</button>`;
+                    } else if (i === recruitmentPage - 2 || i === recruitmentPage + 2) {
                         html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
                     }
                 }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
+                html += `<button class="btn-outline-custom" style="padding:5px 10px;${recruitmentPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${recruitmentPage + 1})">Next ›</button>`;
                 container.innerHTML = html;
             }
         }
 
-        async function editJob(id) {
-            const result = await apiGet(API.job + id + '/');
-            if (!result) return;
-            const modal = document.getElementById('modalJob');
-            if (!modal) return;
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            if (inputs[0]) inputs[0].value = result.job_title || '';
-            if (selects[0]) selects[0].value = result.job_type || 'full_time';
-            if (inputs[3]) inputs[3].value = result.vacancies || 1;
-            if (inputs[4]) inputs[4].value = result.salary_range_min || '';
-            if (inputs[5]) inputs[5].value = result.salary_range_max || '';
-            if (inputs[6]) inputs[6].value = result.application_deadline || '';
-            if (selects[1]) selects[1].value = result.experience_required || '';
-            if (selects[2]) selects[2].value = result.education_level || '';
-            if (inputs[7]) inputs[7].value = result.job_description || '';
-            if (inputs[8]) inputs[8].value = result.skills_required || '';
-            if (selects[3]) selects[3].value = result.status || 'draft';
-            modal.setAttribute('data-edit-id', id);
-            new bootstrap.Modal(modal).show();
+        /**
+         * Updates current page and triggers render for the active paginated table.
+         * @param {string} tbodyId - ID of the tbody being paginated.
+         * @param {string} infoId - ID of the pagination info element.
+         * @param {string} containerId - ID of the pagination container.
+         * @param {number} page - Target page number.
+         */
+        function goPage(tbodyId, infoId, containerId, page) {
+            recruitmentPage = page;
+            if (tbodyId === 'jobs-tbody') loadJobs(recruitmentPage);
+            if (tbodyId === 'candidates-tbody') loadCandidates(recruitmentPage);
         }
 
-        async function deleteJob(id) {
-            if (!confirm('Delete this job posting?')) return;
-            const res = await apiDelete(API.job + id + '/');
-            if (res.ok) { showToast('🗑️', 'Job deleted'); loadJobs(); }
-            else showToast('❌', 'Failed to delete job');
+        /**
+         * Loads job postings from the API and renders them.
+         * @param {number} [page] - Page number to load. Defaults to 1.
+         * @async
+         */
+        async function loadJobs(page) {
+            recruitmentPage = page || 1;
+            const status = document.getElementById('jobs-filter-status')?.value || '';
+            const search = document.getElementById('jobs-filter-search')?.value || '';
+
+            const params = { page: recruitmentPage, page_size: recruitmentPageSize };
+            if (status) params.status = status;
+            if (search) params.search = search;
+
+            try {
+                const result = await indexJobs(params);
+                const tbody = document.getElementById('jobs-tbody');
+                if (!tbody || !result?.data) return;
+                tbody.innerHTML = '';
+                if (result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No job postings found</td></tr>';
+                } else {
+                    result.data.forEach(j => {
+                        const statusBadge = j.status === 'active' ? 'badge-success' : j.status === 'draft' ? 'badge-warning' : 'badge-gray';
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('data-id', j.id);
+                        tr.innerHTML = `
+                            <td style="font-weight:600;">${j.job_title}</td>
+                            <td>${j.department_name || '—'}</td>
+                            <td>${j.location_name || '—'}</td>
+                            <td>${j.application_deadline ? new Date(j.application_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}</td>
+                            <td><span class="badge-custom badge-info">${j.candidate_count || 0}</span></td>
+                            <td><span class="badge-custom ${statusBadge}">${j.status}</span></td>
+                            <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editJob(${j.id})">✏ Edit</button><button class="btn-del" onclick="deleteJob(${j.id})">🗑</button></div></td>`;
+                        tbody.appendChild(tr);
+                    });
+                }
+                renderPagination(result.data, 'jobs-tbody', 'jobs-pagination-info', 'jobs-pagination', (item) => {
+                    const sBadge = item.status === 'active' ? 'badge-success' : item.status === 'draft' ? 'badge-warning' : 'badge-gray';
+                    return `<tr data-id="${item.id}">
+                        <td style="font-weight:600;">${item.job_title}</td>
+                        <td>${item.department_name || '—'}</td>
+                        <td>${item.location_name || '—'}</td>
+                        <td>${item.application_deadline ? new Date(item.application_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}</td>
+                        <td><span class="badge-custom badge-info">${item.candidate_count || 0}</span></td>
+                        <td><span class="badge-custom ${sBadge}">${item.status}</span></td>
+                        <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editJob(${item.id})">✏ Edit</button><button class="btn-del" onclick="deleteJob(${item.id})">🗑</button></div></td>
+                    </tr>`;
+                });
+            } catch (e) {
+                console.error('Failed to load jobs:', e);
+            }
         }
 
-        async function viewCandidate(id) {
-            const result = await apiGet(API.candidate + id + '/');
-            if (!result) return;
-            const modal = document.getElementById('modalCandidate');
-            if (!modal) return;
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            if (inputs[0]) inputs[0].value = result.full_name || '';
-            if (inputs[1]) inputs[1].value = result.email || '';
-            if (inputs[2]) inputs[2].value = result.phone || '';
-            if (selects[0]) selects[0].value = result.source || '';
-            if (selects[1]) selects[1].value = result.current_stage || 'applied';
-            if (inputs[3]) inputs[3].value = result.experience_yrs || '';
-            if (inputs[4]) inputs[4].value = result.current_salary || '';
-            if (inputs[5]) inputs[5].value = result.expected_salary || '';
-            if (selects[2]) selects[2].value = result.notice_period || '';
-            modal.setAttribute('data-edit-id', id);
-            new bootstrap.Modal(modal).show();
+        /**
+         * Loads candidates from the API and renders them.
+         * @param {number} [page] - Page number to load. Defaults to 1.
+         * @async
+         */
+        async function loadCandidates(page) {
+            recruitmentPage = page || 1;
+            const stage = document.getElementById('candidate-filter-stage')?.value || '';
+            const search = document.getElementById('candidate-filter-search')?.value || '';
+
+            const params = { page: recruitmentPage, page_size: recruitmentPageSize };
+            if (stage) params.stage = stage;
+            if (search) params.search = search;
+
+            try {
+                const result = await indexCandidates(params);
+                const tbody = document.getElementById('candidates-tbody');
+                if (!tbody || !result?.data) return;
+                tbody.innerHTML = '';
+                if (result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No candidates found</td></tr>';
+                } else {
+                    result.data.forEach(c => {
+                        const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('data-id', c.id);
+                        tr.innerHTML = `
+                            <td style="font-weight:600;">${c.full_name}</td>
+                            <td>${c.applied_for_title || '—'}</td>
+                            <td>${c.source || '—'}</td>
+                            <td>${c.experience_yrs || 0} yrs</td>
+                            <td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td>
+                            <td><div style="display:flex;gap:3px;">
+                                <button class="btn-view" onclick="viewCandidate(${c.id})">👁 View</button>
+                                ${c.current_stage !== 'rejected' && c.current_stage !== 'hired' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="advanceCandidate(${c.id})">▶ Advance</button>` : ''}
+                            </div></td>`;
+                        tbody.appendChild(tr);
+                    });
+                }
+                renderPagination(result.data, 'candidates-tbody', 'candidates-pagination-info', 'candidates-pagination', (item) => {
+                    const sBadge = item.current_stage === 'hired' ? 'badge-success' : item.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
+                    return `<tr data-id="${item.id}">
+                        <td style="font-weight:600;">${item.full_name}</td>
+                        <td>${item.applied_for_title || '—'}</td>
+                        <td>${item.source || '—'}</td>
+                        <td>${item.experience_yrs || 0} yrs</td>
+                        <td><span class="badge-custom ${sBadge}">${item.current_stage}</span></td>
+                        <td><div style="display:flex;gap:3px;">
+                            <button class="btn-view" onclick="viewCandidate(${item.id})">👁 View</button>
+                            ${item.current_stage !== 'rejected' && item.current_stage !== 'hired' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="advanceCandidate(${item.id})">▶ Advance</button>` : ''}
+                        </div></td>
+                    </tr>`;
+                });
+            } catch (e) {
+                console.error('Failed to load candidates:', e);
+            }
         }
 
+        /**
+         * Loads recruitment pipeline data from the API and updates kanban counts.
+         * @async
+         */
         async function loadPipeline() {
-            const result = await apiGet(API.pipeline);
-            if (result) {
+            try {
+                const result = await getPipeline();
                 const counts = document.querySelectorAll('#page-recruitment .kanban-count');
+                if (!counts.length || !result) return;
                 if (counts[0]) counts[0].textContent = result.applied || 0;
                 if (counts[1]) counts[1].textContent = result.screening || 0;
                 if (counts[2]) counts[2].textContent = result.interview || 0;
                 if (counts[3]) counts[3].textContent = result.offer || 0;
+            } catch (e) {
+                console.error('Failed to load pipeline:', e);
             }
         }
 
-        async function advanceCandidate(id) {
-            const res = await apiPost(API.candidate + id + '/advance/', {});
-            if (res.ok) { showToast('✅', 'Candidate advanced'); loadCandidates(); }
-            else showToast('❌', 'Failed to advance candidate');
+        /**
+         * Opens a job modal for editing, pre-filling form fields from API data.
+         * @param {number} id - Job posting ID.
+         * @async
+         */
+        async function editJob(id) {
+            try {
+                const result = await getJob(id);
+                if (!result) return;
+                const modal = document.getElementById('modalJob');
+                if (!modal) return;
+                const inputs = modal.querySelectorAll('.fi');
+                const selects = modal.querySelectorAll('select.fi');
+                if (inputs[0]) inputs[0].value = result.job_title || '';
+                if (selects[0]) selects[0].value = result.job_type || 'full_time';
+                if (inputs[3]) inputs[3].value = result.vacancies || 1;
+                if (inputs[4]) inputs[4].value = result.salary_range_min || '';
+                if (inputs[5]) inputs[5].value = result.salary_range_max || '';
+                if (inputs[6]) inputs[6].value = result.application_deadline || '';
+                if (selects[1]) selects[1].value = result.experience_required || '';
+                if (selects[2]) selects[2].value = result.education_level || '';
+                if (inputs[7]) inputs[7].value = result.job_description || '';
+                if (inputs[8]) inputs[8].value = result.skills_required || '';
+                if (selects[3]) selects[3].value = result.status || 'draft';
+                modal.setAttribute('data-edit-id', id);
+                new bootstrap.Modal(modal).show();
+            } catch (e) {
+                console.error('Failed to load job for edit:', e);
+            }
         }
 
+        /**
+         * Deletes a job posting after confirmation.
+         * @param {number} id - Job posting ID.
+         * @async
+         */
+        async function deleteJob(id) {
+            if (!confirm('Delete this job posting?')) return;
+            try {
+                await deleteJobAPI(id);
+                showToast('🗑️', 'Job deleted');
+                loadJobs(1);
+            } catch (e) {
+                showToast('❌', 'Failed to delete job');
+            }
+        }
+
+        /**
+         * Opens a candidate modal for viewing, pre-filling form fields from API data.
+         * @param {number} id - Candidate ID.
+         * @async
+         */
+        async function viewCandidate(id) {
+            try {
+                const result = await getCandidate(id);
+                if (!result) return;
+                const modal = document.getElementById('modalCandidate');
+                if (!modal) return;
+                const inputs = modal.querySelectorAll('.fi');
+                const selects = modal.querySelectorAll('select.fi');
+                if (inputs[0]) inputs[0].value = result.full_name || '';
+                if (inputs[1]) inputs[1].value = result.email || '';
+                if (inputs[2]) inputs[2].value = result.phone || '';
+                if (selects[0]) selects[0].value = result.source || '';
+                if (selects[1]) selects[1].value = result.current_stage || 'applied';
+                if (inputs[3]) inputs[3].value = result.experience_yrs || '';
+                if (inputs[4]) inputs[4].value = result.current_salary || '';
+                if (inputs[5]) inputs[5].value = result.expected_salary || '';
+                if (selects[2]) selects[2].value = result.notice_period || '';
+                modal.setAttribute('data-edit-id', id);
+                new bootstrap.Modal(modal).show();
+            } catch (e) {
+                console.error('Failed to load candidate for view:', e);
+            }
+        }
+
+        /**
+         * Advances a candidate to the next stage via API.
+         * @param {number} id - Candidate ID.
+         * @async
+         */
+        async function advanceCandidate(id) {
+            try {
+                await advanceCandidateAPI(id);
+                showToast('✅', 'Candidate advanced');
+                loadCandidates(1);
+            } catch (e) {
+                showToast('❌', 'Failed to advance candidate');
+            }
+        }
+
+        /**
+         * Rejects a candidate via API.
+         * @param {number} id - Candidate ID.
+         * @async
+         */
+        async function rejectCandidate(id) {
+            try {
+                await rejectCandidateAPI(id);
+                showToast('✅', 'Candidate rejected');
+                loadCandidates(1);
+            } catch (e) {
+                showToast('❌', 'Failed to reject candidate');
+            }
+        }
+
+        /**
+         * Reads job modal inputs, creates or updates a job via API, and refreshes the list.
+         * @async
+         */
         async function saveJob() {
             const modal = document.getElementById('modalJob');
             const editId = modal.getAttribute('data-edit-id');
@@ -909,17 +1200,25 @@
                 skills_required: inputs[8]?.value || '',
                 status: selects[3]?.value || 'draft',
             };
-            let result;
-            if (editId) {
-                result = await apiPut(API.job + editId + '/', data);
-                modal.removeAttribute('data-edit-id');
-            } else {
-                result = await apiPost(API.job, data);
+            try {
+                if (editId) {
+                    await updateJobAPI(editId, data);
+                    modal.removeAttribute('data-edit-id');
+                } else {
+                    await createJob(data);
+                }
+                showToast('✅', editId ? 'Job updated!' : 'Job created!');
+                bootstrap.Modal.getInstance(modal).hide();
+                loadJobs(1);
+            } catch (e) {
+                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
             }
-            if (result.ok) { showToast('✅', 'Job saved!'); bootstrap.Modal.getInstance(modal).hide(); loadJobs(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
         }
 
+        /**
+         * Reads candidate modal inputs, creates or updates a candidate via API, and refreshes the list.
+         * @async
+         */
         async function saveCandidate() {
             const modal = document.getElementById('modalCandidate');
             const editId = modal.getAttribute('data-edit-id');
@@ -936,17 +1235,25 @@
                 expected_salary: inputs[5]?.value || null,
                 notice_period: selects[2]?.value || '',
             };
-            let result;
-            if (editId) {
-                result = await apiPut(API.candidate + editId + '/', data);
-                modal.removeAttribute('data-edit-id');
-            } else {
-                result = await apiPost(API.candidate, data);
+            try {
+                if (editId) {
+                    await updateCandidateAPI(editId, data);
+                    modal.removeAttribute('data-edit-id');
+                } else {
+                    await createCandidate(data);
+                }
+                showToast('✅', editId ? 'Candidate updated!' : 'Candidate created!');
+                bootstrap.Modal.getInstance(modal).hide();
+                loadCandidates(1);
+            } catch (e) {
+                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
             }
-            if (result.ok) { showToast('✅', 'Candidate saved!'); bootstrap.Modal.getInstance(modal).hide(); loadCandidates(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
         }
 
+        /**
+         * Reads interview modal inputs, creates an interview via API, and closes the modal.
+         * @async
+         */
         async function saveInterview() {
             const modal = document.getElementById('modalInterview');
             const inputs = modal.querySelectorAll('.fi');
@@ -957,14 +1264,18 @@
                 duration_mins: inputs[1]?.value || 60,
                 feedback: inputs[2]?.value || '',
             };
-            const result = await apiPost(API.interview, data);
-            if (result.ok) { showToast('✅', 'Interview scheduled!'); bootstrap.Modal.getInstance(modal).hide(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+            try {
+                await createInterview(data);
+                showToast('✅', 'Interview scheduled!');
+                bootstrap.Modal.getInstance(modal).hide();
+            } catch (e) {
+                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+            }
         }
 
         $(function () {
-            loadJobs();
-            loadCandidates();
+            loadJobs(1);
+            loadCandidates(1);
             loadPipeline();
         });
 
@@ -975,6 +1286,3 @@
         });
 
     </script>
-</body>
-
-</html>

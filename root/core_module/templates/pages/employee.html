@@ -614,6 +614,101 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
         if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
 
+        /**
+         * @namespace Employee CRUD operations
+         * @description REST API wrapper functions for employee management.
+         * @see API_ENDPOINTS.EMPLOYEE in constants.js
+         */
+        async function allEmployees() {
+            try {
+                return await api.all(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX);
+            } catch (error) {
+                console.error('Error fetching all employees:', error);
+                throw error;
+            }
+        }
+
+        async function indexEmployees(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing employees:', error);
+                throw error;
+            }
+        }
+
+        async function createEmployee(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.STORE, payload);
+            } catch (error) {
+                console.error('Error creating employee:', error);
+                throw error;
+            }
+        }
+
+        async function getEmployee(id) {
+            try {
+                return await api.show(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching employee:', error);
+                throw error;
+            }
+        }
+
+        async function updateEmployeeAPI(id, payload) {
+            try {
+                return await api.update(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.UPDATE, id, payload);
+            } catch (error) {
+                console.error('Error updating employee:', error);
+                throw error;
+            }
+        }
+
+        async function deleteEmployeeAPI(id) {
+            try {
+                return await api.destroy(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.DESTROY, id);
+            } catch (error) {
+                console.error('Error deleting employee:', error);
+                throw error;
+            }
+        }
+
+        async function getEmployeeStats() {
+            try {
+                return await api.all(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.STATS);
+            } catch (error) {
+                console.error('Error fetching employee stats:', error);
+                throw error;
+            }
+        }
+
+        async function getAllDepartments() {
+            try {
+                return await api.all(API_ENDPOINTS.EMPLOYEE.DEPARTMENTS.INDEX);
+            } catch (error) {
+                console.error('Error fetching departments:', error);
+                throw error;
+            }
+        }
+
+        async function getAllLocations() {
+            try {
+                return await api.all(API_ENDPOINTS.EMPLOYEE.LOCATIONS.INDEX);
+            } catch (error) {
+                console.error('Error fetching locations:', error);
+                throw error;
+            }
+        }
+
+        async function getAllDesignations() {
+            try {
+                return await api.all(API_ENDPOINTS.EMPLOYEE.DESIGNATIONS.INDEX);
+            } catch (error) {
+                console.error('Error fetching designations:', error);
+                throw error;
+            }
+        }
+
         let empPage = 1;
         let empPageSize = 10;
 
@@ -668,7 +763,7 @@
             if (statusFilter) params.status = statusFilter;
 
             try {
-                const result = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, params);
+                const result = await indexEmployees(params);
                 const tbody = document.getElementById('employee-tbody');
                 if (!tbody) return;
                 if (!result || !result.data || result.data.length === 0) {
@@ -735,10 +830,10 @@
         async function loadDropdowns() {
             try {
                 const [depts, locs, desigs, emps] = await Promise.all([
-                    api.all(API_ENDPOINTS.EMPLOYEE.DEPARTMENTS.INDEX),
-                    api.all(API_ENDPOINTS.EMPLOYEE.LOCATIONS.INDEX),
-                    api.all(API_ENDPOINTS.EMPLOYEE.DESIGNATIONS.INDEX),
-                    api.all(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX),
+                    getAllDepartments(),
+                    getAllLocations(),
+                    getAllDesignations(),
+                    allEmployees(),
                 ]);
 
                 const filterDept = document.getElementById('filter-department');
@@ -767,7 +862,7 @@
 
         async function viewEmployee(id) {
             try {
-                const emp = await api.show(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.SHOW, id);
+                const emp = await getEmployee(id);
                 const nameEl = document.getElementById('view-emp-name');
                 if (nameEl) nameEl.textContent = `${emp.first_name} ${emp.last_name}`;
                 const subEl = document.getElementById('view-emp-sub');
@@ -788,9 +883,14 @@
             }
         }
 
+        /**
+         * Opens employee edit modal and pre-fills form fields from API data.
+         * @param {number} id - Employee record ID.
+         * @async
+         */
         async function editEmployee(id) {
             try {
-                const emp = await api.show(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.SHOW, id);
+                const emp = await getEmployee(id);
                 const modal = document.getElementById('modalEmployee');
                 if (!modal) return;
                 const formGrid = modal.querySelector('.form-grid');
@@ -823,18 +923,26 @@
             }
         }
 
+        /**
+         * Deletes an employee record after confirmation.
+         * @param {number} id - Employee record ID.
+         * @async
+         */
         async function deleteEmployee(id) {
             if (!confirm('Are you sure you want to delete this employee?')) return;
             try {
-                await api.destroy(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.DESTROY, id);
+                await deleteEmployeeAPI(id);
                 showToast('🗑️', 'Employee deleted successfully');
-                loadEmployees();
+                loadEmployees(1);
             } catch (e) {
                 showToast('❌', 'Failed to delete employee');
             }
         }
 
-        // Save employee (create or update)
+        /**
+         * Reads employee modal inputs, creates or updates via API, and refreshes list.
+         * @async
+         */
         async function saveEmployee() {
             const modal = document.getElementById('modalEmployee');
             if (!modal) return;
@@ -880,29 +988,30 @@
             if (!data.office_location) delete data.office_location;
 
             try {
-                let result;
                 if (editId) {
-                    result = await api.update(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.UPDATE, editId, data);
-                } else {
-                    result = await api.store(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.STORE, data);
-                }
-                if (result) {
-                    showToast('✅', editId ? 'Employee updated!' : 'Employee created!');
+                    await updateEmployeeAPI(editId, data);
+                    showToast('✅', 'Employee updated!');
                     modal.removeAttribute('data-edit-id');
-                    bootstrap.Modal.getInstance(modal).hide();
-                    loadEmployees();
-                    loadEmployeeStats();
+                } else {
+                    await createEmployee(data);
+                    showToast('✅', 'Employee created!');
                 }
+                bootstrap.Modal.getInstance(modal).hide();
+                loadEmployees(1);
+                loadEmployeeStats();
             } catch (e) {
                 const msg = e?.response?.data ? JSON.stringify(e.response.data) : 'Validation error';
                 showToast('❌', msg);
             }
         }
 
-        // Load stats
+        /**
+         * Loads employee statistics from the API and updates stat cards.
+         * @async
+         */
         async function loadEmployeeStats() {
             try {
-                const result = await api.all(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.STATS);
+                const result = await getEmployeeStats();
                 const stats = result?.data || result;
                 const totalEl = document.getElementById('stat-total');
                 const activeEl = document.getElementById('stat-active');

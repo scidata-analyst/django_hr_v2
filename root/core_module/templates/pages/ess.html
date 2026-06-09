@@ -264,23 +264,130 @@
     <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
 
 
+    <script src="{% static 'js/constants.js' %}"></script>
+    <script src="{% static 'js/APIClient.js' %}"></script>
+    <script>
+        const api = new APIClient({
+            baseURL: API_CONFIG.BASE_URL,
+            timeout: API_CONFIG.TIMEOUT,
+            headers: { ...API_CONFIG.HEADERS }
+        });
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+
+        /**
+         * @namespace ESS CRUD operations
+         * @description REST API wrapper functions for Employee Self-Service.
+         * @see API_ENDPOINTS.ESS in constants.js
+         */
+        async function allExpenses() {
+            try {
+                return await api.all(API_ENDPOINTS.ESS.EXPENSES.INDEX);
+            } catch (error) {
+                console.error('Error fetching all expenses:', error);
+                throw error;
+            }
+        }
+
+        async function indexExpenses(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ESS.EXPENSES.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing expenses:', error);
+                throw error;
+            }
+        }
+
+        async function createExpense(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ESS.EXPENSES.STORE, payload);
+            } catch (error) {
+                console.error('Error creating expense:', error);
+                throw error;
+            }
+        }
+
+        async function getExpense(id) {
+            try {
+                return await api.show(API_ENDPOINTS.ESS.EXPENSES.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching expense:', error);
+                throw error;
+            }
+        }
+
+        async function approveExpense(id) {
+            try {
+                return await api.update(API_ENDPOINTS.ESS.EXPENSES.APPROVE(id), { status: 'approved' });
+            } catch (error) {
+                console.error('Error approving expense:', error);
+                throw error;
+            }
+        }
+
+        async function rejectExpense(id) {
+            try {
+                return await api.update(API_ENDPOINTS.ESS.EXPENSES.REJECT(id), { status: 'rejected' });
+            } catch (error) {
+                console.error('Error rejecting expense:', error);
+                throw error;
+            }
+        }
+
+        async function allAnnouncements() {
+            try {
+                return await api.all(API_ENDPOINTS.ESS.ANNOUNCEMENTS.INDEX);
+            } catch (error) {
+                console.error('Error fetching all announcements:', error);
+                throw error;
+            }
+        }
+
+        async function indexAnnouncements(params = {}) {
+            try {
+                return await api.index(API_ENDPOINTS.ESS.ANNOUNCEMENTS.INDEX, params);
+            } catch (error) {
+                console.error('Error indexing announcements:', error);
+                throw error;
+            }
+        }
+
+        async function createAnnouncement(payload) {
+            try {
+                return await api.store(API_ENDPOINTS.ESS.ANNOUNCEMENTS.STORE, payload);
+            } catch (error) {
+                console.error('Error creating announcement:', error);
+                throw error;
+            }
+        }
+
+        async function getAnnouncement(id) {
+            try {
+                return await api.show(API_ENDPOINTS.ESS.ANNOUNCEMENTS.SHOW, id);
+            } catch (error) {
+                console.error('Error fetching announcement:', error);
+                throw error;
+            }
+        }
+    </script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
     </script>
     <script>
 
-        // ── Bootstrap 5 + jQuery ──
-        // Modals are triggered directly from HTML via:
-        //   data-bs-toggle="modal" data-bs-target="#modalId"
-        // No openXxxModal() JS functions needed.
-
-        // Populate integration name from data attribute on the trigger button
         $(document).on('show.bs.modal', '#modalIntegration', function (e) {
             var name = $(e.relatedTarget).data('integration-name');
             if (name) $('#integration-name').text(name);
         });
 
+        /**
+         * Displays a toast notification with an icon and message.
+         * @param {string} icon - Emoji or icon character.
+         * @param {string} msg - Message to display.
+         * @param {number} [duration=3000] - Auto-hide duration in ms.
+         */
         function showToast(icon, msg, duration) {
             duration = duration || 3000;
             $('#toast-icon').text(icon);
@@ -288,17 +395,20 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-        function saveForm() {
-            $('.modal.show').modal('hide');
-            showToast('\u2705', 'Record saved successfully!');
-        }
+
+        /**
+         * Handles delete confirmation modal close and feedback.
+         */
         function confirmDelete() {
             $('#modalDelete').modal('hide');
             showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
         }
-        // ── End ──
 
-        // SUB-MODULE TABS
+        /**
+         * Switches the active tab within a tab group.
+         * @param {string} tabGroup - Matches data-tabgroup attribute.
+         * @param {string} tabId - Matches data-tabid attribute to activate.
+         */
         function showSubTab(tabGroup, tabId) {
             document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
                 t.classList.toggle('active', t.dataset.tabid === tabId);
@@ -308,9 +418,7 @@
             });
         }
 
-        // ═══════════════════════════════════════
-        // PAGE TITLE / DATE UPDATE
-        // ═══════════════════════════════════════
+        /** Page title lookup for topbar updates. */
         const pageTitles = {
             dashboard: 'Dashboard Overview',
             employee: 'Employee Management',
@@ -331,6 +439,11 @@
             integrations: 'Integrations & Automation'
         };
 
+        /**
+         * Navigates to a page section and updates navigation state.
+         * @param {string} id - Page identifier matching `page-{id}` element.
+         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
+         */
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + id);
@@ -350,55 +463,46 @@
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
 
-
-        function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
-
-        // ═══════════════════════════════════════════
-        // API INTEGRATION — Employee Self-Service
-        // ═══════════════════════════════════════════
-        const API = {
-            expense: '/core-module/ess/api/expense/',
-            announcement: '/core-module/ess/api/announcement/',
-        };
-
-        async function apiGet(url) {
-            try { const res = await fetch(url); return await res.json(); }
-            catch (e) { console.error('GET error:', e); return null; }
-        }
-
-        async function apiPost(url, data) {
-            try {
-                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-                return { ok: res.ok, status: res.status, data: await res.json() };
-            } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-        }
-
+        /**
+         * Loads expense records from the API and renders them.
+         * @async
+         */
         async function loadExpenses() {
-            const result = await apiGet(API.expense);
-            if (result && result.data) {
+            try {
+                const result = await indexExpenses();
                 const tbody = document.querySelector('#page-ess .table-custom tbody');
-                if (!tbody) return;
+                if (!tbody || !result?.data) return;
                 tbody.innerHTML = '';
-                result.data.forEach(e => {
-                    const statusBadge = e.status === 'approved' ? 'badge-success' : e.status === 'rejected' ? 'badge-danger' : 'badge-warning';
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-id', e.id);
-                    tr.innerHTML = `
-            <td style="font-weight:600;">${e.category}</td>
-            <td>$${Number(e.amount || 0).toLocaleString()}</td>
-            <td>${e.expense_date || '—'}</td>
-            <td>${e.description ? e.description.substring(0, 30) + '...' : '—'}</td>
-            <td><span class="badge-custom ${statusBadge}">${e.status}</span></td>`;
-                    tbody.appendChild(tr);
-                });
+                if (result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No expense claims found</td></tr>';
+                } else {
+                    result.data.forEach(e => {
+                        const statusBadge = e.status === 'approved' ? 'badge-success' : e.status === 'rejected' ? 'badge-danger' : 'badge-warning';
+                        const tr = document.createElement('tr');
+                        tr.setAttribute('data-id', e.id);
+                        tr.innerHTML = `
+                            <td style="font-weight:600;">${e.category}</td>
+                            <td>$${Number(e.amount || 0).toLocaleString()}</td>
+                            <td>${e.expense_date || '—'}</td>
+                            <td>${e.description ? e.description.substring(0, 30) + '...' : '—'}</td>
+                            <td><span class="badge-custom ${statusBadge}">${e.status}</span></td>`;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to load expenses:', e);
             }
         }
 
+        /**
+         * Loads announcements from the API and renders them.
+         * @async
+         */
         async function loadAnnouncements() {
-            const result = await apiGet(API.announcement);
-            if (result && result.data) {
+            try {
+                const result = await indexAnnouncements();
                 const container = document.querySelector('#page-ess .card-body-custom');
-                if (!container) return;
+                if (!container || !result?.data) return;
                 const list = container.querySelector('.d-flex.flex-column');
                 if (list) {
                     list.innerHTML = '';
@@ -407,17 +511,23 @@
                         const div = document.createElement('div');
                         div.style.cssText = 'padding:12px;background:#f8fafc;border-radius:8px;border-left:3px solid ' + priorityColor + ';margin-bottom:8px;';
                         div.innerHTML = `
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-                <span style="font-size:0.82rem;font-weight:600;">${a.title}</span>
-                <span class="badge-custom ${a.is_pinned ? 'badge-warning' : 'badge-info'}">${a.is_pinned ? '📌 Pinned' : a.priority}</span>
-              </div>
-              <div style="font-size:0.72rem;color:var(--text-muted);">${a.content ? a.content.substring(0, 80) + '...' : ''}</div>`;
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                                <span style="font-size:0.82rem;font-weight:600;">${a.title}</span>
+                                <span class="badge-custom ${a.is_pinned ? 'badge-warning' : 'badge-info'}">${a.is_pinned ? '📌 Pinned' : a.priority}</span>
+                            </div>
+                            <div style="font-size:0.72rem;color:var(--text-muted);">${a.content ? a.content.substring(0, 80) + '...' : ''}</div>`;
                         list.appendChild(div);
                     });
                 }
+            } catch (e) {
+                console.error('Failed to load announcements:', e);
             }
         }
 
+        /**
+         * Reads expense modal inputs, creates an expense via API, and refreshes the list.
+         * @async
+         */
         async function saveExpense() {
             const modal = document.getElementById('modalExpense');
             const inputs = modal.querySelectorAll('.fi');
@@ -428,9 +538,14 @@
                 expense_date: inputs[1]?.value || null,
                 description: inputs[2]?.value || '',
             };
-            const result = await apiPost(API.expense, data);
-            if (result.ok) { showToast('✅', 'Expense claim submitted!'); bootstrap.Modal.getInstance(modal).hide(); loadExpenses(); }
-            else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+            try {
+                await createExpense(data);
+                showToast('✅', 'Expense claim submitted!');
+                bootstrap.Modal.getInstance(modal).hide();
+                loadExpenses();
+            } catch (e) {
+                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+            }
         }
 
         $(function () {
