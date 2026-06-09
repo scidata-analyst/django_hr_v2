@@ -16,12 +16,16 @@ class ReportService(BaseService):
             .order_by('-count')
         )
 
-    def generate_attendance_report(self, start_date, end_date):
+    def generate_attendance_report(self, start_date=None, end_date=None):
         from core_module.models.attendance.attendance import Attendance
         from django.db.models import Count
+        qs = Attendance.objects.all()
+        if start_date:
+            qs = qs.filter(date__gte=start_date)
+        if end_date:
+            qs = qs.filter(date__lte=end_date)
         return list(
-            Attendance.objects.filter(date__gte=start_date, date__lte=end_date)
-            .values('status')
+            qs.values('status')
             .annotate(count=Count('id'))
         )
 

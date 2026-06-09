@@ -443,14 +443,70 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
   </script>
+  <script src="{% static 'js/constants.js' %}"></script>
+  <script src="{% static 'js/APIClient.js' %}"></script>
   <script>
+    const api = new APIClient({
+      baseURL: API_CONFIG.BASE_URL,
+      timeout: API_CONFIG.TIMEOUT,
+      headers: API_CONFIG.HEADERS
+    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+    window.api = api;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 
-    // ── Bootstrap 5 + jQuery ──
-    // Modals are triggered directly from HTML via:
-    //   data-bs-toggle="modal" data-bs-target="#modalId"
-    // No openXxxModal() JS functions needed.
+    async function allCandidates() {
+      try { return await api.all(API_ENDPOINTS.RECRUITMENT.CANDIDATES.INDEX); }
+      catch (e) { console.error('Error fetching all candidates:', e); throw e; }
+    }
+    async function indexCandidates(params = {}) {
+      try { return await api.index(API_ENDPOINTS.RECRUITMENT.CANDIDATES.INDEX, params); }
+      catch (e) { console.error('Error indexing candidates:', e); throw e; }
+    }
+    async function createCandidate(payload) {
+      try { return await api.store(API_ENDPOINTS.RECRUITMENT.CANDIDATES.STORE, payload); }
+      catch (e) { console.error('Error creating candidate:', e); throw e; }
+    }
+    async function getCandidate(id) {
+      try { return await api.show(API_ENDPOINTS.RECRUITMENT.CANDIDATES.SHOW, id); }
+      catch (e) { console.error('Error fetching candidate:', e); throw e; }
+    }
+    async function updateCandidateAPI(id, payload) {
+      try { return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.UPDATE, id, payload); }
+      catch (e) { console.error('Error updating candidate:', e); throw e; }
+    }
+    async function deleteCandidateAPI(id) {
+      try { return await api.destroy(API_ENDPOINTS.RECRUITMENT.CANDIDATES.DESTROY, id); }
+      catch (e) { console.error('Error deleting candidate:', e); throw e; }
+    }
+    async function advanceCandidateAPI(id) {
+      try { return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.ADVANCE(id), {}); }
+      catch (e) { console.error('Error advancing candidate:', e); throw e; }
+    }
+    async function rejectCandidateAPI(id) {
+      try { return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.REJECT(id), {}); }
+      catch (e) { console.error('Error rejecting candidate:', e); throw e; }
+    }
 
-    // Populate integration name from data attribute on the trigger button
+    async function allJobs() {
+      try { return await api.all(API_ENDPOINTS.RECRUITMENT.JOBS.INDEX); }
+      catch (e) { console.error('Error fetching all jobs:', e); throw e; }
+    }
+    async function indexJobs(params = {}) {
+      try { return await api.index(API_ENDPOINTS.RECRUITMENT.JOBS.INDEX, params); }
+      catch (e) { console.error('Error indexing jobs:', e); throw e; }
+    }
+
+    async function getPipeline() {
+      try { return await api.all(API_ENDPOINTS.RECRUITMENT.PIPELINE.INDEX); }
+      catch (e) { console.error('Error fetching pipeline:', e); throw e; }
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -463,29 +519,11 @@
       $('#toast').addClass('show');
       setTimeout(function () { $('#toast').removeClass('show'); }, duration);
     }
-    function saveForm() {
-      $('.modal.show').modal('hide');
-      showToast('\u2705', 'Record saved successfully!');
-    }
     function confirmDelete() {
       $('#modalDelete').modal('hide');
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
-    // ── End ──
 
-    // SUB-MODULE TABS
-    function showSubTab(tabGroup, tabId) {
-      document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-        t.classList.toggle('active', t.dataset.tabid === tabId);
-      });
-      document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-        p.classList.toggle('active', p.dataset.panelid === tabId);
-      });
-    }
-
-    // ═══════════════════════════════════════
-    // PAGE TITLE / DATE UPDATE
-    // ═══════════════════════════════════════
     const pageTitles = {
       dashboard: 'Dashboard Overview',
       employee: 'Employee Management',
@@ -525,76 +563,59 @@
       t.addEventListener('click', () => t.classList.toggle('on'));
     });
 
-
-    function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
-
-    // ═══════════════════════════════════════════
-    // API INTEGRATION — Recruitment Marketing
-    // ═══════════════════════════════════════════
-    const API = {
-      job: '/core-module/recruitment/api/job/',
-      candidate: '/core-module/recruitment/api/candidate/',
-      pipeline: '/core-module/recruitment/api/candidate/pipeline/',
-    };
-
-    async function apiGet(url) {
-      try { const res = await fetch(url); return await res.json(); }
-      catch (e) { console.error('GET error:', e); return null; }
-    }
-
     async function loadJobStats() {
-      const result = await apiGet(API.job);
-      if (result && result.data) {
-        const activeJobs = result.data.filter(j => j.status === 'active');
-        const cards = document.querySelectorAll('#page-branding .stat-card .stat-value');
-        if (cards[0]) cards[0].textContent = (result.data.reduce((sum, j) => sum + (j.view_count || 0), 0)).toLocaleString();
-        if (cards[1]) cards[1].textContent = result.data.reduce((sum, j) => sum + (j.candidate_count || 0), 0).toLocaleString();
+      try {
+        const result = await indexJobs();
+        if (result && result.data) {
+          const cards = document.querySelectorAll('#page-branding .stat-card .stat-value');
+          if (cards[0]) cards[0].textContent = (result.data.reduce((sum, j) => sum + (j.view_count || 0), 0)).toLocaleString();
+          if (cards[1]) cards[1].textContent = result.data.reduce((sum, j) => sum + (j.candidate_count || 0), 0).toLocaleString();
+        }
+      } catch (e) {
+        console.error('Failed to load job stats:', e);
       }
     }
 
     async function loadCandidates() {
-      const result = await apiGet(API.candidate);
-      if (result && result.data) {
-        const tbody = document.querySelector('#page-branding .table-custom tbody');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        result.data.slice(0, 10).forEach(c => {
-          const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td style="font-weight:600;">${c.full_name}</td>
-            <td>${c.applied_for_title || '—'}</td>
-            <td>${c.source || '—'}</td>
-            <td>${c.experience_yrs || 0} yrs</td>
-            <td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td>`;
-          tbody.appendChild(tr);
-        });
+      try {
+        const result = await indexCandidates();
+        if (result && result.data) {
+          const tbody = document.querySelector('#page-branding .table-custom tbody');
+          if (!tbody) return;
+          tbody.innerHTML = '';
+          result.data.slice(0, 10).forEach(c => {
+            const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="font-weight:600;">${c.full_name}</td>
+              <td>${c.applied_for_title || '—'}</td>
+              <td>${c.source || '—'}</td>
+              <td>${c.experience_yrs || 0} yrs</td>
+              <td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td>`;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) {
+        console.error('Failed to load candidates:', e);
       }
     }
 
     async function loadPipeline() {
-      const result = await apiGet(API.pipeline);
-      if (result) {
-        const counts = document.querySelectorAll('#page-branding .kanban-count');
-        if (counts[0]) counts[0].textContent = result.applied || 0;
-        if (counts[1]) counts[1].textContent = result.screening || 0;
-        if (counts[2]) counts[2].textContent = result.interview || 0;
-        if (counts[3]) counts[3].textContent = result.offer || 0;
+      try {
+        const result = await getPipeline();
+        if (result) {
+          const counts = document.querySelectorAll('#page-branding .kanban-count');
+          if (counts[0]) counts[0].textContent = result.applied || 0;
+          if (counts[1]) counts[1].textContent = result.screening || 0;
+          if (counts[2]) counts[2].textContent = result.interview || 0;
+          if (counts[3]) counts[3].textContent = result.offer || 0;
+        }
+      } catch (e) {
+        console.error('Failed to load pipeline:', e);
       }
     }
 
-    $(function () {
-      loadJobStats();
-      loadCandidates();
-      loadPipeline();
-    });
-
-    $(function () {
-      var d = new Date();
-      $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
-      $('.toggle').on('click', function () { $(this).toggleClass('on'); });
-    });
-
+    $(function () { loadJobStats(); loadCandidates(); loadPipeline(); });
   </script>
 </body>
 

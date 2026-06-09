@@ -396,139 +396,133 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
   </script>
+  <script src="{% static 'js/constants.js' %}"></script>
+  <script src="{% static 'js/APIClient.js' %}"></script>
   <script>
+    const api = new APIClient({
+      baseURL: API_CONFIG.BASE_URL,
+      timeout: API_CONFIG.TIMEOUT,
+      headers: API_CONFIG.HEADERS
+    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+    window.api = api;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 
-// ── Bootstrap 5 + jQuery ──
-// Modals are triggered directly from HTML via:
-//   data-bs-toggle="modal" data-bs-target="#modalId"
-// No openXxxModal() JS functions needed.
+    async function getHeadcountReport() {
+      try { return await api.all(API_ENDPOINTS.REPORTS.HEADCOUNT); }
+      catch (e) { console.error('Error fetching headcount report:', e); throw e; }
+    }
+    async function getAttendanceReport() {
+      try { return await api.all(API_ENDPOINTS.REPORTS.ATTENDANCE); }
+      catch (e) { console.error('Error fetching attendance report:', e); throw e; }
+    }
+    async function getTurnoverReport() {
+      try { return await api.all(API_ENDPOINTS.REPORTS.TURNOVER); }
+      catch (e) { console.error('Error fetching turnover report:', e); throw e; }
+    }
+    async function getEmployeeStats() {
+      try { return await api.all(API_ENDPOINTS.EMPLOYEE.STATS); }
+      catch (e) { console.error('Error fetching employee stats:', e); throw e; }
+    }
+    async function getAttendanceStats() {
+      try { return await api.all(API_ENDPOINTS.ATTENDANCE.STATS.INDEX); }
+      catch (e) { console.error('Error fetching attendance stats:', e); throw e; }
+    }
+  </script>
 
-// Populate integration name from data attribute on the trigger button
-$(document).on('show.bs.modal', '#modalIntegration', function(e) {
-  var name = $(e.relatedTarget).data('integration-name');
-  if (name) $('#integration-name').text(name);
-});
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
+    $(document).on('show.bs.modal', '#modalIntegration', function (e) {
+      var name = $(e.relatedTarget).data('integration-name');
+      if (name) $('#integration-name').text(name);
+    });
 
-function showToast(icon, msg, duration) {
-  duration = duration || 3000;
-  $('#toast-icon').text(icon);
-  $('#toast-msg').text(msg);
-  $('#toast').addClass('show');
-  setTimeout(function() { $('#toast').removeClass('show'); }, duration);
-}
-function saveForm() {
-  $('.modal.show').modal('hide');
-  showToast('\u2705', 'Record saved successfully!');
-}
-function confirmDelete() {
-  $('#modalDelete').modal('hide');
-  showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
-}
-// ── End ──
-
-      // SUB-MODULE TABS
-      function showSubTab(tabGroup, tabId) {
-        document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-          t.classList.toggle('active', t.dataset.tabid === tabId);
-        });
-        document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-          p.classList.toggle('active', p.dataset.panelid === tabId);
-        });
-      }
-
-      // ═══════════════════════════════════════
-      // PAGE TITLE / DATE UPDATE
-      // ═══════════════════════════════════════
-      const pageTitles = {
-        dashboard: 'Dashboard Overview',
-        employee: 'Employee Management',
-        attendance: 'Attendance & Leave',
-        payroll: 'Payroll Management',
-        recruitment: 'Recruitment & Hiring',
-        performance: 'Performance Management',
-        training: 'Training & Development',
-        onboarding: 'Onboarding & Offboarding',
-        ess: 'Employee Self-Service',
-        reports: 'Reports & Analytics',
-        compliance: 'Compliance & Policies',
-        engagement: 'Engagement & Recognition',
-        health: 'Health, Safety & Benefits',
-        talent: 'Talent & Succession',
-        branding: 'Recruitment Marketing',
-        global: 'Global HR',
-        integrations: 'Integrations & Automation'
-      };
-
-      function showPage(id, btn) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        const target = document.getElementById('page-' + id);
-        if (target) target.classList.add('active');
-        document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-        if (btn) btn.classList.add('active');
-        document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-        document.getElementById('sidebar').classList.remove('open');
-        window.scrollTo(0, 0);
-      }
-
-      const d = new Date();
-      const dateEl = document.getElementById('topbar-date');
-      if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
-      document.querySelectorAll('.toggle').forEach(t => {
-        t.addEventListener('click', () => t.classList.toggle('on'));
-      });
-
-
-    function showPage(id) { var m={dashboard:'../index.html',employee:'employee.html',attendance:'attendance.html',payroll:'payroll.html',recruitment:'recruitment.html',performance:'performance.html',training:'training.html',onboarding:'onboarding.html',ess:'ess.html',reports:'reports.html',compliance:'compliance.html',engagement:'engagement.html',health:'health.html',talent:'talent.html',branding:'branding.html',global:'global.html',integrations:'integrations.html'}; if(m[id]) location.href=m[id]; }
-
-    // ═══════════════════════════════════════════
-    // API INTEGRATION — Reports & Analytics
-    // ═══════════════════════════════════════════
-    const API = {
-      headcount: '/operation/api/report/headcount/',
-      attendance: '/operation/api/report/attendance/',
-      turnover: '/operation/api/report/turnover/',
-      employeeStats: '/core-module/employee/api/employee/stats/',
-      attendanceStats: '/core-module/attendance/api/attendance/stats/',
-    };
-
-    async function apiGet(url) {
-      try { const res = await fetch(url); return await res.json(); }
-      catch(e) { console.error('GET error:', e); return null; }
+    function showToast(icon, msg, duration) {
+      duration = duration || 3000;
+      $('#toast-icon').text(icon);
+      $('#toast-msg').text(msg);
+      $('#toast').addClass('show');
+      setTimeout(function () { $('#toast').removeClass('show'); }, duration);
+    }
+    function confirmDelete() {
+      $('#modalDelete').modal('hide');
+      showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
 
-    async function loadReports() {
-      const [headcount, attendance, turnover] = await Promise.all([
-        apiGet(API.headcount),
-        apiGet(API.attendance),
-        apiGet(API.turnover),
-      ]);
+    const pageTitles = {
+      dashboard: 'Dashboard Overview',
+      employee: 'Employee Management',
+      attendance: 'Attendance & Leave',
+      payroll: 'Payroll Management',
+      recruitment: 'Recruitment & Hiring',
+      performance: 'Performance Management',
+      training: 'Training & Development',
+      onboarding: 'Onboarding & Offboarding',
+      ess: 'Employee Self-Service',
+      reports: 'Reports & Analytics',
+      compliance: 'Compliance & Policies',
+      engagement: 'Engagement & Recognition',
+      health: 'Health, Safety & Benefits',
+      talent: 'Talent & Succession',
+      branding: 'Recruitment Marketing',
+      global: 'Global HR',
+      integrations: 'Integrations & Automation'
+    };
 
-      // Update stat cards with real data
-      const cards = document.querySelectorAll('#page-reports .stat-card .stat-value');
-      if (cards[0] && attendance) cards[0].textContent = (attendance.avg_rate || 84.3) + '%';
-      if (cards[1] && turnover) cards[1].textContent = (turnover.rate || 3.2) + '%';
+    function showPage(id, btn) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('page-' + id);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      document.getElementById('topbar-title').textContent = pageTitles[id] || id;
+      document.getElementById('sidebar').classList.remove('open');
+      window.scrollTo(0, 0);
+    }
+
+    const d = new Date();
+    const dateEl = document.getElementById('topbar-date');
+    if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+    document.querySelectorAll('.toggle').forEach(t => {
+      t.addEventListener('click', () => t.classList.toggle('on'));
+    });
+
+    async function loadReports() {
+      try {
+        const [headcount, attendance, turnover] = await Promise.all([
+          getHeadcountReport(),
+          getAttendanceReport(),
+          getTurnoverReport(),
+        ]);
+        const cards = document.querySelectorAll('#page-reports .stat-card .stat-value');
+        if (cards[0] && attendance) cards[0].textContent = (attendance.avg_rate || attendance.data?.avg_rate || 84.3) + '%';
+        if (cards[1] && turnover) cards[1].textContent = (turnover.rate || turnover.data?.rate || 3.2) + '%';
+      } catch (e) {
+        console.error('Failed to load reports:', e);
+      }
     }
 
     async function generateReport() {
-      const modal = document.getElementById('modalReport');
-      const inputs = modal.querySelectorAll('.fi');
-      const selects = modal.querySelectorAll('select.fi');
-      const reportType = selects[0]?.value || 'attendance';
-      showToast('📊', `Generating ${reportType} report...`);
-      bootstrap.Modal.getInstance(modal).hide();
+      try {
+        const modal = document.getElementById('modalReport');
+        const inputs = modal.querySelectorAll('.fi');
+        const selects = modal.querySelectorAll('select.fi');
+        const reportType = selects[0]?.value || 'attendance';
+        showToast('📊', `Generating ${reportType} report...`);
+        bootstrap.Modal.getInstance(modal).hide();
+      } catch (e) {
+        showToast('❌', 'Failed to generate report');
+      }
     }
 
-    $(function() {
-      loadReports();
-    });
-
-    $(function() {
+    $(function () { loadReports(); });
+    $(function () {
       var d = new Date();
-      $('#topbar-date').text(d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'}));
-      $('.toggle').on('click', function() { $(this).toggleClass('on'); });
+      $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
+      $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-
-  </script></body>
-</html>
+  </script>
 

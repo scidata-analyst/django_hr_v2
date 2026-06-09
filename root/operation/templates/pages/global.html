@@ -388,14 +388,48 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
   </script>
+  <script src="{% static 'js/constants.js' %}"></script>
+  <script src="{% static 'js/APIClient.js' %}"></script>
   <script>
+    const api = new APIClient({
+      baseURL: API_CONFIG.BASE_URL,
+      timeout: API_CONFIG.TIMEOUT,
+      headers: API_CONFIG.HEADERS
+    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+    window.api = api;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 
-    // ── Bootstrap 5 + jQuery ──
-    // Modals are triggered directly from HTML via:
-    //   data-bs-toggle="modal" data-bs-target="#modalId"
-    // No openXxxModal() JS functions needed.
+    async function allOffices() {
+      try { return await api.all(API_ENDPOINTS.OFFICES.INDEX); }
+      catch (e) { console.error('Error fetching all offices:', e); throw e; }
+    }
+    async function indexOffices(params = {}) {
+      try { return await api.index(API_ENDPOINTS.OFFICES.INDEX, params); }
+      catch (e) { console.error('Error indexing offices:', e); throw e; }
+    }
+    async function createOffice(payload) {
+      try { return await api.store(API_ENDPOINTS.OFFICES.STORE, payload); }
+      catch (e) { console.error('Error creating office:', e); throw e; }
+    }
+    async function getOffice(id) {
+      try { return await api.show(API_ENDPOINTS.OFFICES.SHOW, id); }
+      catch (e) { console.error('Error fetching office:', e); throw e; }
+    }
+    async function updateOfficeAPI(id, payload) {
+      try { return await api.update(API_ENDPOINTS.OFFICES.UPDATE, id, payload); }
+      catch (e) { console.error('Error updating office:', e); throw e; }
+    }
+    async function deleteOfficeAPI(id) {
+      try { return await api.destroy(API_ENDPOINTS.OFFICES.DESTROY, id); }
+      catch (e) { console.error('Error deleting office:', e); throw e; }
+    }
+  </script>
 
-    // Populate integration name from data attribute on the trigger button
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -408,29 +442,11 @@
       $('#toast').addClass('show');
       setTimeout(function () { $('#toast').removeClass('show'); }, duration);
     }
-    function saveForm() {
-      $('.modal.show').modal('hide');
-      showToast('\u2705', 'Record saved successfully!');
-    }
     function confirmDelete() {
       $('#modalDelete').modal('hide');
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
-    // ── End ──
 
-    // SUB-MODULE TABS
-    function showSubTab(tabGroup, tabId) {
-      document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-        t.classList.toggle('active', t.dataset.tabid === tabId);
-      });
-      document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-        p.classList.toggle('active', p.dataset.panelid === tabId);
-      });
-    }
-
-    // ═══════════════════════════════════════
-    // PAGE TITLE / DATE UPDATE
-    // ═══════════════════════════════════════
     const pageTitles = {
       dashboard: 'Dashboard Overview',
       employee: 'Employee Management',
@@ -470,65 +486,12 @@
       t.addEventListener('click', () => t.classList.toggle('on'));
     });
 
-
-    function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
-
-    // ═══════════════════════════════════════════
-    // API INTEGRATION — Global HR
-    // ═══════════════════════════════════════════
-    const API = {
-      office: '/operation/global/api/office/',
-    };
-
-    async function apiGet(url) {
-      try { const res = await fetch(url); return await res.json(); }
-      catch (e) { console.error('GET error:', e); return null; }
-    }
-
-    async function apiPost(url, data) {
-      try {
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        return { ok: res.ok, status: res.status, data: await res.json() };
-      } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-    }
-
-    async function loadOffices(page) {
-      const pageSize = document.getElementById('offices-page-size')?.value || 10;
-      page = page || 1;
-      const search = document.getElementById('office-search')?.value || '';
-      const country = document.getElementById('office-filter-country')?.value || '';
-      let url = API.office + `?page=${page}&page_size=${pageSize}`;
-      if (search) url += `&search=${encodeURIComponent(search)}`;
-      if (country) url += `&country=${country}`;
-      const result = await apiGet(url);
-      if (!result || !result.data) return;
-      const tbody = document.getElementById('offices-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      if (result.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No offices found</td></tr>';
-      } else {
-        result.data.forEach(o => {
-          const tr = document.createElement('tr');
-          tr.setAttribute('data-id', o.id);
-          tr.innerHTML = `
-            <td><span style="font-weight:600;">${o.country}</span></td>
-            <td>${o.name}</td>
-            <td style="font-weight:700;">${o.employee_count || 0}</td>
-            <td>${o.local_currency || '-'}</td>
-            <td><span class="badge-custom badge-success">Processed</span></td>
-            <td><span class="badge-custom badge-success">100%</span></td>`;
-          tbody.appendChild(tr);
-        });
-      }
-      renderPagination(result, 'offices-pagination-info', 'offices-pagination', 'loadOffices');
-    }
-
     function renderPagination(result, infoId, containerId, fnName) {
       const totalPages = result.total_pages || 1;
       const page = result.page || 1;
-      const start = (page - 1) * (result.page_size || 10) + 1;
-      const end = Math.min(page * (result.page_size || 10), result.count);
+      const pageSize = result.page_size || 10;
+      const start = (page - 1) * pageSize + 1;
+      const end = Math.min(page * pageSize, result.count);
       const info = document.getElementById(infoId);
       if (info) {
         info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
@@ -549,36 +512,73 @@
       }
     }
 
-    async function saveOffice() {
-      const modal = document.getElementById('modalOffice');
-      const inputs = modal.querySelectorAll('.fi');
-      const selects = modal.querySelectorAll('select.fi');
-      const data = {
-        name: inputs[0]?.value || '',
-        country: inputs[1]?.value || '',
-        city: inputs[2]?.value || '',
-        office_type: selects[0]?.value || 'branch',
-        full_address: inputs[3]?.value || '',
-        local_currency: selects[1]?.value || 'BDT',
-        timezone: selects[2]?.value || 'Asia/Dhaka',
-        capacity: inputs[4]?.value || 0,
-        status: selects[3]?.value || 'active',
-      };
-      const result = await apiPost(API.office, data);
-      if (result.ok) { showToast('✅', 'Office saved!'); bootstrap.Modal.getInstance(modal).hide(); loadOffices(); }
-      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+    async function loadOffices(page) {
+      try {
+        const pageSize = document.getElementById('offices-page-size')?.value || 10;
+        page = page || 1;
+        const search = document.getElementById('office-search')?.value || '';
+        const country = document.getElementById('office-filter-country')?.value || '';
+        const params = { page, page_size: pageSize };
+        if (search) params.search = search;
+        if (country) params.country = country;
+        const result = await indexOffices(params);
+        if (!result || !result.data) return;
+        const tbody = document.getElementById('offices-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (result.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No offices found</td></tr>';
+        } else {
+          result.data.forEach(o => {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-id', o.id);
+            tr.innerHTML = `
+              <td><span style="font-weight:600;">${o.country}</span></td>
+              <td>${o.name}</td>
+              <td style="font-weight:700;">${o.employee_count || 0}</td>
+              <td>${o.local_currency || '-'}</td>
+              <td><span class="badge-custom badge-success">Processed</span></td>
+              <td><span class="badge-custom badge-success">100%</span></td>`;
+            tbody.appendChild(tr);
+          });
+        }
+        renderPagination(result, 'offices-pagination-info', 'offices-pagination', 'loadOffices');
+      } catch (e) {
+        console.error('Failed to load offices:', e);
+      }
     }
 
-    $(function () {
-      loadOffices();
-    });
+    async function saveOffice() {
+      try {
+        const modal = document.getElementById('modalOffice');
+        const inputs = modal.querySelectorAll('.fi');
+        const selects = modal.querySelectorAll('select.fi');
+        const data = {
+          name: inputs[0]?.value || '',
+          country: inputs[1]?.value || '',
+          city: inputs[2]?.value || '',
+          office_type: selects[0]?.value || 'branch',
+          full_address: inputs[3]?.value || '',
+          local_currency: selects[1]?.value || 'BDT',
+          timezone: selects[2]?.value || 'Asia/Dhaka',
+          capacity: inputs[4]?.value || 0,
+          status: selects[3]?.value || 'active',
+        };
+        await createOffice(data);
+        showToast('✅', 'Office saved!');
+        bootstrap.Modal.getInstance(modal).hide();
+        loadOffices();
+      } catch (e) {
+        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+      }
+    }
 
+    $(function () { loadOffices(); });
     $(function () {
       var d = new Date();
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
       $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-
   </script>
 </body>
 

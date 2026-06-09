@@ -266,8 +266,8 @@ def report_headcount(request):
 
 def report_attendance(request):
     try:
-        start = request.GET.get('start_date')
-        end = request.GET.get('end_date')
+        start = request.GET.get('start_date') or '2000-01-01'
+        end = request.GET.get('end_date') or '2099-12-31'
         data = report_service.generate_attendance_report(start, end)
         return JsonResponse({'data': data})
     except Exception as e:

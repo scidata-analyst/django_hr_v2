@@ -538,14 +538,52 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
   </script>
+  <script src="{% static 'js/constants.js' %}"></script>
+  <script src="{% static 'js/APIClient.js' %}"></script>
   <script>
+    const api = new APIClient({
+      baseURL: API_CONFIG.BASE_URL,
+      timeout: API_CONFIG.TIMEOUT,
+      headers: API_CONFIG.HEADERS
+    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+    window.api = api;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 
-    // ── Bootstrap 5 + jQuery ──
-    // Modals are triggered directly from HTML via:
-    //   data-bs-toggle="modal" data-bs-target="#modalId"
-    // No openXxxModal() JS functions needed.
+    async function allIntegrations() {
+      try { return await api.all(API_ENDPOINTS.INTEGRATIONS.INDEX); }
+      catch (e) { console.error('Error fetching all integrations:', e); throw e; }
+    }
+    async function indexIntegrations(params = {}) {
+      try { return await api.index(API_ENDPOINTS.INTEGRATIONS.INDEX, params); }
+      catch (e) { console.error('Error indexing integrations:', e); throw e; }
+    }
+    async function createIntegration(payload) {
+      try { return await api.store(API_ENDPOINTS.INTEGRATIONS.INDEX, payload); }
+      catch (e) { console.error('Error creating integration:', e); throw e; }
+    }
+    async function getIntegration(id) {
+      try { return await api.show(API_ENDPOINTS.INTEGRATIONS.INDEX, id); }
+      catch (e) { console.error('Error fetching integration:', e); throw e; }
+    }
+    async function updateIntegrationAPI(id, payload) {
+      try { return await api.update(API_ENDPOINTS.INTEGRATIONS.INDEX, id, payload); }
+      catch (e) { console.error('Error updating integration:', e); throw e; }
+    }
+    async function deleteIntegrationAPI(id) {
+      try { return await api.destroy(API_ENDPOINTS.INTEGRATIONS.INDEX, id); }
+      catch (e) { console.error('Error deleting integration:', e); throw e; }
+    }
+    async function toggleIntegrationAPI(id) {
+      try { return await api.update(API_ENDPOINTS.INTEGRATIONS.TOGGLE(id), {}); }
+      catch (e) { console.error('Error toggling integration:', e); throw e; }
+    }
+  </script>
 
-    // Populate integration name from data attribute on the trigger button
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -558,29 +596,11 @@
       $('#toast').addClass('show');
       setTimeout(function () { $('#toast').removeClass('show'); }, duration);
     }
-    function saveForm() {
-      $('.modal.show').modal('hide');
-      showToast('\u2705', 'Record saved successfully!');
-    }
     function confirmDelete() {
       $('#modalDelete').modal('hide');
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
-    // ── End ──
 
-    // SUB-MODULE TABS
-    function showSubTab(tabGroup, tabId) {
-      document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-        t.classList.toggle('active', t.dataset.tabid === tabId);
-      });
-      document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-        p.classList.toggle('active', p.dataset.panelid === tabId);
-      });
-    }
-
-    // ═══════════════════════════════════════
-    // PAGE TITLE / DATE UPDATE
-    // ═══════════════════════════════════════
     const pageTitles = {
       dashboard: 'Dashboard Overview',
       employee: 'Employee Management',
@@ -620,63 +640,51 @@
       t.addEventListener('click', () => t.classList.toggle('on'));
     });
 
-
-    function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
-
-    // ═══════════════════════════════════════════
-    // API INTEGRATION — Integrations & Automation
-    // ═══════════════════════════════════════════
-    const API = {
-      integration: '/operation/api/integration/',
-    };
-
-    async function apiGet(url) {
-      try { const res = await fetch(url); return await res.json(); }
-      catch (e) { console.error('GET error:', e); return null; }
-    }
-
-    async function apiPost(url, data) {
-      try {
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        return { ok: res.ok, status: res.status, data: await res.json() };
-      } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-    }
-
     async function loadIntegrations() {
-      const result = await apiGet(API.integration);
-      if (result && result.data) {
-        const cards = document.querySelectorAll('#page-integrations .col-md-4 .row .col-6');
-        if (!cards.length) return;
-        // Update integration cards with real data
-        const connectedCount = result.data.filter(i => i.status === 'active').length;
-        const statCards = document.querySelectorAll('#page-integrations .stat-card .stat-value');
-        if (statCards[0]) statCards[0].textContent = connectedCount;
+      try {
+        const result = await indexIntegrations();
+        if (result && result.data) {
+          const connectedCount = result.data.filter(i => i.status === 'active').length;
+          const statCards = document.querySelectorAll('#page-integrations .stat-card .stat-value');
+          if (statCards[0]) statCards[0].textContent = connectedCount;
+        }
+      } catch (e) {
+        console.error('Failed to load integrations:', e);
       }
     }
 
     async function toggleIntegration(id) {
-      const res = await apiPost(API.integration + id + '/toggle/', {});
-      if (res.ok) { showToast('✅', 'Integration toggled'); loadIntegrations(); }
-      else showToast('❌', 'Failed to toggle integration');
+      try {
+        await toggleIntegrationAPI(id);
+        showToast('✅', 'Integration toggled');
+        loadIntegrations();
+      } catch (e) {
+        showToast('❌', 'Failed to toggle integration');
+      }
     }
 
     async function saveIntegration() {
-      const modal = document.getElementById('modalIntegration');
-      const inputs = modal.querySelectorAll('.fi');
-      const selects = modal.querySelectorAll('select.fi');
-      const data = {
-        name: inputs[0]?.value || '',
-        integration_type: selects[0]?.value || 'other',
-        api_key: inputs[1]?.value || '',
-        api_secret: inputs[2]?.value || '',
-        webhook_url: inputs[3]?.value || '',
-        is_enabled: true,
-        status: 'active',
-        settings: inputs[4]?.value || '{}',
-      };
-      const result = await apiPost(API.integration, data);
-      if (result.ok) { showToast('✅', 'Integration connected!'); bootstrap.Modal.getInstance(modal).hide(); loadIntegrations(); }
-      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+      try {
+        const modal = document.getElementById('modalIntegration');
+        const inputs = modal.querySelectorAll('.fi');
+        const selects = modal.querySelectorAll('select.fi');
+        const data = {
+          name: inputs[0]?.value || '',
+          integration_type: selects[0]?.value || 'other',
+          api_key: inputs[1]?.value || '',
+          api_secret: inputs[2]?.value || '',
+          webhook_url: inputs[3]?.value || '',
+          is_enabled: true,
+          status: 'active',
+          settings: inputs[4]?.value || '{}',
+        };
+        await createIntegration(data);
+        showToast('✅', 'Integration connected!');
+        bootstrap.Modal.getInstance(modal).hide();
+        loadIntegrations();
+      } catch (e) {
+        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+      }
     }
 
     async function saveAutomation() {
@@ -685,16 +693,12 @@
       bootstrap.Modal.getInstance(modal).hide();
     }
 
-    $(function () {
-      loadIntegrations();
-    });
-
+    $(function () { loadIntegrations(); });
     $(function () {
       var d = new Date();
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
       $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-
   </script>
 </body>
 

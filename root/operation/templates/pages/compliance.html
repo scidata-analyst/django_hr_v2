@@ -399,14 +399,61 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
   </script>
+  <script src="{% static 'js/constants.js' %}"></script>
+  <script src="{% static 'js/APIClient.js' %}"></script>
   <script>
+    const api = new APIClient({
+      baseURL: API_CONFIG.BASE_URL,
+      timeout: API_CONFIG.TIMEOUT,
+      headers: API_CONFIG.HEADERS
+    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+    window.api = api;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 
-    // ── Bootstrap 5 + jQuery ──
-    // Modals are triggered directly from HTML via:
-    //   data-bs-toggle="modal" data-bs-target="#modalId"
-    // No openXxxModal() JS functions needed.
+    async function allPolicies() {
+      try { return await api.all(API_ENDPOINTS.POLICIES.INDEX); }
+      catch (e) { console.error('Error fetching all policies:', e); throw e; }
+    }
+    async function indexPolicies(params = {}) {
+      try { return await api.index(API_ENDPOINTS.POLICIES.INDEX, params); }
+      catch (e) { console.error('Error indexing policies:', e); throw e; }
+    }
+    async function createPolicy(payload) {
+      try { return await api.store(API_ENDPOINTS.POLICIES.STORE, payload); }
+      catch (e) { console.error('Error creating policy:', e); throw e; }
+    }
+    async function getPolicy(id) {
+      try { return await api.show(API_ENDPOINTS.POLICIES.SHOW, id); }
+      catch (e) { console.error('Error fetching policy:', e); throw e; }
+    }
+    async function updatePolicyAPI(id, payload) {
+      try { return await api.update(API_ENDPOINTS.POLICIES.UPDATE, id, payload); }
+      catch (e) { console.error('Error updating policy:', e); throw e; }
+    }
+    async function deletePolicyAPI(id) {
+      try { return await api.destroy(API_ENDPOINTS.POLICIES.DESTROY, id); }
+      catch (e) { console.error('Error deleting policy:', e); throw e; }
+    }
 
-    // Populate integration name from data attribute on the trigger button
+    async function allCompliance() {
+      try { return await api.all(API_ENDPOINTS.COMPLIANCE.INDEX); }
+      catch (e) { console.error('Error fetching all compliance:', e); throw e; }
+    }
+    async function indexCompliance(params = {}) {
+      try { return await api.index(API_ENDPOINTS.COMPLIANCE.INDEX, params); }
+      catch (e) { console.error('Error indexing compliance:', e); throw e; }
+    }
+    async function completeComplianceAPI(id) {
+      try { return await api.update(API_ENDPOINTS.COMPLIANCE.COMPLETE(id), {}); }
+      catch (e) { console.error('Error completing compliance:', e); throw e; }
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -419,29 +466,11 @@
       $('#toast').addClass('show');
       setTimeout(function () { $('#toast').removeClass('show'); }, duration);
     }
-    function saveForm() {
-      $('.modal.show').modal('hide');
-      showToast('\u2705', 'Record saved successfully!');
-    }
     function confirmDelete() {
       $('#modalDelete').modal('hide');
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
-    // ── End ──
 
-    // SUB-MODULE TABS
-    function showSubTab(tabGroup, tabId) {
-      document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-        t.classList.toggle('active', t.dataset.tabid === tabId);
-      });
-      document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-        p.classList.toggle('active', p.dataset.panelid === tabId);
-      });
-    }
-
-    // ═══════════════════════════════════════
-    // PAGE TITLE / DATE UPDATE
-    // ═══════════════════════════════════════
     const pageTitles = {
       dashboard: 'Dashboard Overview',
       employee: 'Employee Management',
@@ -481,99 +510,12 @@
       t.addEventListener('click', () => t.classList.toggle('on'));
     });
 
-
-    function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
-
-    // ═══════════════════════════════════════════
-    // API INTEGRATION — Compliance & Policies
-    // ═══════════════════════════════════════════
-    const API = {
-      policy: '/operation/api/policy/',
-      compliance: '/operation/api/compliance/',
-    };
-
-    async function apiGet(url) {
-      try { const res = await fetch(url); return await res.json(); }
-      catch (e) { console.error('GET error:', e); return null; }
-    }
-
-    async function apiPost(url, data) {
-      try {
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        return { ok: res.ok, status: res.status, data: await res.json() };
-      } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-    }
-
-    async function loadPolicies(page) {
-      const pageSize = document.getElementById('policies-page-size')?.value || 10;
-      page = page || 1;
-      const search = document.getElementById('policy-search')?.value || '';
-      const category = document.getElementById('policy-filter-category')?.value || '';
-      let url = API.policy + `?page=${page}&page_size=${pageSize}`;
-      if (search) url += `&search=${encodeURIComponent(search)}`;
-      if (category) url += `&category=${category}`;
-      const result = await apiGet(url);
-      if (!result || !result.data) return;
-      const tbody = document.getElementById('policies-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      if (result.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No policies found</td></tr>';
-      } else {
-        result.data.forEach(p => {
-          const tr = document.createElement('tr');
-          tr.setAttribute('data-id', p.id);
-          tr.innerHTML = `
-            <td style="font-weight:600;"><i class="bi bi-file-earmark-pdf" style="color:var(--danger);"></i> ${p.policy_name}</td>
-            <td><span class="badge-custom badge-primary">${p.category}</span></td>
-            <td>v${p.version || '1.0'}</td>
-            <td>${p.effective_date ? new Date(p.effective_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '-'}</td>
-            <td>
-              <div class="progress-custom" style="width:80px;display:inline-block;margin-right:6px;">
-                <div class="progress-fill pf-green" style="width:${p.acknowledgement_rate || 0}%;"></div>
-              </div><span style="font-size:0.7rem;">${p.acknowledgement_rate || 0}%</span>
-            </td>
-            <td><button class="btn-outline-custom" style="padding:4px 8px;font-size:0.7rem;" onclick="viewPolicy(${p.id})"><i class="bi bi-eye"></i></button></td>`;
-          tbody.appendChild(tr);
-        });
-      }
-      renderPagination(result, 'policies-pagination-info', 'policies-pagination', 'loadPolicies');
-    }
-
-    async function loadCompliance(page) {
-      const pageSize = document.getElementById('compliance-page-size')?.value || 10;
-      page = page || 1;
-      const status = document.getElementById('compliance-filter-status')?.value || '';
-      let url = API.compliance + `?page=${page}&page_size=${pageSize}`;
-      if (status) url += `&status=${status}`;
-      const result = await apiGet(url);
-      if (!result || !result.data) return;
-      const tbody = document.getElementById('compliance-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      if (result.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">No compliance items found</td></tr>';
-      } else {
-        result.data.forEach(c => {
-          const statusBadge = c.status === 'completed' ? 'badge-success' : c.status === 'in_progress' ? 'badge-warning' : 'badge-danger';
-          const tr = document.createElement('tr');
-          tr.setAttribute('data-id', c.id);
-          tr.innerHTML = `
-            <td style="font-weight:600;">${c.checklist_name}</td>
-            <td>${c.due_date || '—'}</td>
-            <td><span class="badge-custom ${statusBadge}">${c.status}</span></td>
-            <td>${c.status !== 'completed' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="completeCompliance(${c.id})">✓ Complete</button>` : '—'}</td>`;
-          tbody.appendChild(tr);
-        });
-      }
-      renderPagination(result, 'compliance-pagination-info', 'compliance-pagination', 'loadCompliance');
-    }
-
     function renderPagination(result, infoId, containerId, fnName) {
       const totalPages = result.total_pages || 1;
       const page = result.page || 1;
-      const start = (page - 1) * (result.page_size || 10) + 1;
-      const end = Math.min(page * (result.page_size || 10), result.count);
+      const pageSize = result.page_size || 10;
+      const start = (page - 1) * pageSize + 1;
+      const end = Math.min(page * pageSize, result.count);
       const info = document.getElementById(infoId);
       if (info) {
         info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
@@ -594,41 +536,118 @@
       }
     }
 
-    async function completeCompliance(id) {
-      const res = await apiPost(API.compliance + id + '/complete/', {});
-      if (res.ok) { showToast('✅', 'Compliance item completed'); loadCompliance(); }
-      else showToast('❌', 'Failed to complete');
+    async function loadPolicies(page) {
+      try {
+        const pageSize = document.getElementById('policies-page-size')?.value || 10;
+        page = page || 1;
+        const search = document.getElementById('policy-search')?.value || '';
+        const category = document.getElementById('policy-filter-category')?.value || '';
+        const params = { page, page_size: pageSize };
+        if (search) params.search = search;
+        if (category) params.category = category;
+        const result = await indexPolicies(params);
+        if (!result || !result.data) return;
+        const tbody = document.getElementById('policies-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (result.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No policies found</td></tr>';
+        } else {
+          result.data.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-id', p.id);
+            tr.innerHTML = `
+              <td style="font-weight:600;"><i class="bi bi-file-earmark-pdf" style="color:var(--danger);"></i> ${p.policy_name}</td>
+              <td><span class="badge-custom badge-primary">${p.category}</span></td>
+              <td>v${p.version || '1.0'}</td>
+              <td>${p.effective_date ? new Date(p.effective_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '-'}</td>
+              <td>
+                <div class="progress-custom" style="width:80px;display:inline-block;margin-right:6px;">
+                  <div class="progress-fill pf-green" style="width:${p.acknowledgement_rate || 0}%;"></div>
+                </div><span style="font-size:0.7rem;">${p.acknowledgement_rate || 0}%</span>
+              </td>
+              <td><button class="btn-outline-custom" style="padding:4px 8px;font-size:0.7rem;" onclick="viewPolicy(${p.id})"><i class="bi bi-eye"></i></button></td>`;
+            tbody.appendChild(tr);
+          });
+        }
+        renderPagination(result, 'policies-pagination-info', 'policies-pagination', 'loadPolicies');
+      } catch (e) {
+        console.error('Failed to load policies:', e);
+      }
+    }
+
+    async function loadCompliance(page) {
+      try {
+        const pageSize = document.getElementById('compliance-page-size')?.value || 10;
+        page = page || 1;
+        const status = document.getElementById('compliance-filter-status')?.value || '';
+        const params = { page, page_size: pageSize };
+        if (status) params.status = status;
+        const result = await indexCompliance(params);
+        if (!result || !result.data) return;
+        const tbody = document.getElementById('compliance-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (result.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">No compliance items found</td></tr>';
+        } else {
+          result.data.forEach(c => {
+            const statusBadge = c.status === 'completed' ? 'badge-success' : c.status === 'in_progress' ? 'badge-warning' : 'badge-danger';
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-id', c.id);
+            tr.innerHTML = `
+              <td style="font-weight:600;">${c.checklist_name}</td>
+              <td>${c.due_date || '—'}</td>
+              <td><span class="badge-custom ${statusBadge}">${c.status}</span></td>
+              <td>${c.status !== 'completed' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="completeComplianceItem(${c.id})">✓ Complete</button>` : '—'}</td>`;
+            tbody.appendChild(tr);
+          });
+        }
+        renderPagination(result, 'compliance-pagination-info', 'compliance-pagination', 'loadCompliance');
+      } catch (e) {
+        console.error('Failed to load compliance:', e);
+      }
+    }
+
+    async function completeComplianceItem(id) {
+      try {
+        await completeComplianceAPI(id);
+        showToast('✅', 'Compliance item completed');
+        loadCompliance();
+      } catch (e) {
+        showToast('❌', 'Failed to complete');
+      }
     }
 
     async function savePolicy() {
-      const modal = document.getElementById('modalPolicy');
-      const inputs = modal.querySelectorAll('.fi');
-      const selects = modal.querySelectorAll('select.fi');
-      const data = {
-        policy_name: inputs[0]?.value || '',
-        category: selects[0]?.value || 'hr',
-        version: inputs[1]?.value || '1.0',
-        description: inputs[2]?.value || '',
-        effective_date: inputs[3]?.value || null,
-        review_date: inputs[4]?.value || null,
-        is_mandatory: selects[1]?.value === 'Yes',
-      };
-      const result = await apiPost(API.policy, data);
-      if (result.ok) { showToast('✅', 'Policy published!'); bootstrap.Modal.getInstance(modal).hide(); loadPolicies(); }
-      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+      try {
+        const modal = document.getElementById('modalPolicy');
+        const inputs = modal.querySelectorAll('.fi');
+        const selects = modal.querySelectorAll('select.fi');
+        const data = {
+          policy_name: inputs[0]?.value || '',
+          category: selects[0]?.value || 'hr',
+          version: inputs[1]?.value || '1.0',
+          description: inputs[2]?.value || '',
+          effective_date: inputs[3]?.value || null,
+          review_date: inputs[4]?.value || null,
+          is_mandatory: selects[1]?.value === 'Yes',
+        };
+        await createPolicy(data);
+        showToast('✅', 'Policy published!');
+        bootstrap.Modal.getInstance(modal).hide();
+        loadPolicies();
+      } catch (e) {
+        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+      }
     }
 
-    $(function () {
-      loadPolicies();
-      loadCompliance();
-    });
-
+    $(function () { loadPolicies(); loadCompliance(); });
     $(function () {
       var d = new Date();
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
       $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-
   </script>
 </body>
 

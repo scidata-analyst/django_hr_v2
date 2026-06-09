@@ -381,19 +381,67 @@
   </div>
   <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
 
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
   </script>
   <script>
+    const api = new APIClient({
+      baseURL: API_CONFIG.BASE_URL,
+      timeout: API_CONFIG.TIMEOUT,
+      headers: API_CONFIG.HEADERS
+    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
+    window.api = api;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 
-    // ── Bootstrap 5 + jQuery ──
-    // Modals are triggered directly from HTML via:
-    //   data-bs-toggle="modal" data-bs-target="#modalId"
-    // No openXxxModal() JS functions needed.
+    async function allBenefitPlans() {
+      try { return await api.all(API_ENDPOINTS.BENEFITS.PLANS.INDEX); }
+      catch (e) { console.error('Error fetching all benefit plans:', e); throw e; }
+    }
+    async function indexBenefitPlans(params = {}) {
+      try { return await api.index(API_ENDPOINTS.BENEFITS.PLANS.INDEX, params); }
+      catch (e) { console.error('Error indexing benefit plans:', e); throw e; }
+    }
+    async function createBenefitPlan(payload) {
+      try { return await api.store(API_ENDPOINTS.BENEFITS.PLANS.STORE, payload); }
+      catch (e) { console.error('Error creating benefit plan:', e); throw e; }
+    }
+    async function getBenefitPlan(id) {
+      try { return await api.show(API_ENDPOINTS.BENEFITS.PLANS.SHOW, id); }
+      catch (e) { console.error('Error fetching benefit plan:', e); throw e; }
+    }
+    async function updateBenefitPlanAPI(id, payload) {
+      try { return await api.update(API_ENDPOINTS.BENEFITS.PLANS.UPDATE, id, payload); }
+      catch (e) { console.error('Error updating benefit plan:', e); throw e; }
+    }
+    async function deleteBenefitPlanAPI(id) {
+      try { return await api.destroy(API_ENDPOINTS.BENEFITS.PLANS.DESTROY, id); }
+      catch (e) { console.error('Error deleting benefit plan:', e); throw e; }
+    }
 
-    // Populate integration name from data attribute on the trigger button
+    async function allSafetyIncidents() {
+      try { return await api.all(API_ENDPOINTS.SAFETY.INCIDENTS.INDEX); }
+      catch (e) { console.error('Error fetching all safety incidents:', e); throw e; }
+    }
+    async function indexSafetyIncidents(params = {}) {
+      try { return await api.index(API_ENDPOINTS.SAFETY.INCIDENTS.INDEX, params); }
+      catch (e) { console.error('Error indexing safety incidents:', e); throw e; }
+    }
+    async function createSafetyIncident(payload) {
+      try { return await api.store(API_ENDPOINTS.SAFETY.INCIDENTS.STORE, payload); }
+      catch (e) { console.error('Error creating safety incident:', e); throw e; }
+    }
+    async function resolveSafetyIncidentAPI(id) {
+      try { return await api.update(API_ENDPOINTS.SAFETY.INCIDENTS.RESOLVE, id, {}); }
+      catch (e) { console.error('Error resolving safety incident:', e); throw e; }
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -406,29 +454,11 @@
       $('#toast').addClass('show');
       setTimeout(function () { $('#toast').removeClass('show'); }, duration);
     }
-    function saveForm() {
-      $('.modal.show').modal('hide');
-      showToast('\u2705', 'Record saved successfully!');
-    }
     function confirmDelete() {
       $('#modalDelete').modal('hide');
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
-    // ── End ──
 
-    // SUB-MODULE TABS
-    function showSubTab(tabGroup, tabId) {
-      document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-        t.classList.toggle('active', t.dataset.tabid === tabId);
-      });
-      document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-        p.classList.toggle('active', p.dataset.panelid === tabId);
-      });
-    }
-
-    // ═══════════════════════════════════════
-    // PAGE TITLE / DATE UPDATE
-    // ═══════════════════════════════════════
     const pageTitles = {
       dashboard: 'Dashboard Overview',
       employee: 'Employee Management',
@@ -468,93 +498,12 @@
       t.addEventListener('click', () => t.classList.toggle('on'));
     });
 
-
-    function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
-
-    // ═══════════════════════════════════════════
-    // API INTEGRATION — Health, Safety & Benefits
-    // ═══════════════════════════════════════════
-    const API = {
-      benefitPlan: '/operation/api/benefit-plan/',
-      benefitEnrollment: '/operation/api/benefit-enrollment/',
-      safetyIncident: '/operation/api/safety-incident/',
-    };
-
-    async function apiGet(url) {
-      try { const res = await fetch(url); return await res.json(); }
-      catch (e) { console.error('GET error:', e); return null; }
-    }
-
-    async function apiPost(url, data) {
-      try {
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        return { ok: res.ok, status: res.status, data: await res.json() };
-      } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
-    }
-
-    async function loadBenefitPlans(page) {
-      const pageSize = document.getElementById('benefits-page-size')?.value || 10;
-      page = page || 1;
-      const search = document.getElementById('benefit-search')?.value || '';
-      const status = document.getElementById('benefit-filter-status')?.value || '';
-      let url = API.benefitPlan + `?page=${page}&page_size=${pageSize}`;
-      if (search) url += `&search=${encodeURIComponent(search)}`;
-      if (status) url += `&status=${status}`;
-      console.log('Fetching:', url);
-      const result = await apiGet(url);
-      console.log('Result:', result);
-      if (!result || !result.data) {
-        console.error('No data returned from API');
-        return;
-      }
-      const tbody = document.getElementById('benefits-tbody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      if (result.data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No benefit plans found</td></tr>';
-      } else {
-        result.data.forEach(bp => {
-          const tr = document.createElement('tr');
-          tr.setAttribute('data-id', bp.id);
-          tr.innerHTML = `
-            <td style="font-weight:600;">${bp.plan_name}</td>
-            <td>${bp.plan_type}</td>
-            <td>${bp.enrolled_count || 0}</td>
-            <td>$${Number(bp.cost_per_month || 0).toLocaleString()}/mo</td>
-            <td><span class="badge-custom ${bp.is_active ? 'badge-success' : 'badge-gray'}">${bp.is_active ? 'Active' : 'Inactive'}</span></td>`;
-          tbody.appendChild(tr);
-        });
-      }
-      renderPagination(result, 'benefits-pagination-info', 'benefits-pagination', 'loadBenefitPlans');
-    }
-
-    async function loadSafetyIncidents() {
-      const result = await apiGet(API.safetyIncident);
-      if (result && result.data) {
-        const container = document.querySelector('#page-health .card-body-custom .d-flex.flex-column');
-        if (!container) return;
-        container.innerHTML = '';
-        result.data.forEach(si => {
-          const color = si.status === 'resolved' || si.status === 'closed' ? 'var(--success)' : 'var(--accent)';
-          const bg = si.status === 'resolved' || si.status === 'closed' ? '#f0fdf4' : '#fffbeb';
-          const div = document.createElement('div');
-          div.style.cssText = `display:flex;justify-content:space-between;align-items:center;padding:10px;background:${bg};border-radius:8px;margin-bottom:6px;`;
-          div.innerHTML = `
-            <div>
-              <div style="font-size:0.8rem;font-weight:600;color:${color};">${si.severity} - ${si.location}</div>
-              <div style="font-size:0.7rem;color:var(--text-muted);">${si.incident_date} · ${si.description ? si.description.substring(0, 40) + '...' : ''}</div>
-            </div>
-            <span class="badge-custom ${si.status === 'closed' ? 'badge-success' : 'badge-warning'}">${si.status}</span>`;
-          container.appendChild(div);
-        });
-      }
-    }
-
     function renderPagination(result, infoId, containerId, fnName) {
       const totalPages = result.total_pages || 1;
       const page = result.page || 1;
-      const start = (page - 1) * (result.page_size || 10) + 1;
-      const end = Math.min(page * (result.page_size || 10), result.count);
+      const pageSize = result.page_size || 10;
+      const start = (page - 1) * pageSize + 1;
+      const end = Math.min(page * pageSize, result.count);
       const info = document.getElementById(infoId);
       if (info) {
         info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
@@ -575,56 +524,95 @@
       }
     }
 
+    async function loadBenefitPlans(page) {
+      try {
+        const pageSize = document.getElementById('benefits-page-size')?.value || 10;
+        page = page || 1;
+        const search = document.getElementById('benefit-search')?.value || '';
+        const status = document.getElementById('benefit-filter-status')?.value || '';
+        const params = { page, page_size: pageSize };
+        if (search) params.search = search;
+        if (status) params.status = status;
+        const result = await indexBenefitPlans(params);
+        if (!result || !result.data) return;
+        const tbody = document.getElementById('benefits-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (result.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No benefit plans found</td></tr>';
+        } else {
+          result.data.forEach(bp => {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-id', bp.id);
+            tr.innerHTML = `
+              <td style="font-weight:600;">${bp.plan_name}</td>
+              <td>${bp.plan_type}</td>
+              <td>${bp.enrolled_count || 0}</td>
+              <td>$${Number(bp.cost_per_month || 0).toLocaleString()}/mo</td>
+              <td><span class="badge-custom ${bp.is_active ? 'badge-success' : 'badge-gray'}">${bp.is_active ? 'Active' : 'Inactive'}</span></td>`;
+            tbody.appendChild(tr);
+          });
+        }
+        renderPagination(result, 'benefits-pagination-info', 'benefits-pagination', 'loadBenefitPlans');
+      } catch (e) {
+        console.error('Failed to load benefit plans:', e);
+      }
+    }
+
     async function loadSafetyIncidents() {
-      const result = await apiGet(API.safetyIncident);
-      if (result && result.data) {
-        const container = document.querySelector('#page-health .card-body-custom .d-flex.flex-column');
-        if (!container) return;
-        container.innerHTML = '';
-        result.data.forEach(si => {
-          const color = si.status === 'resolved' || si.status === 'closed' ? 'var(--success)' : 'var(--accent)';
-          const bg = si.status === 'resolved' || si.status === 'closed' ? '#f0fdf4' : '#fffbeb';
-          const div = document.createElement('div');
-          div.style.cssText = `display:flex;justify-content:space-between;align-items:center;padding:10px;background:${bg};border-radius:8px;margin-bottom:6px;`;
-          div.innerHTML = `
-            <div>
-              <div style="font-size:0.8rem;font-weight:600;color:${color};">${si.severity} — ${si.location}</div>
-              <div style="font-size:0.7rem;color:var(--text-muted);">${si.incident_date} · ${si.description ? si.description.substring(0, 40) + '...' : ''}</div>
-            </div>
-            <span class="badge-custom ${si.status === 'closed' ? 'badge-success' : 'badge-warning'}">${si.status}</span>`;
-          container.appendChild(div);
-        });
+      try {
+        const result = await indexSafetyIncidents();
+        if (result && result.data) {
+          const container = document.querySelector('#page-health .card-body-custom .d-flex.flex-column');
+          if (!container) return;
+          container.innerHTML = '';
+          result.data.forEach(si => {
+            const color = si.status === 'resolved' || si.status === 'closed' ? 'var(--success)' : 'var(--accent)';
+            const bg = si.status === 'resolved' || si.status === 'closed' ? '#f0fdf4' : '#fffbeb';
+            const div = document.createElement('div');
+            div.style.cssText = `display:flex;justify-content:space-between;align-items:center;padding:10px;background:${bg};border-radius:8px;margin-bottom:6px;`;
+            div.innerHTML = `
+              <div>
+                <div style="font-size:0.8rem;font-weight:600;color:${color};">${si.severity} - ${si.location}</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">${si.incident_date} · ${si.description ? si.description.substring(0, 40) + '...' : ''}</div>
+              </div>
+              <span class="badge-custom ${si.status === 'closed' ? 'badge-success' : 'badge-warning'}">${si.status}</span>`;
+            container.appendChild(div);
+          });
+        }
+      } catch (e) {
+        console.error('Failed to load safety incidents:', e);
       }
     }
 
     async function saveBenefit() {
-      const modal = document.getElementById('modalBenefit');
-      const inputs = modal.querySelectorAll('.fi');
-      const selects = modal.querySelectorAll('select.fi');
-      const data = {
-        plan_name: inputs[0]?.value || '',
-        plan_type: selects[0]?.value || 'medical',
-        coverage_details: inputs[1]?.value || '',
-        cost_per_month: inputs[2]?.value || 0,
-        employer_contribution: inputs[3]?.value || 0,
-        is_active: true,
-      };
-      const result = await apiPost(API.benefitPlan, data);
-      if (result.ok) { showToast('✅', 'Benefit plan saved!'); bootstrap.Modal.getInstance(modal).hide(); loadBenefitPlans(); }
-      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+      try {
+        const modal = document.getElementById('modalBenefit');
+        const inputs = modal.querySelectorAll('.fi');
+        const selects = modal.querySelectorAll('select.fi');
+        const data = {
+          plan_name: inputs[0]?.value || '',
+          plan_type: selects[0]?.value || 'medical',
+          coverage_details: inputs[1]?.value || '',
+          cost_per_month: inputs[2]?.value || 0,
+          employer_contribution: inputs[3]?.value || 0,
+          is_active: true,
+        };
+        await createBenefitPlan(data);
+        showToast('✅', 'Benefit plan saved!');
+        bootstrap.Modal.getInstance(modal).hide();
+        loadBenefitPlans();
+      } catch (e) {
+        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+      }
     }
 
-    $(function () {
-      loadBenefitPlans();
-      loadSafetyIncidents();
-    });
-
+    $(function () { loadBenefitPlans(); loadSafetyIncidents(); });
     $(function () {
       var d = new Date();
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
       $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-
   </script>
 </body>
 

@@ -10,6 +10,28 @@
  *              Static properties return a string; dynamic ones accept an `id` and return a string.
  */
 const API_ENDPOINTS = {
+    RECRUITMENT: {
+        JOBS: {
+            INDEX: '/core-module/recruitment/api/job/',
+            STORE: '/core-module/recruitment/api/job/',
+            SHOW: (id) => `/core-module/recruitment/api/job/${id}/`,
+            UPDATE: (id) => `/core-module/recruitment/api/job/${id}/`,
+            DESTROY: (id) => `/core-module/recruitment/api/job/${id}/`,
+        },
+        CANDIDATES: {
+            INDEX: '/core-module/recruitment/api/candidate/',
+            STORE: '/core-module/recruitment/api/candidate/',
+            SHOW: (id) => `/core-module/recruitment/api/candidate/${id}/`,
+            UPDATE: (id) => `/core-module/recruitment/api/candidate/${id}/`,
+            DESTROY: (id) => `/core-module/recruitment/api/candidate/${id}/`,
+            ADVANCE: (id) => `/core-module/recruitment/api/candidate/${id}/advance/`,
+            REJECT: (id) => `/core-module/recruitment/api/candidate/${id}/reject/`,
+        },
+        PIPELINE: {
+            INDEX: '/core-module/recruitment/api/candidate/pipeline/',
+        },
+    },
+
     BENEFITS: {
         PLANS: {
             INDEX: '/operation/api/benefit-plan/',
@@ -52,6 +74,12 @@ const API_ENDPOINTS = {
         TURNOVER: '/operation/api/report/turnover/',
     },
 
+    ATTENDANCE: {
+        STATS: {
+            INDEX: '/core-module/attendance/api/attendance/stats/',
+        },
+    },
+
     INTEGRATIONS: {
         INDEX: '/operation/api/integration/',
         TOGGLE: (id) => `/operation/api/integration/${id}/toggle/`,
@@ -74,7 +102,7 @@ const API_ENDPOINTS = {
  * @property {Object} HEADERS     - Default HTTP headers sent with every request.
  */
 const API_CONFIG = {
-    BASE_URL: '',
+    BASE_URL: 'http://localhost:9003',
     TIMEOUT: 10000,
     HEADERS: {
         'Content-Type': 'application/json',

@@ -70,8 +70,13 @@ class APIClient {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                const error = await response.json().catch(() => ({}));
-                throw new Error(error.message || `HTTP ${response.status}`);
+                const contentType = response.headers.get('content-type') || '';
+                if (contentType.includes('application/json')) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.message || error.error || `HTTP ${response.status}`);
+                }
+                const text = await response.text().catch(() => '');
+                throw new Error(text || `HTTP ${response.status}`);
             }
 
             return await response.json();
@@ -123,7 +128,41 @@ class APIClient {
      * @returns {Promise<Object>} Stored record
      */
     async store(endpoint, data) {
-        return this._request('POST', endpoint, data);
+        const urlPath = this._getEndpoint(endpoint);
+        const url = `${this.baseURL}${urlPath}`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+        const options = {
+            method: 'POST',
+            headers: this.headers,
+            signal: controller.signal,
+            body: JSON.stringify(data)
+        };
+
+        try {
+            const response = await fetch(url, options);
+            clearTimeout(timeoutId);
+            if (!response.ok) {
+                const contentType = response.headers.get('content-type') || '';
+                if (contentType.includes('application/json')) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.message || error.error || `HTTP ${response.status}`);
+                }
+                const text = await response.text().catch(() => '');
+                throw new Error(text || `HTTP ${response.status}`);
+            }
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                const text = await response.text().catch(() => '');
+                console.warn('Unexpected non-JSON POST response:', text);
+                return {};
+            }
+            return await response.json();
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
+        }
     }
 
     /**
