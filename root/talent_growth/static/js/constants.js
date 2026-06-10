@@ -200,6 +200,85 @@ const API_ENDPOINTS = {
             SHOW: (id) => `/core-module/employee/api/document/${id}/`,
         },
     },
+
+    /**
+     * @namespace TALENT_GROWTH
+     * @description Talent growth modules - engagement, performance, training, talent.
+     * @see talent_growth/routes/
+     * @routePrefix talent-growth
+     */
+    TALENT_GROWTH: {
+        /** @routePrefix talent-growth.engagement */
+        ENGAGEMENT: {
+            SURVEYS: {
+                INDEX: '/talent-growth/engagement/api/survey/',
+                STORE: '/talent-growth/engagement/api/survey/',
+                SHOW: (id) => `/talent-growth/engagement/api/survey/${id}/`,
+                UPDATE: (id) => `/talent-growth/engagement/api/survey/${id}/`,
+                DESTROY: (id) => `/talent-growth/engagement/api/survey/${id}/`,
+            },
+            RECOGNITION: {
+                INDEX: '/talent-growth/engagement/api/recognition/',
+                STORE: '/talent-growth/engagement/api/recognition/',
+                SHOW: (id) => `/talent-growth/engagement/api/recognition/${id}/`,
+                UPDATE: (id) => `/talent-growth/engagement/api/recognition/${id}/`,
+                DESTROY: (id) => `/talent-growth/engagement/api/recognition/${id}/`,
+                EMPLOYEE_POINTS: (employeeId) => `/talent-growth/engagement/api/recognition/${employeeId}/points/`,
+            },
+        },
+
+        /** @routePrefix talent-growth.performance */
+        PERFORMANCE: {
+            REVIEWS: {
+                INDEX: '/talent-growth/performance/api/review/',
+                STORE: '/talent-growth/performance/api/review/',
+                SHOW: (id) => `/talent-growth/performance/api/review/${id}/`,
+                COMPLETE: (id) => `/talent-growth/performance/api/review/${id}/complete/`,
+            },
+            GOALS: {
+                INDEX: '/talent-growth/performance/api/goal/',
+                STORE: '/talent-growth/performance/api/goal/',
+                SHOW: (id) => `/talent-growth/performance/api/goal/${id}/`,
+                UPDATE_PROGRESS: (id) => `/talent-growth/performance/api/goal/${id}/progress/`,
+            },
+        },
+
+        /** @routePrefix talent-growth.training */
+        TRAINING: {
+            COURSES: {
+                INDEX: '/talent-growth/training/api/course/',
+                STORE: '/talent-growth/training/api/course/',
+                SHOW: (id) => `/talent-growth/training/api/course/${id}/`,
+                UPDATE: (id) => `/talent-growth/training/api/course/${id}/`,
+                DESTROY: (id) => `/talent-growth/training/api/course/${id}/`,
+            },
+            ENROLLMENTS: {
+                INDEX: '/talent-growth/training/api/enrollment/',
+                STORE: '/talent-growth/training/api/enrollment/',
+                SHOW: (id) => `/talent-growth/training/api/enrollment/${id}/`,
+                COMPLETE: (id) => `/talent-growth/training/api/enrollment/${id}/complete/`,
+                BULK: '/talent-growth/training/api/enrollment/bulk/',
+            },
+        },
+
+        /** @routePrefix talent-growth.talent */
+        TALENT: {
+            PROFILES: {
+                INDEX: '/talent-growth/talent/api/profile/',
+                STORE: '/talent-growth/talent/api/profile/',
+                SHOW: (id) => `/talent-growth/talent/api/profile/${id}/`,
+                UPDATE: (id) => `/talent-growth/talent/api/profile/${id}/`,
+                DESTROY: (id) => `/talent-growth/talent/api/profile/${id}/`,
+            },
+            SUCCESSION: {
+                INDEX: '/talent-growth/talent/api/succession/',
+                STORE: '/talent-growth/talent/api/succession/',
+                SHOW: (id) => `/talent-growth/talent/api/succession/${id}/`,
+                UPDATE: (id) => `/talent-growth/talent/api/succession/${id}/`,
+                DESTROY: (id) => `/talent-growth/talent/api/succession/${id}/`,
+            },
+        },
+    },
 };
 
 /**

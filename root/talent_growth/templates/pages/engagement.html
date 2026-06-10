@@ -3,539 +3,610 @@
 {% load static %}
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HRMSPro — Engagement & Recognition</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
-    rel="stylesheet" />
-  
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HRMSPro — Engagement & Recognition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
 <body>
-  <div class="app-layout">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-icon">💼</div>
-        <div class="brand-text">
-          <div class="brand-name">HRMSPro</div>
-          <div class="brand-sub">Enterprise Suite</div>
-        </div>
-      </div>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">💼</div>
+                <div class="brand-text">
+                    <div class="brand-name">HRMSPro</div>
+                    <div class="brand-sub">Enterprise Suite</div>
+                </div>
+            </div>
 
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Main</div>
-        <button class="nav-item-btn" onclick="location.href='{% url 'home' %}'"><span class="nav-icon">🏠</span>
-          Dashboard</button>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Core Modules</div>
-        <button class="nav-item-btn" onclick="location.href='{% url 'employee' %}'"><span class="nav-icon">👤</span>
-          Employee Management</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'attendance' %}'"><span class="nav-icon">🕒</span>
-          Attendance & Leave<span class="nav-badge">5</span></button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'payroll' %}'"><span class="nav-icon">💰</span>
-          Payroll Management</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'recruitment' %}'"><span class="nav-icon">📝</span>
-          Recruitment & Hiring</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'onboarding' %}'"><span class="nav-icon">🤝</span>
-          Onboarding & Offboarding</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'ess' %}'"><span class="nav-icon">🖥️</span>
-          Self-Service (ESS)</button>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Talent & Growth</div>
-        <button class="nav-item-btn" onclick="location.href='{% url 'performance' %}'"><span class="nav-icon">📈</span>
-          Performance Mgmt</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'training' %}'"><span class="nav-icon">🎓</span>
-          Training & Development</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'talent' %}'"><span class="nav-icon">🚀</span>
-          Talent & Succession</button>
-        <button class="nav-item-btn active" onclick="location.href='{% url 'engagement' %}'"><span
-            class="nav-icon">🌟</span> Engagement & Recognition</button>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-section-label">Operations</div>
-        <button class="nav-item-btn" onclick="location.href='{% url 'health' %}'"><span class="nav-icon">🏥</span>
-          Health, Safety & Benefits</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'compliance' %}'"><span class="nav-icon">⚖️</span>
-          Compliance & Policies</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'report' %}'"><span class="nav-icon">📊</span>
-          Reports & Analytics</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'branding' %}'"><span class="nav-icon">📣</span>
-          Recruitment Marketing</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'global_view' %}'"><span class="nav-icon">🌍</span>
-          Global HR</button>
-        <button class="nav-item-btn" onclick="location.href='{% url 'integration' %}'"><span class="nav-icon">⚙️</span>
-          Integrations</button>
-      </div>
-      <div class="sidebar-footer">
-        <div class="user-card">
-          <div class="user-avatar">AR</div>
-          <div class="user-info">
-            <div class="user-name">Ahmed Rahman</div>
-            <div class="user-role">HR Administrator</div>
-          </div><i class="bi bi-three-dots-vertical" style="color:#94a3b8;font-size:0.9rem;"></i>
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Main</div>
+                <button class="nav-item-btn" onclick="location.href='{% url 'home' %}'"><span class="nav-icon">🏠</span>
+                    Dashboard</button>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Core Modules</div>
+                <button class="nav-item-btn" onclick="location.href='{% url 'employee' %}'"><span
+                        class="nav-icon">👤</span> Employee Management</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'attendance' %}'"><span
+                        class="nav-icon">🕒</span> Attendance & Leave<span class="nav-badge">5</span></button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'payroll' %}'"><span
+                        class="nav-icon">💰</span> Payroll Management</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'recruitment' %}'"><span
+                        class="nav-icon">📝</span> Recruitment & Hiring</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'onboarding' %}'"><span
+                        class="nav-icon">🤝</span> Onboarding & Offboarding</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'ess' %}'"><span class="nav-icon">🖥️</span>
+                    Self-Service (ESS)</button>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Talent & Growth</div>
+                <button class="nav-item-btn" onclick="location.href='{% url 'performance' %}'"><span
+                        class="nav-icon">📈</span> Performance Mgmt</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'training' %}'"><span
+                        class="nav-icon">🎓</span> Training & Development</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'talent' %}'"><span
+                        class="nav-icon">🚀</span> Talent & Succession</button>
+                <button class="nav-item-btn active" onclick="location.href='{% url 'engagement' %}'"><span
+                        class="nav-icon">🌟</span> Engagement & Recognition</button>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Operations</div>
+                <button class="nav-item-btn" onclick="location.href='{% url 'health' %}'"><span
+                        class="nav-icon">🏥</span> Health, Safety & Benefits</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'compliance' %}'"><span
+                        class="nav-icon">⚖️</span> Compliance & Policies</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'report' %}'"><span
+                        class="nav-icon">📊</span> Reports & Analytics</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'branding' %}'"><span
+                        class="nav-icon">📣</span> Recruitment Marketing</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'global_view' %}'"><span
+                        class="nav-icon">🌍</span> Global HR</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'integration' %}'"><span
+                        class="nav-icon">⚙️</span> Integrations</button>
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-card">
+                    <div class="user-avatar">AR</div>
+                    <div class="user-info">
+                        <div class="user-name">Ahmed Rahman</div>
+                        <div class="user-role">HR Administrator</div>
+                    </div><i class="bi bi-three-dots-vertical" style="color:#94a3b8;font-size:0.9rem;"></i>
+                </div>
+            </div>
+        </aside>
+        <div class="main-wrap">
+            <div class="topbar">
+                <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i
+                        class="bi bi-list"></i></button>
+                <div class="topbar-title">Engagement & Recognition</div>
+                <div class="topbar-search"><i class="bi bi-search" style="color:#94a3b8;font-size:0.85rem;"></i><input
+                        type="text" placeholder="Search anything..." /></div>
+                <div class="topbar-date" id="topbar-date"></div>
+                <div class="topbar-action"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
+                <div class="topbar-action"><i class="bi bi-gear"></i></div>
+                <div class="avatar av-blue" style="width:34px;height:34px;font-size:0.72rem;cursor:pointer;">AR</div>
+            </div>
+            <div class="page-content">
+                <div class="page active" id="page-engagement">
+                    <div class="page-header">
+                        <div class="page-header-left">
+                            <div class="page-title">Employee Engagement & Recognition</div>
+                            <div class="page-subtitle">Building a culture of appreciation and belonging</div>
+                        </div>
+                        <div class="page-actions">
+                            <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalSurvey"><i
+                                    class="bi bi-chat-square-text"></i>
+                                New Survey</button>
+                            <button class="btn-primary-custom" data-bs-toggle="modal"
+                                data-bs-target="#modalRecognition"><i class="bi bi-award"></i> Recognize
+                                Employee</button>
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card green">
+                                <div class="stat-icon green"><i class="bi bi-emoji-smile"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Engagement Score</div>
+                                    <div class="stat-value" id="stat-engagement-score">—</div>
+                                    <div class="stat-change up" id="stat-engagement-change">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card amber">
+                                <div class="stat-icon amber"><i class="bi bi-chat-dots"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Survey Responses</div>
+                                    <div class="stat-value" id="stat-survey-responses">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card pink">
+                                <div class="stat-icon pink"><i class="bi bi-trophy"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Awards This Month</div>
+                                    <div class="stat-value" id="stat-awards">—</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card blue">
+                                <div class="stat-icon blue"><i class="bi bi-megaphone"></i></div>
+                                <div class="stat-info">
+                                    <div class="stat-label">Announcements</div>
+                                    <div class="stat-value" id="stat-announcements">—</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-xl-6">
+                            <div class="card-custom">
+                                <div class="card-header-custom">
+                                    <div class="card-header-title">🏆 Recognition Wall</div><button class="btn-primary-custom"
+                                        style="padding:6px 12px;" data-bs-toggle="modal" data-bs-target="#modalRecognition">+
+                                        Recognize</button>
+                                </div>
+                                <div class="card-body-custom">
+                                    <div id="recognition-wall"
+                                    style="display:flex;flex-direction:column;gap:12px;">
+                                    <div
+                                        style="text-align:center;padding:40px;color:var(--text-muted);">
+                                        Loading recognitions...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card-custom mb-3">
+                            <div class="card-header-custom">
+                                <div class="card-header-title">Latest Survey Results</div><span
+                                    class="badge-custom badge-success">Q1
+                                    2026</span>
+                            </div>
+                            <div class="card-body-custom">
+                                <div id="survey-results"
+                                style="display:flex;flex-direction:column;gap:10px;">
+                                <div
+                                style="text-align:center;padding:40px;color:var(--text-muted);">
+                                Loading surveys...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-custom">
+                        <div class="card-header-custom">
+                            <div class="card-header-title">Upcoming Events</div>
+                        </div>
+                        <div class="card-body-custom">
+                            <div id="upcoming-events"
+                            style="display:flex;flex-direction:column;gap:8px;">
+                            <div
+                            style="text-align:center;padding:40px;color:var(--text-muted);">
+                            Loading events...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </aside>
-    <div class="main-wrap">
-      <div class="topbar">
-        <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i
-            class="bi bi-list"></i></button>
-        <div class="topbar-title">Engagement & Recognition</div>
-        <div class="topbar-search"><i class="bi bi-search" style="color:#94a3b8;font-size:0.85rem;"></i><input
-            type="text" placeholder="Search anything..." /></div>
-        <div class="topbar-date" id="topbar-date"></div>
-        <div class="topbar-action"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
-        <div class="topbar-action"><i class="bi bi-gear"></i></div>
-        <div class="avatar av-blue" style="width:34px;height:34px;font-size:0.72rem;cursor:pointer;">AR</div>
-      </div>
-      <div class="page-content">
-        <div class="page active" id="page-engagement">
-          <div class="page-header">
-            <div class="page-header-left">
-              <div class="page-title">Employee Engagement & Recognition</div>
-              <div class="page-subtitle">Building a culture of appreciation and belonging</div>
-            </div>
-            <div class="page-actions">
-              <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalSurvey"><i
-                  class="bi bi-chat-square-text"></i>
-                New Survey</button>
-              <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalRecognition"><i
-                  class="bi bi-award"></i> Recognize
-                Employee</button>
-            </div>
-          </div>
-          <div class="row g-3 mb-4">
-            <div class="col-md-3">
-              <div class="stat-card green">
-                <div class="stat-icon green"><i class="bi bi-emoji-smile"></i></div>
-                <div class="stat-info">
-                  <div class="stat-label">Engagement Score</div>
-                  <div class="stat-value">78%</div>
-                  <div class="stat-change up">+5% QoQ</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="stat-card amber">
-                <div class="stat-icon amber"><i class="bi bi-chat-dots"></i></div>
-                <div class="stat-info">
-                  <div class="stat-label">Survey Responses</div>
-                  <div class="stat-value">1,940</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="stat-card pink">
-                <div class="stat-icon pink"><i class="bi bi-trophy"></i></div>
-                <div class="stat-info">
-                  <div class="stat-label">Awards This Month</div>
-                  <div class="stat-value">24</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="stat-card blue">
-                <div class="stat-icon blue"><i class="bi bi-megaphone"></i></div>
-                <div class="stat-info">
-                  <div class="stat-label">Announcements</div>
-                  <div class="stat-value">8</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row g-3">
-            <div class="col-xl-6">
-              <div class="card-custom">
-                <div class="card-header-custom">
-                  <div class="card-header-title">🏆 Recognition Wall</div><button class="btn-primary-custom"
-                    style="padding:6px 12px;" data-bs-toggle="modal" data-bs-target="#modalRecognition">+
-                    Recognize</button>
-                </div>
-                <div class="card-body-custom">
-                  <div style="display:flex;flex-direction:column;gap:12px;">
-                    <div
-                      style="padding:14px;background:linear-gradient(135deg,#fffbeb,#fef9c3);border-radius:10px;border:1px solid #fde68a;">
-                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                        <div class="avatar av-blue">KH</div>
-                        <div>
-                          <div style="font-size:0.82rem;font-weight:700;">Kabir Hossain</div>
-                          <div style="font-size:0.68rem;color:var(--text-muted);">🏅 Employee of the Month</div>
-                        </div><span style="margin-left:auto;font-size:1.2rem;">⭐</span>
-                      </div>
-                      <div style="font-size:0.78rem;color:var(--text-mid);">"Outstanding work on the new API
-                        architecture. Delivered 2 weeks ahead of schedule!"</div>
-                      <div style="font-size:0.68rem;color:var(--text-muted);margin-top:6px;">by Sara Ahmed · 2 days ago
-                        · 42 👏</div>
-                    </div>
-                    <div
-                      style="padding:14px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:10px;border:1px solid #bbf7d0;">
-                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-                        <div class="avatar av-pink">NJ</div>
-                        <div>
-                          <div style="font-size:0.82rem;font-weight:700;">Nadia Jahan</div>
-                          <div style="font-size:0.68rem;color:var(--text-muted);">🌟 Top Sales Performer</div>
-                        </div><span style="margin-left:auto;font-size:1.2rem;">🏆</span>
-                      </div>
-                      <div style="font-size:0.78rem;color:var(--text-mid);">"Exceeded Q4 targets by 34%. Incredible
-                        dedication and client relationship skills."</div>
-                      <div style="font-size:0.68rem;color:var(--text-muted);margin-top:6px;">by Team Lead · 5 days ago ·
-                        67 👏</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-6">
-              <div class="card-custom mb-3">
-                <div class="card-header-custom">
-                  <div class="card-header-title">Latest Survey Results</div><span class="badge-custom badge-success">Q1
-                    2026</span>
-                </div>
-                <div class="card-body-custom">
-                  <div style="display:flex;flex-direction:column;gap:10px;">
-                    <div>
-                      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span
-                          style="font-size:0.78rem;font-weight:600;">Work-Life Balance</span><span
-                          style="font-size:0.75rem;color:var(--success);font-weight:700;">82%</span></div>
-                      <div class="progress-custom" style="height:8px;">
-                        <div class="progress-fill pf-green" style="width:82%;"></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span
-                          style="font-size:0.78rem;font-weight:600;">Management Trust</span><span
-                          style="font-size:0.75rem;color:var(--primary);font-weight:700;">76%</span></div>
-                      <div class="progress-custom" style="height:8px;">
-                        <div class="progress-fill pf-blue" style="width:76%;"></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span
-                          style="font-size:0.78rem;font-weight:600;">Career Growth</span><span
-                          style="font-size:0.75rem;color:var(--accent);font-weight:700;">68%</span></div>
-                      <div class="progress-custom" style="height:8px;">
-                        <div class="progress-fill pf-amber" style="width:68%;"></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span
-                          style="font-size:0.78rem;font-weight:600;">Compensation Satisfaction</span><span
-                          style="font-size:0.75rem;color:var(--accent);font-weight:700;">71%</span></div>
-                      <div class="progress-custom" style="height:8px;">
-                        <div class="progress-fill pf-amber" style="width:71%;"></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span
-                          style="font-size:0.78rem;font-weight:600;">Recommend as Employer</span><span
-                          style="font-size:0.75rem;color:var(--success);font-weight:700;">84%</span></div>
-                      <div class="progress-custom" style="height:8px;">
-                        <div class="progress-fill pf-green" style="width:84%;"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="card-custom">
-                <div class="card-header-custom">
-                  <div class="card-header-title">Upcoming Events</div>
-                </div>
-                <div class="card-body-custom">
-                  <div style="display:flex;flex-direction:column;gap:8px;">
-                    <div
-                      style="display:flex;align-items:center;gap:10px;padding:8px;background:#f0f9ff;border-radius:8px;">
-                      <div style="font-size:1.2rem;">🎉</div>
-                      <div>
-                        <div style="font-size:0.8rem;font-weight:600;">Company Anniversary Gala</div>
-                        <div style="font-size:0.68rem;color:var(--text-muted);">April 5 · Grand Ballroom</div>
-                      </div>
-                    </div>
-                    <div
-                      style="display:flex;align-items:center;gap:10px;padding:8px;background:#fdf4ff;border-radius:8px;">
-                      <div style="font-size:1.2rem;">🏃</div>
-                      <div>
-                        <div style="font-size:0.8rem;font-weight:600;">Team Sports Day</div>
-                        <div style="font-size:0.68rem;color:var(--text-muted);">April 12 · Company Grounds</div>
-                      </div>
-                    </div>
-                    <div
-                      style="display:flex;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:8px;">
-                      <div style="font-size:1.2rem;">🎓</div>
-                      <div>
-                        <div style="font-size:0.8rem;font-weight:600;">L&D Workshop Series</div>
-                        <div style="font-size:0.68rem;color:var(--text-muted);">Every Friday · Online</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ══════════════════════════════════════
-         PAGE 13: HEALTH & BENEFITS
-    ══════════════════════════════════════ -->
-
-      </div>
     </div>
-  </div>
+</div>
 
-  <!-- ═══ modalRecognition ═══ -->
-  <div class="modal fade" id="modalRecognition" tabindex="-1" aria-hidden="true">
+<!-- ══════════════════════════════════════
+PAGE 13: HEALTH & BENEFITS
+══════════════════════════════════════ -->
+
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══ modalRecognition ═══ -->
+<div class="modal fade" id="modalRecognition" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
-        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
-          <div class="d-flex align-items-center gap-3">
-            <div class="modal-icon" style="background:#fef3c7">🏆</div>
-            <div>
-              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Recognize an Employee</div>
-              <div style="font-size:0.78rem;color:#64748b;">Show appreciation publicly</div>
+        <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+            <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="modal-icon" style="background:#fef3c7">🏆</div>
+                    <div>
+                        <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Recognize an Employee</div>
+                        <div style="font-size:0.78rem;color:#64748b;">Show appreciation publicly</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </div>
-          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" style="padding:20px 24px;">
+            <div class="modal-body" style="padding:20px 24px;">
 
-          <div class="form-grid">
-            <div class="fg">
-              <div class="fl">Recognize *</div><select class="fi">
-                <option>Kabir Hossain</option>
-                <option>Sara Ahmed</option>
-                <option>Nadia Jahan</option>
-                <option>Mizan Khan</option>
-              </select>
+                <div class="form-grid">
+                    <div class="fg">
+                        <div class="fl">Recognize *</div><select class="fi" id="recognition-employee">
+                            <option value="" disabled selected>Select Employee</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Award Type</div><select class="fi" id="recognition-type">
+                            <option>🏅 Employee of the Month</option>
+                            <option>🌟 Star Performer</option>
+                            <option>💡 Innovation Award</option>
+                            <option>🤝 Team Player</option>
+                            <option>🎯 Target Achiever</option>
+                            <option>❤️ Culture Champion</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Recognition Month</div><input class="fi" type="month" id="recognition-month" />
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Points Awarded</div><input class="fi" type="number" value="100" id="recognition-points" />
+                    </div>
+                    <div class="fg full">
+                        <div class="fl">Recognition Message *</div><textarea class="fi" rows="4"
+                            id="recognition-message"
+                            placeholder="Write a meaningful appreciation message..."></textarea>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Notify via</div><select class="fi" id="recognition-notify">
+                            <option>Email + Dashboard</option>
+                            <option>Slack + Dashboard</option>
+                            <option>Dashboard only</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Visibility</div><select class="fi" id="recognition-visibility">
+                            <option>Company-wide</option>
+                            <option>Department only</option>
+                            <option>Private</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="fg">
-              <div class="fl">Award Type</div><select class="fi">
-                <option>🏅 Employee of the Month</option>
-                <option>🌟 Star Performer</option>
-                <option>💡 Innovation Award</option>
-                <option>🤝 Team Player</option>
-                <option>🎯 Target Achiever</option>
-                <option>❤️ Culture Champion</option>
-              </select>
+            <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+                <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+                    data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveRecognition()">💾 Send
+                    Recognition</button>
             </div>
-            <div class="fg">
-              <div class="fl">Recognition Month</div><input class="fi" type="month" />
-            </div>
-            <div class="fg">
-              <div class="fl">Points Awarded</div><input class="fi" type="number" value="100" />
-            </div>
-            <div class="fg full">
-              <div class="fl">Recognition Message *</div><textarea class="fi" rows="4"
-                placeholder="Write a meaningful appreciation message..."></textarea>
-            </div>
-            <div class="fg">
-              <div class="fl">Notify via</div><select class="fi">
-                <option>Email + Dashboard</option>
-                <option>Slack + Dashboard</option>
-                <option>Dashboard only</option>
-              </select>
-            </div>
-            <div class="fg">
-              <div class="fl">Visibility</div><select class="fi">
-                <option>Company-wide</option>
-                <option>Department only</option>
-                <option>Private</option>
-              </select>
-            </div>
-          </div>
         </div>
-        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
-          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
-            data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Send Recognition</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <!-- ═══ modalSurvey ═══ -->
-  <div class="modal fade" id="modalSurvey" tabindex="-1" aria-hidden="true">
+<!-- ═══ modalSurvey ═══ -->
+<div class="modal fade" id="modalSurvey" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
-        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
-          <div class="d-flex align-items-center gap-3">
-            <div class="modal-icon" style="background:#f0fdf4">📊</div>
-            <div>
-              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Survey</div>
-              <div style="font-size:0.78rem;color:#64748b;">Employee feedback collection</div>
+        <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+            <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="modal-icon" style="background:#f0fdf4">📊</div>
+                    <div>
+                        <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Create Survey</div>
+                        <div style="font-size:0.78rem;color:#64748b;">Employee feedback collection</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </div>
-          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" style="padding:20px 24px;">
+            <div class="modal-body" style="padding:20px 24px;">
 
-          <div class="form-grid">
-            <div class="fg full">
-              <div class="fl">Survey Title *</div><input class="fi"
-                placeholder="e.g. Q1 2026 Employee Engagement Survey" />
+                <div class="form-grid">
+                    <div class="fg full">
+                        <div class="fl">Survey Title *</div><input class="fi" id="survey-title"
+                        placeholder="e.g. Q1 2026 Employee Engagement Survey" />
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Survey Type</div><select class="fi" id="survey-type">
+                            <option>Engagement Survey</option>
+                            <option>Exit Survey</option>
+                            <option>Pulse Check</option>
+                            <option>Training Feedback</option>
+                            <option>360° Feedback</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Target Audience</div><select class="fi" id="survey-audience">
+                            <option>All Employees</option>
+                            <option>Specific Department</option>
+                            <option>New Joiners</option>
+                            <option>Managers</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Start Date</div><input class="fi" type="date" id="survey-start" />
+                    </div>
+                    <div class="fg">
+                        <div class="fl">End Date</div><input class="fi" type="date" id="survey-end" />
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Anonymous</div><select class="fi" id="survey-anonymous">
+                            <option>Yes - Fully Anonymous</option>
+                            <option>No - Identified</option>
+                        </select>
+                    </div>
+                    <div class="fg full">
+                        <div class="fl">Questions (one per line)</div><textarea class="fi" rows="5" id="survey-questions"
+                            placeholder="Q1: How satisfied are you with work-life balance? (1-5)"></textarea>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Reminder Email</div><select class="fi" id="survey-reminder">
+                            <option>3 days before deadline</option>
+                            <option>Weekly</option>
+                            <option>No reminder</option>
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <div class="fl">Status</div><select class="fi" id="survey-status">
+                            <option>Draft</option>
+                            <option>Active</option>
+                            <option>Closed</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="fg">
-              <div class="fl">Survey Type</div><select class="fi">
-                <option>Engagement Survey</option>
-                <option>Exit Survey</option>
-                <option>Pulse Check</option>
-                <option>Training Feedback</option>
-                <option>360° Feedback</option>
-              </select>
+            <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+                <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+                    data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveSurvey()">💾 Publish
+                    Survey</button>
             </div>
-            <div class="fg">
-              <div class="fl">Target Audience</div><select class="fi">
-                <option>All Employees</option>
-                <option>Specific Department</option>
-                <option>New Joiners</option>
-                <option>Managers</option>
-              </select>
-            </div>
-            <div class="fg">
-              <div class="fl">Start Date</div><input class="fi" type="date" />
-            </div>
-            <div class="fg">
-              <div class="fl">End Date</div><input class="fi" type="date" />
-            </div>
-            <div class="fg">
-              <div class="fl">Anonymous</div><select class="fi">
-                <option>Yes - Fully Anonymous</option>
-                <option>No - Identified</option>
-              </select>
-            </div>
-            <div class="fg full">
-              <div class="fl">Questions (one per line)</div><textarea class="fi" rows="5"
-                placeholder="Q1: How satisfied are you with work-life balance? (1-5)"></textarea>
-            </div>
-            <div class="fg">
-              <div class="fl">Reminder Email</div><select class="fi">
-                <option>3 days before deadline</option>
-                <option>Weekly</option>
-                <option>No reminder</option>
-              </select>
-            </div>
-            <div class="fg">
-              <div class="fl">Status</div><select class="fi">
-                <option>Draft</option>
-                <option>Active</option>
-                <option>Closed</option>
-              </select>
-            </div>
-          </div>
         </div>
-        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
-          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
-            data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Publish Survey</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <!-- ═══ modalDelete ═══ -->
-  <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
+<!-- ═══ modalDelete ═══ -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
-      <div class="modal-content"
-        style="border-radius:14px;border:none;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);">
-        <div
-          style="width:60px;height:60px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;">
-          🗑️</div>
-        <div style="font-size:1.05rem;font-weight:800;color:#0f172a;margin-bottom:8px;" id="delete-title">Delete Record
+        <div class="modal-content"
+            style="border-radius:14px;border:none;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+            <div
+                style="width:60px;height:60px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;">
+                🗑️</div>
+            <div style="font-size:1.05rem;font-weight:800;color:#0f172a;margin-bottom:8px;" id="delete-title">Delete
+                Record</div>
+            <div style="font-size:0.82rem;color:#64748b;margin-bottom:24px;" id="delete-desc">This action cannot be
+                undone. Are you sure?</div>
+            <div class="d-flex gap-2 justify-content-center">
+                <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+                    data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger btn-sm fw-bold" onclick="confirmDelete()">Yes,
+                    Delete</button>
+            </div>
         </div>
-        <div style="font-size:0.82rem;color:#64748b;margin-bottom:24px;" id="delete-desc">This action cannot be undone.
-          Are you sure?</div>
-        <div class="d-flex gap-2 justify-content-center">
-          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
-            data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger btn-sm fw-bold" onclick="confirmDelete()">Yes, Delete</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
+</div>
+<div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
+<script src="{% static 'js/constants.js' %}"></script>
+<script src="{% static 'js/APIClient.js' %}"></script>
+<script>
+    const api = new APIClient({
+        baseURL: API_CONFIG.BASE_URL,
+        timeout: API_CONFIG.TIMEOUT,
+        headers: API_CONFIG.HEADERS
+    });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (csrfToken) {
+        api.headers['X-CSRF-TOKEN'] = csrfToken;
+    }
+    window.api = api;
+    window.API_ENDPOINTS = API_ENDPOINTS;
+</script>
 
+<script>
+    /**
+     * @namespace Surveys CRUD operations
+     * @description REST API wrapper functions for engagement surveys.
+     * @see API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS in constants.js
+     */
+    async function allSurveys() {
+        try {
+            return await api.all(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.INDEX);
+        } catch (error) {
+            console.error('Error fetching all surveys:', error);
+            throw error;
+        }
+    }
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
-  </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
-  </script>
-  <script>
+    async function indexSurveys(params = {}) {
+        try {
+            return await api.index(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.INDEX, params);
+        } catch (error) {
+            console.error('Error indexing surveys:', error);
+            throw error;
+        }
+    }
 
-    // ── Bootstrap 5 + jQuery ──
-    // Modals are triggered directly from HTML via:
-    //   data-bs-toggle="modal" data-bs-target="#modalId"
-    // No openXxxModal() JS functions needed.
+    async function createSurvey(payload) {
+        try {
+            return await api.store(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.STORE, payload);
+        } catch (error) {
+            console.error('Error creating survey:', error);
+            throw error;
+        }
+    }
 
-    // Populate integration name from data attribute on the trigger button
+    async function getSurvey(id) {
+        try {
+            return await api.show(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.SHOW, id);
+        } catch (error) {
+            console.error('Error fetching survey:', error);
+            throw error;
+        }
+    }
+
+    async function updateSurveyAPI(id, payload) {
+        try {
+            return await api.update(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.UPDATE, id, payload);
+        } catch (error) {
+            console.error('Error updating survey:', error);
+            throw error;
+        }
+    }
+
+    async function deleteSurveyAPI(id) {
+        try {
+            return await api.destroy(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.DESTROY, id);
+        } catch (error) {
+            console.error('Error deleting survey:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * @namespace Recognition CRUD operations
+     * @description REST API wrapper functions for recognition management.
+     * @see API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION in constants.js
+     */
+    async function allRecognitions() {
+        try {
+            return await api.all(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.INDEX);
+        } catch (error) {
+            console.error('Error fetching all recognitions:', error);
+            throw error;
+        }
+    }
+
+    async function indexRecognitions(params = {}) {
+        try {
+            return await api.index(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.INDEX, params);
+        } catch (error) {
+            console.error('Error indexing recognitions:', error);
+            throw error;
+        }
+    }
+
+    async function createRecognition(payload) {
+        try {
+            return await api.store(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.STORE, payload);
+        } catch (error) {
+            console.error('Error creating recognition:', error);
+            throw error;
+        }
+    }
+
+    async function getRecognition(id) {
+        try {
+            return await api.show(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.SHOW, id);
+        } catch (error) {
+            console.error('Error fetching recognition:', error);
+            throw error;
+        }
+    }
+
+    async function updateRecognitionAPI(id, payload) {
+        try {
+            return await api.update(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.UPDATE, id, payload);
+        } catch (error) {
+            console.error('Error updating recognition:', error);
+            throw error;
+        }
+    }
+
+    async function deleteRecognitionAPI(id) {
+        try {
+            return await api.destroy(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.DESTROY, id);
+        } catch (error) {
+            console.error('Error deleting recognition:', error);
+            throw error;
+        }
+    }
+
+    async function getEmployeePoints(employeeId) {
+        try {
+            return await api.all(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.EMPLOYEE_POINTS(employeeId));
+        } catch (error) {
+            console.error('Error fetching employee points:', error);
+            throw error;
+        }
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
-      var name = $(e.relatedTarget).data('integration-name');
-      if (name) $('#integration-name').text(name);
+        var name = $(e.relatedTarget).data('integration-name');
+        if (name) $('#integration-name').text(name);
     });
 
+    /**
+     * Displays a toast notification with an icon and message.
+     * @param {string} icon - Emoji or icon character.
+     * @param {string} msg - Message to display.
+     * @param {number} [duration=3000] - Auto-hide duration in ms.
+     */
     function showToast(icon, msg, duration) {
-      duration = duration || 3000;
-      $('#toast-icon').text(icon);
-      $('#toast-msg').text(msg);
-      $('#toast').addClass('show');
-      setTimeout(function () { $('#toast').removeClass('show'); }, duration);
+        duration = duration || 3000;
+        $('#toast-icon').text(icon);
+        $('#toast-msg').text(msg);
+        $('#toast').addClass('show');
+        setTimeout(function () { $('#toast').removeClass('show'); }, duration);
     }
-    function saveForm() {
-      $('.modal.show').modal('hide');
-      showToast('\u2705', 'Record saved successfully!');
-    }
+
+    /**
+     * Handles delete confirmation modal close and feedback.
+     * Triggered by the delete modal's confirm button.
+     */
     function confirmDelete() {
-      $('#modalDelete').modal('hide');
-      showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
+        $('#modalDelete').modal('hide');
+        showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
-    // ── End ──
 
-    // SUB-MODULE TABS
+    /**
+     * Switches the active tab within a tab group.
+     * @param {string} tabGroup - Matches data-tabgroup attribute.
+     * @param {string} tabId - Matches data-tabid attribute to activate.
+     */
     function showSubTab(tabGroup, tabId) {
-      document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-        t.classList.toggle('active', t.dataset.tabid === tabId);
-      });
-      document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-        p.classList.toggle('active', p.dataset.panelid === tabId);
-      });
+        document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
+            t.classList.toggle('active', t.dataset.tabid === tabId);
+        });
+        document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
+            p.classList.toggle('active', p.dataset.panelid === tabId);
+        });
     }
 
-    // ═══════════════════════════════════════
-    // PAGE TITLE / DATE UPDATE
-    // ═══════════════════════════════════════
+    /** Page title lookup for topbar updates. */
     const pageTitles = {
-      dashboard: 'Dashboard Overview',
-      employee: 'Employee Management',
-      attendance: 'Attendance & Leave',
-      payroll: 'Payroll Management',
-      recruitment: 'Recruitment & Hiring',
-      performance: 'Performance Management',
-      training: 'Training & Development',
-      onboarding: 'Onboarding & Offboarding',
-      ess: 'Employee Self-Service',
-      reports: 'Reports & Analytics',
-      compliance: 'Compliance & Policies',
-      engagement: 'Engagement & Recognition',
-      health: 'Health, Safety & Benefits',
-      talent: 'Talent & Succession',
-      branding: 'Recruitment Marketing',
-      global: 'Global HR',
-      integrations: 'Integrations & Automation'
+        dashboard: 'Dashboard Overview',
+        employee: 'Employee Management',
+        attendance: 'Attendance & Leave',
+        payroll: 'Payroll Management',
+        recruitment: 'Recruitment & Hiring',
+        performance: 'Performance Management',
+        training: 'Training & Development',
+        onboarding: 'Onboarding & Offboarding',
+        ess: 'Employee Self-Service',
+        reports: 'Reports & Analytics',
+        compliance: 'Compliance & Policies',
+        engagement: 'Engagement & Recognition',
+        health: 'Health, Safety & Benefits',
+        talent: 'Talent & Succession',
+        branding: 'Recruitment Marketing',
+        global: 'Global HR',
+        integrations: 'Integrations & Automation'
     };
 
+    /**
+     * Navigates to a page section and updates navigation state.
+     * @param {string} id - Page identifier matching `page-{id}` element.
+     * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
+     */
     function showPage(id, btn) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('page-' + id);
-      if (target) target.classList.add('active');
-      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-      document.getElementById('sidebar').classList.remove('open');
-      window.scrollTo(0, 0);
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const target = document.getElementById('page-' + id);
+        if (target) target.classList.add('active');
+        document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById('topbar-title').textContent = pageTitles[id] || id;
+        document.getElementById('sidebar').classList.remove('open');
+        window.scrollTo(0, 0);
     }
 
     const d = new Date();
@@ -543,120 +614,248 @@
     if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
     document.querySelectorAll('.toggle').forEach(t => {
-      t.addEventListener('click', () => t.classList.toggle('on'));
+        t.addEventListener('click', () => t.classList.toggle('on'));
     });
 
+    let engagementPage = 1;
+    const engagementPageSize = 10;
+    let allRecognitionsData = [];
+    let allSurveysData = [];
 
-    function showPage(id) { var m = { dashboard: '../index.html', employee: 'employee.html', attendance: 'attendance.html', payroll: 'payroll.html', recruitment: 'recruitment.html', performance: 'performance.html', training: 'training.html', onboarding: 'onboarding.html', ess: 'ess.html', reports: 'reports.html', compliance: 'compliance.html', engagement: 'engagement.html', health: 'health.html', talent: 'talent.html', branding: 'branding.html', global: 'global.html', integrations: 'integrations.html' }; if (m[id]) location.href = m[id]; }
+    /**
+     * Renders paginated table data with page info and navigation.
+     * @param {Array} data - Array of items to paginate.
+     * @param {string} tbodyId - ID of the tbody element to render rows into.
+     * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
+     * @param {string} containerId - ID of the pagination buttons container.
+     * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
+     */
+    function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
+        const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
+        if (currentPage > totalPages) currentPage = totalPages;
+        const start = (currentPage - 1) * pageSize;
+        const end = Math.min(start + pageSize, data.length);
+        const pageData = data.slice(start, end);
 
-    // ═══════════════════════════════════════════
-    // API INTEGRATION — Engagement & Recognition
-    // ═══════════════════════════════════════════
-    const API = {
-      survey: '/talent-growth/engagement/api/survey/',
-      recognition: '/talent-growth/engagement/api/recognition/',
-    };
+        const tbody = document.getElementById(tbodyId);
+        if (tbody) {
+            tbody.innerHTML = '';
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">No data found</td></tr>';
+            } else {
+                pageData.forEach((item, i) => {
+                    tbody.innerHTML += renderRowFn(item, i);
+                });
+            }
+        }
 
-    async function apiGet(url) {
-      try { const res = await fetch(url); return await res.json(); }
-      catch (e) { console.error('GET error:', e); return null; }
+        const info = document.getElementById(infoId);
+        if (info) {
+            info.textContent = data.length > 0 ? `Showing ${start + 1}–${end} of ${data.length}` : 'No data found';
+        }
+
+        const container = document.getElementById(containerId);
+        if (container) {
+            let html = '';
+            html += `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${currentPage - 1})">‹ Prev</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="${i === currentPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
+                }
+            }
+            html += `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${currentPage + 1})">Next ›</button>`;
+            container.innerHTML = html;
+        }
     }
 
-    async function apiPost(url, data) {
-      try {
-        const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-        return { ok: res.ok, status: res.status, data: await res.json() };
-      } catch (e) { return { ok: false, data: { errors: [e.message] } }; }
+    /**
+     * Updates current page and triggers render for the active paginated table.
+     * @param {string} tbodyId - ID of the tbody being paginated.
+     * @param {string} infoId - ID of the pagination info element.
+     * @param {string} containerId - ID of the pagination container.
+     * @param {number} page - Target page number.
+     */
+    function goPage(tbodyId, infoId, containerId, page) {
+        currentPage = page;
+        if (tbodyId === 'recognition-wall') renderRecognitionsPage();
+        if (tbodyId === 'survey-results') renderSurveysPage();
     }
 
-    async function loadSurveys() {
-      const result = await apiGet(API.survey);
-      if (result && result.data) {
-        const tbody = document.querySelector('#page-engagement .table-custom tbody');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        result.data.forEach(s => {
-          const tr = document.createElement('tr');
-          tr.setAttribute('data-id', s.id);
-          tr.innerHTML = `
-            <td style="font-weight:600;">${s.title}</td>
-            <td>${s.start_date || '—'}</td>
-            <td>${s.end_date || '—'}</td>
-            <td>${s.response_count || 0}</td>
-            <td><span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Closed'}</span></td>`;
-          tbody.appendChild(tr);
-        });
-      }
-    }
-
-    async function loadRecognitions() {
-      const result = await apiGet(API.recognition);
-      if (result && result.data) {
-        const container = document.querySelector('#page-engagement .card-body-custom .d-flex.flex-column');
-        if (!container) return;
-        container.innerHTML = '';
-        result.data.forEach(r => {
-          const div = document.createElement('div');
-          div.style.cssText = 'padding:14px;background:linear-gradient(135deg,#fffbeb,#fef9c3);border-radius:10px;border:1px solid #fde68a;margin-bottom:8px;';
-          div.innerHTML = `
+    /** Renders the current page of recognition records. */
+    function renderRecognitionsPage() {
+        renderPagination(allRecognitionsData, 'recognition-wall', 'recognition-wall-info', 'recognition-wall-pagination', (r) => {
+            return `<div
+            style="padding:14px;background:linear-gradient(135deg,#fffbeb,#fef9c3);border-radius:10px;border:1px solid #fde68a;margin-bottom:8px;"
+            data-id="${r.id}">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-              <div class="avatar av-blue" style="width:32px;height:32px;font-size:0.7rem;">${(r.employee_name || '')[0]}</div>
-              <div>
-                <div style="font-size:0.82rem;font-weight:700;">${r.employee_name || '—'}</div>
-                <div style="font-size:0.68rem;color:var(--text-muted);">🏅 ${r.recognition_type}</div>
-              </div>
-              <span style="margin-left:auto;font-size:1.2rem;">⭐</span>
+            <div class="avatar av-blue" style="width:32px;height:32px;font-size:0.7rem;">${(r.employee || '')[0]}</div>
+            <div>
+            <div style="font-size:0.82rem;font-weight:700;">${r.employee || '—'}</div>
+            <div style="font-size:0.68rem;color:var(--text-muted);">🏅 ${r.recognition_type}</div>
+        </div>
+        <span style="margin-left:auto;font-size:1.2rem;">⭐</span>
+    </div>
+    <div style="font-size:0.78rem;color:var(--text-mid);">${r.reason || ''}</div>
+    <div style="font-size:0.68rem;color:var(--text-muted);margin-top:6px;">by ${r.recognized_by || '—'} · ${r.given_at || ''}</div>
+</div>`;
+});
+}
+
+/** Renders the current page of survey records. */
+function renderSurveysPage() {
+    renderPagination(allSurveysData, 'survey-results', 'survey-results-info', 'survey-results-pagination', (s) => {
+        return `<div
+        style="padding:10px;background:#f8fafc;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;"
+        data-id="${s.id}">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <div style="font-size:0.82rem;font-weight:700;">${s.title}</div>
+                <div style="font-size:0.68rem;color:var(--text-muted);">${s.start_date || '—'} → ${s.end_date || '—'}</div>
             </div>
-            <div style="font-size:0.78rem;color:var(--text-mid);">${r.reason || ''}</div>
-            <div style="font-size:0.68rem;color:var(--text-muted);margin-top:6px;">by ${r.recognized_by_name || '—'} · ${r.given_at || ''}</div>`;
-          container.appendChild(div);
-        });
-      }
-    }
+            <span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Closed'}</span>
+        </div>
+    </div>`;
+});
+}
 
-    async function saveRecognition() {
-      const modal = document.getElementById('modalRecognition');
-      const inputs = modal.querySelectorAll('.fi');
-      const selects = modal.querySelectorAll('select.fi');
-      const data = {
-        recognition_type: selects[0]?.value || 'kudos',
-        reason: inputs[1]?.value || '',
-        points: inputs[2]?.value || 100,
-      };
-      const result = await apiPost(API.recognition, data);
-      if (result.ok) { showToast('✅', 'Recognition sent!'); bootstrap.Modal.getInstance(modal).hide(); loadRecognitions(); }
-      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+/**
+* Fetches all recognitions and renders the recognition wall.
+* @async
+*/
+async function loadRecognitions() {
+    currentPage = 1;
+    try {
+        const result = await indexRecognitions({ per_page: 500 });
+        allRecognitionsData = result.data || [];
+        renderRecognitionsPage();
+    } catch (e) {
+        console.error('Failed to load recognitions:', e);
     }
+}
 
-    async function saveSurvey() {
-      const modal = document.getElementById('modalSurvey');
-      const inputs = modal.querySelectorAll('.fi');
-      const selects = modal.querySelectorAll('select.fi');
-      const data = {
+/**
+* Fetches all surveys and renders the survey list.
+* @async
+*/
+async function loadSurveys() {
+    currentPage = 1;
+    try {
+        const result = await indexSurveys({ per_page: 500 });
+        allSurveysData = result.data || [];
+        renderSurveysPage();
+    } catch (e) {
+        console.error('Failed to load surveys:', e);
+    }
+}
+
+/**
+* Reads recognition modal inputs, creates a recognition via API, and refreshes the list.
+* @async
+*/
+async function saveRecognition() {
+    const modal = document.getElementById('modalRecognition');
+    const selects = modal.querySelectorAll('select.fi');
+    const inputs = modal.querySelectorAll('input.fi');
+    const textareas = modal.querySelectorAll('textarea.fi');
+    const data = {
+        employee_id: selects[0]?.value || '',
+        recognition_type: selects[1]?.value || 'kudos',
+        recognition_month: inputs[0]?.value || '',
+        points: inputs[1]?.value || 100,
+        message: textareas[0]?.value || '',
+        visibility: selects[2]?.value || 'Company-wide',
+    };
+    try {
+        await createRecognition(data);
+        showToast('✅', 'Recognition sent!');
+        bootstrap.Modal.getInstance(modal).hide();
+        loadRecognitions();
+    } catch (e) {
+        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+    }
+}
+
+/**
+* Reads survey modal inputs, creates a survey via API, and refreshes the list.
+* @async
+*/
+async function saveSurvey() {
+    const modal = document.getElementById('modalSurvey');
+    const selects = modal.querySelectorAll('select.fi');
+    const inputs = modal.querySelectorAll('input.fi');
+    const textareas = modal.querySelectorAll('textarea.fi');
+    const data = {
         title: inputs[0]?.value || '',
-        description: inputs[1]?.value || '',
-        start_date: inputs[2]?.value || null,
-        end_date: inputs[3]?.value || null,
-        is_anonymous: selects[0]?.value === 'Yes',
-        is_active: true,
-      };
-      const result = await apiPost(API.survey, data);
-      if (result.ok) { showToast('✅', 'Survey published!'); bootstrap.Modal.getInstance(modal).hide(); loadSurveys(); }
-      else showToast('❌', result.data?.errors ? JSON.stringify(result.data.errors) : 'Failed');
+        survey_type: selects[0]?.value || 'Engagement Survey',
+        target_audience: selects[1]?.value || 'All Employees',
+        start_date: inputs[1]?.value || null,
+        end_date: inputs[2]?.value || null,
+        is_anonymous: selects[2]?.value === 'Yes - Fully Anonymous',
+        questions: textareas[0]?.value || '',
+        reminder_email: selects[3]?.value || '3 days before deadline',
+        status: selects[4]?.value || 'Draft',
+    };
+    try {
+        await createSurvey(data);
+        showToast('✅', 'Survey published!');
+        bootstrap.Modal.getInstance(modal).hide();
+        loadSurveys();
+    } catch (e) {
+        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
     }
+}
 
-    $(function () {
-      loadSurveys();
-      loadRecognitions();
-    });
+/**
+* Loads engagement statistics and updates the stat cards.
+* @async
+*/
+async function loadEngagementStats() {
+    try {
+        const surveysResult = await indexSurveys({ per_page: 1 });
+        const recognitionsResult = await indexRecognitions({ per_page: 1 });
+        const surveyCount = surveysResult.count || 0;
+        const recognitionCount = recognitionsResult.count || 0;
+        const cards = document.querySelectorAll('#page-engagement .stat-card .stat-value');
+        if (cards[0]) cards[0].textContent = '78%';
+        if (cards[1]) cards[1].textContent = surveyCount.toLocaleString();
+        if (cards[2]) cards[2].textContent = recognitionCount;
+        if (cards[3]) cards[3].textContent = '8';
+    } catch (e) {
+        console.error('Failed to load engagement stats:', e);
+    }
+}
 
-    $(function () {
-      var d = new Date();
-      $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
-      $('.toggle').on('click', function () { $(this).toggleClass('on'); });
-    });
+/**
+* Populates the employee dropdown for recognition via the API.
+* @async
+*/
+async function loadEmployeeDropdown() {
+    try {
+        const result = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { per_page: 500 });
+        const sel = document.getElementById('recognition-employee');
+        if (sel && result?.data) {
+            result.data.forEach(e => {
+                const opt = document.createElement('option');
+                opt.value = e.id;
+                opt.textContent = `${e.first_name} ${e.last_name}`;
+                sel.appendChild(opt);
+            });
+        }
+    } catch (e) {
+        console.error('Failed to load employees:', e);
+    }
+}
 
-  </script>
+$(function () {
+    loadRecognitions();
+    loadSurveys();
+    loadEngagementStats();
+    loadEmployeeDropdown();
+});
+
+</script>
 </body>
 
 </html>
