@@ -191,7 +191,10 @@ class Command(BaseCommand):
                 employment_type=random.choice(['full_time', 'part_time', 'contract']),
                 status=random.choice(['active', 'probation', 'active', 'active']),
                 basic_salary=random.randint(25000, 150000),
-                phone_number=fake.phone_number(),
+                # Employee.phone_number is limited to 20 characters. Faker's
+                # formatted phone numbers can exceed that limit, so generate a
+                # consistent 11-digit Bangladeshi mobile number instead.
+                phone_number=f'01{random.randint(0, 999_999_999):09d}',
                 date_of_birth=fake.date_of_birth(minimum_age=22, maximum_age=55),
                 gender=random.choice(['male', 'female', 'other']),
                 current_address=fake.address(),
@@ -428,7 +431,9 @@ class Command(BaseCommand):
                     email=f'{first.lower()}.{last.lower()}@email.com',
                     applied_for=job,
                     defaults={
-                        'phone': fake.phone_number(),
+                        # Candidate.phone is limited to 20 characters; keep
+                        # generated phone data within that database limit.
+                        'phone': f'01{random.randint(0, 999_999_999):09d}',
                         'source': random.choice(['linkedin', 'bdjobs', 'referral', 'direct']),
                         'current_stage': random.choice(['applied', 'screening', 'interview', 'offer']),
                         'experience_yrs': round(random.uniform(1, 10), 1),
@@ -445,7 +450,9 @@ class Command(BaseCommand):
             Interview.objects.get_or_create(
                 candidate=cand,
                 interview_type=random.choice(['phone', 'video', 'technical', 'hr']),
-                scheduled_at=fake.date_time_between(start_date='-30d', end_date='+30d'),
+                scheduled_at=timezone.make_aware(
+                    fake.date_time_between(start_date='-30d', end_date='+30d')
+                ),
                 defaults={
                     'duration_mins': random.choice([30, 45, 60, 90]),
                     'interviewer': random.choice(employees) if employees else None,
@@ -545,7 +552,9 @@ class Command(BaseCommand):
                     'priority': random.choice(['low', 'medium', 'high', 'urgent']),
                     'is_pinned': random.choice([True, False]),
                     'published_by': random.choice(employees) if employees else None,
-                    'expires_at': fake.date_time_between(start_date='+30d', end_date='+90d'),
+                    'expires_at': timezone.make_aware(
+                        fake.date_time_between(start_date='+30d', end_date='+90d')
+                    ),
                     'is_active': True,
                 }
             )
