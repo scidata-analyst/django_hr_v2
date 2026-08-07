@@ -100,14 +100,14 @@ class APIClient {
      * @param {string|Function} endpoint - API endpoint
      * @param {Object} queryParams - Query parameters
      * @param {string} [queryParams.search=''] - Search keyword
-     * @param {number} [queryParams.per_page=15] - Items per page
+     * @param {number} [queryParams.page_size=15] - Items per page
      * @param {string} [queryParams.sort_by='id'] - Sort column
      * @param {string} [queryParams.sort_direction='desc'] - Sort direction
      * @returns {Promise<Object>} Paginated records
      */
     async index(endpoint, queryParams = {}) {
-        const { search = '', per_page = 15, sort_by = 'id', sort_direction = 'desc' } = queryParams;
-        const query = new URLSearchParams({ search, per_page, sort_by, sort_direction }).toString();
+        const { search = '', page_size = 15, sort_by = 'id', sort_direction = 'desc' } = queryParams;
+        const query = new URLSearchParams({ search, page_size, sort_by, sort_direction }).toString();
         const urlPath = this._getEndpoint(endpoint);
         return this._request('GET', `${urlPath}?${query}`);
     }

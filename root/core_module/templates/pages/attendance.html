@@ -1003,7 +1003,7 @@
         async function loadShifts() {
             currentPage = 1;
             try {
-                const result = await indexShifts({ per_page: 500 });
+                const result = await indexShifts({ page_size: 500 });
                 allShiftsData = result.data || [];
                 renderShiftsPage();
             } catch (e) {
@@ -1018,7 +1018,7 @@
         async function loadLeaves() {
             currentPage = 1;
             try {
-                const result = await indexLeaves({ per_page: 500 });
+                const result = await indexLeaves({ page_size: 500 });
                 allLeavesData = result.data || [];
                 renderLeavesPage();
             } catch (e) {
@@ -1239,7 +1239,7 @@
          */
         async function loadEmployeeFilter() {
             try {
-                const result = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { per_page: 500 });
+                const result = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { page_size: 500 });
                 const sel = document.getElementById('att-filter-employee');
                 if (sel && result?.data) {
                     result.data.forEach(e => {
