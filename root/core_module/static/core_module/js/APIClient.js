@@ -72,8 +72,22 @@ class APIClient {
             if (!response.ok) {
                 const contentType = response.headers.get('content-type') || '';
                 if (contentType.includes('application/json')) {
-                    const error = await response.json().catch(() => ({}));
-                    throw new Error(error.message || error.error || `HTTP ${response.status}`);
+                    const errorData = await response.json().catch(() => ({}));
+                    const fieldErrors = errorData.errors || {};
+                    const validationMessage = Object.entries(fieldErrors)
+                        .map(([field, messages]) => {
+                            const message = Array.isArray(messages) ? messages.join(', ') : messages;
+                            return `${field}: ${message}`;
+                        })
+                        .join('\n');
+                    const requestError = new Error(
+                        validationMessage || errorData.message || errorData.error || `HTTP ${response.status}`
+                    );
+
+                    requestError.status = response.status;
+                    requestError.errors = fieldErrors;
+                    requestError.response = { status: response.status, data: errorData };
+                    throw requestError;
                 }
                 const text = await response.text().catch(() => '');
                 throw new Error(text || `HTTP ${response.status}`);

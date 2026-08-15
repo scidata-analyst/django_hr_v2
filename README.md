@@ -16,6 +16,16 @@ A Django-based HR management application.
 4. Start the development server:
    - `python manage.py runserver`
 
+## Docker development
+
+```bash
+docker compose up -d
+```
+
+The project directory is mounted into the `web` container. Saved Python files
+trigger Django's development-server reload; saved templates and static files are
+available immediately after refreshing the browser.
+
 ## Project Structure
 - `root/`: Main Django project folder
   - `core_module/`: Core HR logic and components

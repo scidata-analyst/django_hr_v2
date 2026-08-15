@@ -1000,8 +1000,13 @@
                 loadEmployees(1);
                 loadEmployeeStats();
             } catch (e) {
-                const msg = e?.response?.data ? JSON.stringify(e.response.data) : 'Validation error';
-                showToast('❌', msg);
+                const msg = e?.response?.data ? e.response.data : 'Validation error';
+                for (const key in msg.errors) {
+                    console.log(`Field: ${key}, Error: ${msg.errors[key]}`);
+
+                    showToast('❌', `Field: ${key}, Error: ${msg.errors[key]}`);
+                    sleep(5);
+                }
             }
         }
 

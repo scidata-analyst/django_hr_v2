@@ -12,24 +12,32 @@ services:
       - "3308:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
 
   web:
     build: .
     container_name: django_web_app
     restart: always
-    command: sh -c "until python root/manage.py migrate --noinput; do echo Waiting for database...; sleep 2; done && python root/manage.py runserver 0.0.0.0:8003"
+    command: sh -c "python root/manage.py migrate --noinput && python root/manage.py runserver 0.0.0.0:8003"
+    # Directly mount the working tree so saved host files are immediately
+    # available to Django inside the container.
     volumes:
       - .:/app
     ports:
       - "9003:8003"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DB_HOST=db
       - DB_PORT=3306
       - DB_NAME=django_db
       - DB_USER=django_user
       - DB_PASSWORD=django_password
-
 volumes:
   mysql_data:
