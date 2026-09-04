@@ -1,7 +1,7 @@
-/**
- * @module routes/payroll/payroll
- * @description Payroll module root routes
- */
+"""
+@module routes/payroll/payroll
+@description Payroll module root routes
+"""
 
 from django.urls import path, include
 from core_module.views.payroll.payroll import payroll

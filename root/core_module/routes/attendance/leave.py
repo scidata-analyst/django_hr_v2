@@ -1,7 +1,7 @@
-/**
- * @module routes/attendance/leave
- * @description Leave request CRUD and action routes
- */
+"""
+@module routes/attendance/leave
+@description Leave request CRUD and action routes
+"""
 
 from django.urls import path
 from core_module.views.api.attendance.leave import leave_list, leave_detail, leave_approve, leave_deny

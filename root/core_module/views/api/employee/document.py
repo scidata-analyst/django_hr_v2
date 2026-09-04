@@ -1,3 +1,7 @@
+"""
+@module views/api/employee/document
+@description Document CRUD and list routes
+"""
 import json
 
 from django.http import JsonResponse

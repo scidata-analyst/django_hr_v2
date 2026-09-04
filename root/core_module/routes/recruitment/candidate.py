@@ -1,7 +1,7 @@
-/**
- * @module routes/recruitment/candidate
- * @description Candidate CRUD and pipeline routes
- */
+"""
+@module routes/recruitment/candidate
+@description Candidate CRUD and pipeline routes
+"""
 
 from django.urls import path
 from core_module.views.api.recruitment.candidate import candidate_list, candidate_detail, candidate_advance, candidate_reject, pipeline_summary

@@ -1,3 +1,7 @@
+"""
+@module views/api/payroll/bonus
+@description Bonus CRUD and list routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

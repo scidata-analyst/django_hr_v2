@@ -1,3 +1,7 @@
+"""
+@module views/api/employee/location
+@description Location CRUD and list routes
+"""
 import json
 
 from django.http import JsonResponse

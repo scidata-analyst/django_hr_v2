@@ -1,3 +1,7 @@
+"""
+@module views/api/onboarding/offboarding
+@description Offboarding task list and checklist routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

@@ -1,7 +1,7 @@
-/**
- * @module routes/employee/location
- * @description Location CRUD routes
- */
+"""
+@module routes/employee/location
+@description Location CRUD routes
+"""
 
 from django.urls import path
 from core_module.views.api.employee.location import location_list, location_detail

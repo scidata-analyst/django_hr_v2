@@ -1,3 +1,7 @@
+"""
+@module views/api/recruitment/candidate
+@description Candidate CRUD, pipeline and stage routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

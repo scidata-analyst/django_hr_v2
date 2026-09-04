@@ -1,3 +1,7 @@
+"""
+@module views/api/employee/employee_api
+@description Employee CRUD, list and stats routes
+"""
 import json
 
 from django.http import JsonResponse

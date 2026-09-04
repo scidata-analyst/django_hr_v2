@@ -1,7 +1,7 @@
-/**
- * @module routes/payroll/bonus
- * @description Bonus CRUD routes
- */
+"""
+@module routes/payroll/bonus
+@description Bonus CRUD routes
+"""
 
 from django.urls import path
 from core_module.views.api.payroll.bonus import bonus_list

@@ -1,7 +1,7 @@
-/**
- * @module routes/recruitment/recruitment
- * @description Recruitment module root routes
- */
+"""
+@module routes/recruitment/recruitment
+@description Recruitment module root routes
+"""
 
 from django.urls import path, include
 from core_module.views.recruitment.recruitment import recruitment

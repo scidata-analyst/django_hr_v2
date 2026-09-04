@@ -1,7 +1,7 @@
-/**
- * @module routes/employee/department
- * @description Department CRUD routes
- */
+"""
+@module routes/employee/department
+@description Department CRUD routes
+"""
 
 from django.urls import path
 from core_module.views.api.employee.department import department_list, department_detail

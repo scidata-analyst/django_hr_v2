@@ -1,3 +1,7 @@
+"""
+@module views/api/payroll/payslip
+@description Payslip CRUD, list and bulk generate routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

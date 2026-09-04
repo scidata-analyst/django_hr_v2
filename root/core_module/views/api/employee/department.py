@@ -1,3 +1,7 @@
+"""
+@module views/api/employee/department
+@description Department CRUD and list routes
+"""
 import json
 import traceback
 

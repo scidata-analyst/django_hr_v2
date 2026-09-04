@@ -1,3 +1,7 @@
+"""
+@module views/api/ess/expense
+@description Expense claim CRUD, approve and reject routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

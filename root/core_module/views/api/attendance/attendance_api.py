@@ -1,3 +1,7 @@
+"""
+@module views/api/attendance/attendance_api
+@description Attendance CRUD and stats routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

@@ -1,3 +1,7 @@
+"""
+@module views/api/employee/designation
+@description Designation CRUD and list routes
+"""
 import json
 
 from django.http import JsonResponse

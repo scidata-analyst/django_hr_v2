@@ -1,3 +1,7 @@
+"""
+@module views/api/attendance/leave
+@description Leave request CRUD, approve and deny routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt

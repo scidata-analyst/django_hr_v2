@@ -1,7 +1,7 @@
-/**
- * @module routes/onboarding/onboarding
- * @description Onboarding module root routes
- */
+"""
+@module routes/onboarding/onboarding
+@description Onboarding module root routes
+"""
 
 from django.urls import path, include
 from core_module.views.onboarding.onboarding import onboarding

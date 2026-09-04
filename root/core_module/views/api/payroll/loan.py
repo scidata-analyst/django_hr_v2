@@ -1,3 +1,7 @@
+"""
+@module views/api/payroll/loan
+@description Loan CRUD, list and approval routes
+"""
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
