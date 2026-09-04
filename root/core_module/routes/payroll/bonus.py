@@ -1,6 +1,6 @@
 from django.urls import path
-from core_module.views.api import payroll_api
+from core_module.views.api.payroll.bonus import bonus_list
 
 urlpatterns = [
-    path('', payroll_api.bonus_list, name='bonus_list'),
+    path('', bonus_list, name='bonus_list'),
 ]

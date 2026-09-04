@@ -1,7 +1,7 @@
 from django.urls import path
-from core_module.views.api import payroll_api
+from core_module.views.api.payroll.structure import salary_structure_list, salary_structure_detail
 
 urlpatterns = [
-    path('', payroll_api.salary_structure_list, name='salary_structure_list'),
-    path('<int:pk>/', payroll_api.salary_structure_detail, name='salary_structure_detail'),
+    path('', salary_structure_list, name='salary_structure_list'),
+    path('<int:pk>/', salary_structure_detail, name='salary_structure_detail'),
 ]

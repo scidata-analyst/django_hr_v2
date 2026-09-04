@@ -1,10 +1,10 @@
 from django.urls import path
-from core_module.views.api import recruitment_api
+from core_module.views.api.recruitment.candidate import candidate_list, candidate_detail, candidate_advance, candidate_reject, pipeline_summary
 
 urlpatterns = [
-    path('', recruitment_api.candidate_list, name='candidate_list'),
-    path('<int:pk>/', recruitment_api.candidate_detail, name='candidate_detail'),
-    path('<int:pk>/advance/', recruitment_api.candidate_advance, name='candidate_advance'),
-    path('<int:pk>/reject/', recruitment_api.candidate_reject, name='candidate_reject'),
-    path('pipeline/', recruitment_api.pipeline_summary, name='pipeline_summary'),
+    path('', candidate_list, name='candidate_list'),
+    path('<int:pk>/', candidate_detail, name='candidate_detail'),
+    path('<int:pk>/advance/', candidate_advance, name='candidate_advance'),
+    path('<int:pk>/reject/', candidate_reject, name='candidate_reject'),
+    path('pipeline/', pipeline_summary, name='pipeline_summary'),
 ]

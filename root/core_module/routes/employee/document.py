@@ -1,6 +1,6 @@
 from django.urls import path
-from core_module.views.api import employee_api
+from core_module.views.api.employee.document import document_list
 
 urlpatterns = [
-    path('', employee_api.document_list, name='document_list'),
+    path('', document_list, name='document_list'),
 ]

@@ -1,9 +1,9 @@
 from django.urls import path
-from core_module.views.api import attendance_api
+from core_module.views.api.attendance.leave import leave_list, leave_detail, leave_approve, leave_deny
 
 urlpatterns = [
-    path('', attendance_api.leave_list, name='leave_list'),
-    path('<int:pk>/', attendance_api.leave_detail, name='leave_detail'),
-    path('<int:pk>/approve/', attendance_api.leave_approve, name='leave_approve'),
-    path('<int:pk>/deny/', attendance_api.leave_deny, name='leave_deny'),
+    path('', leave_list, name='leave_list'),
+    path('<int:pk>/', leave_detail, name='leave_detail'),
+    path('<int:pk>/approve/', leave_approve, name='leave_approve'),
+    path('<int:pk>/deny/', leave_deny, name='leave_deny'),
 ]

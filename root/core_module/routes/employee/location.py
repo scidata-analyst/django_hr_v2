@@ -1,7 +1,7 @@
 from django.urls import path
-from core_module.views.api import employee_api
+from core_module.views.api.employee.location import location_list, location_detail
 
 urlpatterns = [
-    path('', employee_api.location_list, name='location_list'),
-    path('<int:pk>/', employee_api.location_detail, name='location_detail'),
+    path('', location_list, name='location_list'),
+    path('<int:pk>/', location_detail, name='location_detail'),
 ]
