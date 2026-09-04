@@ -1,3 +1,8 @@
+/**
+ * @module routes/employee/employee_api
+ * @description Employee CRUD and stats routes
+ */
+
 from django.urls import path
 from core_module.views.api.employee.employee_api import employee_list, employee_detail_api, employee_stats
 

@@ -1,3 +1,8 @@
+/**
+ * @module routes/ess/ess
+ * @description ESS module root routes
+ */
+
 from django.urls import path, include
 from core_module.views.ess.ess import ess
 

@@ -1,3 +1,8 @@
+/**
+ * @module routes/employee/employee
+ * @description Employee module root routes
+ */
+
 from django.urls import path, include
 from core_module.views.employee.employee import employee, employee_detail, employee_create, employee_update, employee_delete
 

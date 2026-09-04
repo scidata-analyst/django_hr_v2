@@ -1,3 +1,8 @@
+/**
+ * @module routes/onboarding/offboarding
+ * @description Offboarding task routes
+ */
+
 from django.urls import path
 from core_module.views.api.onboarding.offboarding import offboarding_task_list
 

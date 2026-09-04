@@ -1,3 +1,8 @@
+/**
+ * @module routes/payroll/structure
+ * @description Salary structure CRUD routes
+ */
+
 from django.urls import path
 from core_module.views.api.payroll.structure import salary_structure_list, salary_structure_detail
 

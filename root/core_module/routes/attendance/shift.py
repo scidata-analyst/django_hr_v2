@@ -1,3 +1,8 @@
+/**
+ * @module routes/attendance/shift
+ * @description Shift CRUD routes
+ */
+
 from django.urls import path
 from core_module.views.api.attendance.shift import shift_list, shift_detail
 

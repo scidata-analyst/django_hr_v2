@@ -1,3 +1,8 @@
+/**
+ * @module routes/attendance/attendance
+ * @description Attendance module root routes
+ */
+
 from django.urls import path, include
 from core_module.views.attendance.attendance import attendance
 

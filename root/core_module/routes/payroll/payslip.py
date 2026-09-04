@@ -1,3 +1,8 @@
+/**
+ * @module routes/payroll/payslip
+ * @description Payslip CRUD and bulk generate routes
+ */
+
 from django.urls import path
 from core_module.views.api.payroll.payslip import payslip_list, payslip_detail, payslip_bulk_generate
 

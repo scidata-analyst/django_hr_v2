@@ -1,3 +1,8 @@
+/**
+ * @module routes/employee/designation
+ * @description Designation CRUD routes
+ */
+
 from django.urls import path
 from core_module.views.api.employee.designation import designation_list, designation_detail
 

@@ -1,3 +1,8 @@
+/**
+ * @module routes/attendance/attendance_api
+ * @description Attendance record CRUD and stats routes
+ */
+
 from django.urls import path
 from core_module.views.api.attendance.attendance_api import attendance_list, attendance_detail, attendance_stats, employee_attendance_stats
 
