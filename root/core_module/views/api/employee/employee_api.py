@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods
 from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.employee.employee_service import EmployeeService
+from core_module.models.employee.employee import Employee
 from core_module.serializers.employee_serializers import EmployeeSerializer
 
 employee_service = EmployeeService()
@@ -55,6 +56,8 @@ def employee_list(request):
         if department:
             qs = qs.filter(department_id=department)
 
+        qs = qs.select_related('department', 'designation', 'reporting_manager', 'office_location')
+
         total = qs.count()
         start = (page - 1) * page_size
         end = start + page_size
@@ -87,6 +90,12 @@ def employee_detail_api(request, pk):
         instance = employee_service.get_by_id(pk)
         if instance is None:
             return JsonResponse({'error': 'Not found'}, status=404)
+        instance = (
+            Employee.objects
+            .select_related('department', 'designation', 'reporting_manager', 'office_location')
+            .prefetch_related('documents', 'direct_reports')
+            .get(pk=pk)
+        )
         return JsonResponse(EmployeeSerializer.serialize_detail(instance))
 
     elif request.method == "PUT":

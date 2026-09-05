@@ -41,6 +41,8 @@ def candidate_list(request):
         else:
             qs = candidate_service.get_all()
 
+        qs = qs.select_related('applied_for', 'hired_employee')
+
         total = qs.count()
         start = (page - 1) * page_size
         end = start + page_size

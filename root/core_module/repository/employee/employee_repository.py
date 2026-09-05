@@ -10,8 +10,11 @@ class DepartmentRepository(BaseRepository):
     def get_with_employee_count(self):
         return self.model.objects.annotate(employee_count=Count('employee_set'))
 
+    def get_all(self):
+        return self.model.objects.annotate(employee_count=Count('employee_set'))
+
     def search_departments(self, query):
-        return self.search(['name', 'description'], query)
+        return self.search(['name', 'description'], query).annotate(employee_count=Count('employee_set'))
 
 
 class LocationRepository(BaseRepository):
@@ -19,10 +22,13 @@ class LocationRepository(BaseRepository):
         super().__init__(Location)
 
     def get_active(self):
-        return self.model.objects.filter(is_active=True)
+        return self.model.objects.filter(is_active=True).annotate(employee_count=Count('employee_set'))
 
     def get_by_type(self, location_type):
-        return self.model.objects.filter(location_type=location_type)
+        return self.model.objects.filter(location_type=location_type).annotate(employee_count=Count('employee_set'))
+
+    def get_all(self):
+        return self.model.objects.annotate(employee_count=Count('employee_set'))
 
 
 class DesignationRepository(BaseRepository):

@@ -8,7 +8,7 @@ class DepartmentSerializer:
             'id': obj.id,
             'name': obj.name,
             'description': obj.description,
-            'employee_count': obj.employee_set.count(),
+            'employee_count': getattr(obj, 'employee_count', obj.employee_set.count()),
             'created_at': obj.created_at.isoformat(),
             'updated_at': obj.updated_at.isoformat(),
         }
@@ -29,7 +29,7 @@ class LocationSerializer:
             'location_type': obj.location_type,
             'location_type_display': obj.get_location_type_display(),
             'is_active': obj.is_active,
-            'employee_count': obj.employee_set.count(),
+            'employee_count': getattr(obj, 'employee_count', obj.employee_set.count()),
             'created_at': obj.created_at.isoformat(),
             'updated_at': obj.updated_at.isoformat(),
         }

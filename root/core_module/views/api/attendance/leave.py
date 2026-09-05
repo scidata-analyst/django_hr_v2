@@ -38,6 +38,8 @@ def leave_list(request):
         else:
             qs = leave_service.get_all()
 
+        qs = qs.select_related('employee', 'approved_by')
+
         total = qs.count()
         start_idx = (page - 1) * page_size
         end_idx = start_idx + page_size

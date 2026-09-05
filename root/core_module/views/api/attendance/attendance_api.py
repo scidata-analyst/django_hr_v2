@@ -43,6 +43,8 @@ def attendance_list(request):
         else:
             qs = attendance_service.repository.get_by_date(dt.today())
 
+        qs = qs.select_related('employee', 'shift')
+
         total = qs.count()
         start_idx = (page - 1) * page_size
         end_idx = start_idx + page_size

@@ -101,13 +101,13 @@ class Employee(models.Model):
     current_address = models.TextField(blank=True)
     
     employee_id = models.CharField(max_length=20, unique=True)
-    join_date = models.DateField()
-    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
+    join_date = models.DateField(db_index=True)
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, db_index=True)
     designation = models.ForeignKey(Designation, on_delete=models.SET_NULL, null=True, blank=True)
     reporting_manager = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='direct_reports')
     office_location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
     employment_type = models.CharField(max_length=20, choices=EMPLOYMENT_TYPE_CHOICES, default='full_time')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='probation')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='probation', db_index=True)
     
     basic_salary = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     pay_frequency = models.CharField(max_length=20, choices=PAY_FREQUENCY_CHOICES, default='monthly')
@@ -123,6 +123,10 @@ class Employee(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'join_date']),
+            models.Index(fields=['department', 'status']),
+        ]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.employee_id})"

@@ -41,6 +41,8 @@ def payslip_list(request):
         else:
             qs = payslip_service.get_all()
 
+        qs = qs.select_related('employee', 'salary_structure')
+
         total = qs.count()
         start = (page - 1) * page_size
         end = start + page_size

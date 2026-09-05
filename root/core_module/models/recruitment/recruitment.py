@@ -96,7 +96,7 @@ class Candidate(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     applied_for = models.ForeignKey(JobPosting, on_delete=models.CASCADE, related_name='candidates')
     source = models.CharField(max_length=20, choices=SOURCE_CHOICES, blank=True)
-    current_stage = models.CharField(max_length=20, choices=STAGE_CHOICES, default='applied')
+    current_stage = models.CharField(max_length=20, choices=STAGE_CHOICES, default='applied', db_index=True)
     experience_yrs = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     current_salary = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     expected_salary = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
