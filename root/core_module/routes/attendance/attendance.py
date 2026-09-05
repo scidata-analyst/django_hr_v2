@@ -1,14 +1,14 @@
 """
-@module routes/attendance/attendance
-@description Attendance module root routes
+@module routes/attendance/attendance_api
+@description Attendance record CRUD and stats routes
 """
 
-from django.urls import path, include
-from core_module.views.attendance.attendance import attendance
+from django.urls import path
+from core_module.views.api.attendance.attendance_api import attendance_list, attendance_detail, attendance_stats, employee_attendance_stats
 
 urlpatterns = [
-    path('', attendance, name='attendance'),
-    path('api/shift/', include('core_module.routes.attendance.shift')),
-    path('api/attendance/', include('core_module.routes.attendance.attendance_api')),
-    path('api/leave/', include('core_module.routes.attendance.leave')),
+    path('', attendance_list, name='attendance_list'),
+    path('<int:pk>/', attendance_detail, name='attendance_detail'),
+    path('stats/', attendance_stats, name='attendance_stats'),
+    path('<int:employee_id>/stats/', employee_attendance_stats, name='employee_attendance_stats'),
 ]

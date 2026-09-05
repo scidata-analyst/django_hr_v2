@@ -3,8 +3,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('attendance/', include('core_module.routes.attendance.attendance')),
-    path('employee/', include('core_module.routes.employee.employee')),
+    path('attendance/', include('core_module.routes.attendance.route')),
+    path('employee/', include('core_module.routes.employee.route')),
     path('ess/', include('core_module.routes.ess.ess')),
     path('onboarding/', include('core_module.routes.onboarding.onboarding')),
     path('payroll/', include('core_module.routes.payroll.payroll')),
