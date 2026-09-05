@@ -1,60 +1,4 @@
-from core_module.models.employee.employee import Department, Location, Designation, Employee, Document
-
-
-class DepartmentSerializer:
-    @staticmethod
-    def serialize(obj):
-        return {
-            'id': obj.id,
-            'name': obj.name,
-            'description': obj.description,
-            'employee_count': getattr(obj, 'employee_count', obj.employee_set.count()),
-            'created_at': obj.created_at.isoformat(),
-            'updated_at': obj.updated_at.isoformat(),
-        }
-
-    @staticmethod
-    def serialize_list(queryset):
-        return [DepartmentSerializer.serialize(obj) for obj in queryset]
-
-
-class LocationSerializer:
-    @staticmethod
-    def serialize(obj):
-        return {
-            'id': obj.id,
-            'name': obj.name,
-            'city': obj.city,
-            'country': obj.country,
-            'location_type': obj.location_type,
-            'location_type_display': obj.get_location_type_display(),
-            'is_active': obj.is_active,
-            'employee_count': getattr(obj, 'employee_count', obj.employee_set.count()),
-            'created_at': obj.created_at.isoformat(),
-            'updated_at': obj.updated_at.isoformat(),
-        }
-
-    @staticmethod
-    def serialize_list(queryset):
-        return [LocationSerializer.serialize(obj) for obj in queryset]
-
-
-class DesignationSerializer:
-    @staticmethod
-    def serialize(obj):
-        return {
-            'id': obj.id,
-            'title': obj.title,
-            'department_id': obj.department_id,
-            'department_name': obj.department.name if obj.department else None,
-            'level': obj.level,
-            'created_at': obj.created_at.isoformat(),
-            'updated_at': obj.updated_at.isoformat(),
-        }
-
-    @staticmethod
-    def serialize_list(queryset):
-        return [DesignationSerializer.serialize(obj) for obj in queryset]
+from core_module.models.employee.employee import Employee
 
 
 class EmployeeSerializer:
@@ -103,6 +47,7 @@ class EmployeeSerializer:
 
     @staticmethod
     def serialize_detail(obj):
+        from core_module.serializers.employee.document import DocumentSerializer
         data = EmployeeSerializer.serialize(obj)
         data['documents'] = DocumentSerializer.serialize_list(obj.documents.all())
         data['direct_reports'] = EmployeeSerializer.serialize_list(obj.direct_reports.all())
@@ -111,27 +56,3 @@ class EmployeeSerializer:
     @staticmethod
     def serialize_list(queryset):
         return [EmployeeSerializer.serialize(obj) for obj in queryset]
-
-
-class DocumentSerializer:
-    @staticmethod
-    def serialize(obj):
-        return {
-            'id': obj.id,
-            'employee_id': obj.employee_id,
-            'employee_name': obj.employee.full_name,
-            'document_type': obj.document_type,
-            'document_type_display': obj.get_document_type_display(),
-            'title': obj.title,
-            'file': obj.file.url if obj.file else None,
-            'status': obj.status,
-            'status_display': obj.get_status_display(),
-            'expiry_date': obj.expiry_date.isoformat() if obj.expiry_date else None,
-            'notes': obj.notes,
-            'uploaded_at': obj.uploaded_at.isoformat(),
-            'verified_at': obj.verified_at.isoformat() if obj.verified_at else None,
-        }
-
-    @staticmethod
-    def serialize_list(queryset):
-        return [DocumentSerializer.serialize(obj) for obj in queryset]

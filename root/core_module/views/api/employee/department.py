@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods
 from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.employee.department import DepartmentService
-from core_module.serializers.employee_serializers import DepartmentSerializer
+from core_module.serializers.employee.department import DepartmentSerializer
 
 department_service = DepartmentService()
 

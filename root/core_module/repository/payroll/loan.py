@@ -1,5 +1,5 @@
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.payroll.payroll import Loan, LoanRepayment
+from core_module.models.payroll.loan import Loan, LoanRepayment
 
 
 class LoanRepository(BaseRepository):

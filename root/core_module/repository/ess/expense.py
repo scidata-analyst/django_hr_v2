@@ -1,6 +1,6 @@
 from django.db.models import Sum
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.ess.ess import ExpenseClaim
+from core_module.models.ess.expense import ExpenseClaim
 
 
 class ExpenseClaimRepository(BaseRepository):

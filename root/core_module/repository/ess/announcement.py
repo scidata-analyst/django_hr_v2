@@ -1,5 +1,5 @@
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.ess.ess import Announcement
+from core_module.models.ess.announcement import Announcement
 
 
 class AnnouncementRepository(BaseRepository):

@@ -1,6 +1,6 @@
 from django.db.models import Count
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.recruitment.recruitment import Candidate
+from core_module.models.recruitment.candidate import Candidate
 
 
 class CandidateRepository(BaseRepository):

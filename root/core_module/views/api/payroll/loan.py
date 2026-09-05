@@ -9,7 +9,7 @@ from django.views.decorators.http import require_http_methods
 from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.payroll.loan import LoanService
-from core_module.serializers.payroll_serializers import LoanSerializer
+from core_module.serializers.payroll.loan import LoanSerializer
 
 loan_service = LoanService()
 

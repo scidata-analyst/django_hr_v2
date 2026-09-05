@@ -1,6 +1,6 @@
 from django.db.models import Q
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.attendance.attendance import Shift
+from core_module.models.attendance.shift import Shift
 
 
 class ShiftRepository(BaseRepository):

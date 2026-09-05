@@ -8,7 +8,7 @@ class PayslipService(BaseService):
         super().__init__(PayslipRepository())
 
     def generate_payslip(self, employee, pay_period, pay_date):
-        from core_module.models.payroll.payroll import Payslip
+        from core_module.models.payroll.payslip import Payslip
         if self.repository.get_by_employee_and_period(employee.id, pay_period):
             return None, {'error': f'Payslip already exists for {pay_period}'}
         basic = employee.basic_salary or Decimal('0')

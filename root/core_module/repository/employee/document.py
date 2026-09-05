@@ -1,6 +1,6 @@
 from datetime import date
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.employee.employee import Document
+from core_module.models.employee.document import Document
 
 
 class DocumentRepository(BaseRepository):

@@ -1,5 +1,5 @@
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.attendance.attendance import LeaveRequest
+from core_module.models.attendance.leave import LeaveRequest
 
 
 class LeaveRequestRepository(BaseRepository):

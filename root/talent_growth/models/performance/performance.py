@@ -1,5 +1,6 @@
 from django.db import models
-from core_module.models.employee.employee import Employee, Department
+from core_module.models.employee.employee import Employee
+from core_module.models.employee.department import Department
 
 
 class PerformanceReview(models.Model):

@@ -1,6 +1,6 @@
 from django.db.models import Count
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.employee.employee import Location
+from core_module.models.employee.location import Location
 
 
 class LocationRepository(BaseRepository):

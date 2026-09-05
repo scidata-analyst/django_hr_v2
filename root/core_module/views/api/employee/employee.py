@@ -10,7 +10,7 @@ from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.employee.employee import EmployeeService
 from core_module.models.employee.employee import Employee
-from core_module.serializers.employee_serializers import EmployeeSerializer
+from core_module.serializers.employee.employee import EmployeeSerializer
 
 employee_service = EmployeeService()
 

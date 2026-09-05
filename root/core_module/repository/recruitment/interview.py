@@ -1,5 +1,5 @@
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.recruitment.recruitment import Interview
+from core_module.models.recruitment.interview import Interview
 
 
 class InterviewRepository(BaseRepository):

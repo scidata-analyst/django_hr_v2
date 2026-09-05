@@ -1,6 +1,6 @@
 from django.db.models import Sum
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.payroll.payroll import Payslip
+from core_module.models.payroll.payslip import Payslip
 
 
 class PayslipRepository(BaseRepository):

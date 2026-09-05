@@ -1,5 +1,5 @@
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.onboarding.onboarding import OffboardingTask
+from core_module.models.onboarding.offboarding import OffboardingTask
 
 
 class OffboardingTaskRepository(BaseRepository):

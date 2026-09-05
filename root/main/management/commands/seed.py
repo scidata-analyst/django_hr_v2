@@ -7,22 +7,26 @@ from faker import Faker
 
 fake = Faker('en_US')
 
-from core_module.models.employee.employee import (
-    Department, Location, Designation, Employee, Document
-)
-from core_module.models.attendance.attendance import (
-    Shift, Attendance, LeaveRequest
-)
-from core_module.models.payroll.payroll import (
-    SalaryStructure, Payslip, Loan, Bonus
-)
-from core_module.models.recruitment.recruitment import (
-    JobPosting, Candidate, Interview
-)
-from core_module.models.onboarding.onboarding import (
-    OnboardingTask, OffboardingTask, ExitInterview
-)
-from core_module.models.ess.ess import ExpenseClaim, Announcement
+from core_module.models.employee.department import Department
+from core_module.models.employee.location import Location
+from core_module.models.employee.designation import Designation
+from core_module.models.employee.employee import Employee
+from core_module.models.employee.document import Document
+from core_module.models.attendance.shift import Shift
+from core_module.models.attendance.attendance import Attendance
+from core_module.models.attendance.leave import LeaveRequest
+from core_module.models.payroll.structure import SalaryStructure
+from core_module.models.payroll.payslip import Payslip
+from core_module.models.payroll.loan import Loan
+from core_module.models.payroll.bonus import Bonus
+from core_module.models.recruitment.job import JobPosting
+from core_module.models.recruitment.candidate import Candidate
+from core_module.models.recruitment.interview import Interview
+from core_module.models.onboarding.onboarding_task import OnboardingTask
+from core_module.models.onboarding.offboarding import OffboardingTask
+from core_module.models.onboarding.exit_interview import ExitInterview
+from core_module.models.ess.expense import ExpenseClaim
+from core_module.models.ess.announcement import Announcement
 
 from talent_growth.models.performance.performance import PerformanceReview, PerformanceKPI, Goal
 from talent_growth.models.training.training import TrainingCourse, CourseEnrollment

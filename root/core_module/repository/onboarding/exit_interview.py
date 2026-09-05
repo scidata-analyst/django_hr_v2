@@ -1,5 +1,5 @@
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.onboarding.onboarding import ExitInterview
+from core_module.models.onboarding.exit_interview import ExitInterview
 
 
 class ExitInterviewRepository(BaseRepository):

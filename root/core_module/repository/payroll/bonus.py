@@ -1,5 +1,5 @@
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.payroll.payroll import Bonus
+from core_module.models.payroll.bonus import Bonus
 
 
 class BonusRepository(BaseRepository):
