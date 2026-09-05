@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 from django.db import IntegrityError
+from django.db.models import Count, Q, Sum
 from core_module.abstract.base_service import BaseService
 from core_module.repository.attendance.attendance_repository import (
     ShiftRepository, AttendanceRepository, LeaveRequestRepository
@@ -54,16 +55,16 @@ class AttendanceService(BaseService):
         if not end_date:
             end_date = date.today()
         records = self.repository.get_by_date_range(start_date, end_date)
-        total = records.count()
-        return {
-            'total_records': total,
-            'present': records.filter(status='present').count(),
-            'absent': records.filter(status='absent').count(),
-            'late': records.filter(status='late').count(),
-            'half_day': records.filter(status='half_day').count(),
-            'on_leave': records.filter(status='on_leave').count(),
-            'work_from_home': records.filter(status='work_from_home').count(),
-        }
+        agg = records.aggregate(
+            total_records=Count('id'),
+            present=Count('id', filter=Q(status='present')),
+            absent=Count('id', filter=Q(status='absent')),
+            late=Count('id', filter=Q(status='late')),
+            half_day=Count('id', filter=Q(status='half_day')),
+            on_leave=Count('id', filter=Q(status='on_leave')),
+            work_from_home=Count('id', filter=Q(status='work_from_home')),
+        )
+        return agg
 
     def get_employee_stats(self, employee_id, start_date=None, end_date=None):
         if not start_date:

@@ -103,14 +103,13 @@ class EmployeeService(BaseService):
         return self.repository.get_active_employees()
 
     def get_dashboard_stats(self):
-        from core_module.models.employee.employee import Employee
-        return {
-            'total': Employee.objects.count(),
-            'active': Employee.objects.filter(status='active').count(),
-            'probation': Employee.objects.filter(status='probation').count(),
-            'resigned': Employee.objects.filter(status='resigned').count(),
-            'terminated': Employee.objects.filter(status='terminated').count(),
-        }
+        return Employee.objects.aggregate(
+            total=Count('id'),
+            active=Count('id', filter=Q(status='active')),
+            probation=Count('id', filter=Q(status='probation')),
+            resigned=Count('id', filter=Q(status='resigned')),
+            terminated=Count('id', filter=Q(status='terminated')),
+        )
 
 
 class DepartmentService(BaseService):

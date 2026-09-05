@@ -46,16 +46,18 @@ class AttendanceRepository(BaseRepository):
         records = self.model.objects.filter(
             employee_id=employee_id, date__gte=start_date, date__lte=end_date
         )
-        return {
-            'total_days': records.count(),
-            'present': records.filter(status='present').count(),
-            'absent': records.filter(status='absent').count(),
-            'late': records.filter(status='late').count(),
-            'half_day': records.filter(status='half_day').count(),
-            'on_leave': records.filter(status='on_leave').count(),
-            'work_from_home': records.filter(status='work_from_home').count(),
-            'total_overtime': records.aggregate(total=Sum('overtime_hours'))['total'] or 0,
-        }
+        agg = records.aggregate(
+            total_days=Count('id'),
+            present=Count('id', filter=Q(status='present')),
+            absent=Count('id', filter=Q(status='absent')),
+            late=Count('id', filter=Q(status='late')),
+            half_day=Count('id', filter=Q(status='half_day')),
+            on_leave=Count('id', filter=Q(status='on_leave')),
+            work_from_home=Count('id', filter=Q(status='work_from_home')),
+            total_overtime=Sum('overtime_hours'),
+        )
+        agg['total_overtime'] = agg['total_overtime'] or 0
+        return agg
 
 
 class LeaveRequestRepository(BaseRepository):
