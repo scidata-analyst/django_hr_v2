@@ -1,5 +1,5 @@
 from core_module.abstract.base_service import BaseService
-from core_module.repository.payroll.payroll_repository import LoanRepository
+from core_module.repository.payroll.loan import LoanRepository
 
 
 class LoanService(BaseService):

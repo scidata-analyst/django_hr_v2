@@ -1,7 +1,7 @@
 from datetime import date
 from django.db.models import Count, Q
 from core_module.abstract.base_service import BaseService
-from core_module.repository.attendance.attendance_repository import AttendanceRepository
+from core_module.repository.attendance.attendance import AttendanceRepository
 from core_module.models.attendance.attendance import Attendance
 
 

@@ -1,14 +1,6 @@
-from django.db.models import Sum, Q
+from django.db.models import Sum
 from core_module.abstract.base_repository import BaseRepository
-from core_module.models.payroll.payroll import SalaryStructure, Payslip, Loan, LoanRepayment, Bonus
-
-
-class SalaryStructureRepository(BaseRepository):
-    def __init__(self):
-        super().__init__(SalaryStructure)
-
-    def get_active(self):
-        return self.model.objects.filter(is_active=True)
+from core_module.models.payroll.payroll import Payslip
 
 
 class PayslipRepository(BaseRepository):
@@ -48,39 +40,3 @@ class PayslipRepository(BaseRepository):
             'total_deductions': total_deductions,
             'net_payroll': total_gross - total_deductions,
         }
-
-
-class LoanRepository(BaseRepository):
-    def __init__(self):
-        super().__init__(Loan)
-
-    def get_by_employee(self, employee_id):
-        return self.model.objects.filter(employee_id=employee_id)
-
-    def get_active_loans(self):
-        return self.model.objects.filter(status='active')
-
-    def get_pending_loans(self):
-        return self.model.objects.filter(status='pending')
-
-
-class LoanRepaymentRepository(BaseRepository):
-    def __init__(self):
-        super().__init__(LoanRepayment)
-
-    def get_by_loan(self, loan_id):
-        return self.model.objects.filter(loan_id=loan_id)
-
-
-class BonusRepository(BaseRepository):
-    def __init__(self):
-        super().__init__(Bonus)
-
-    def get_by_employee(self, employee_id):
-        return self.model.objects.filter(employee_id=employee_id)
-
-    def get_by_month(self, pay_month):
-        return self.model.objects.filter(pay_month=pay_month)
-
-    def get_pending_bonuses(self):
-        return self.model.objects.filter(status='pending')

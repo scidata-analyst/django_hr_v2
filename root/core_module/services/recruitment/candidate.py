@@ -1,5 +1,5 @@
 from core_module.abstract.base_service import BaseService
-from core_module.repository.recruitment.recruitment_repository import CandidateRepository
+from core_module.repository.recruitment.candidate import CandidateRepository
 
 
 class CandidateService(BaseService):

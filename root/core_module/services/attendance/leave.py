@@ -1,6 +1,6 @@
 from django.db import IntegrityError
 from core_module.abstract.base_service import BaseService
-from core_module.repository.attendance.attendance_repository import LeaveRequestRepository
+from core_module.repository.attendance.leave import LeaveRequestRepository
 
 
 class LeaveRequestService(BaseService):

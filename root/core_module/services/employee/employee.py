@@ -2,7 +2,7 @@ from django.db import IntegrityError
 from django.db.models import Count, Q
 from django.core.exceptions import ValidationError
 from core_module.abstract.base_service import BaseService
-from core_module.repository.employee.employee_repository import EmployeeRepository
+from core_module.repository.employee.employee import EmployeeRepository
 from core_module.models.employee.employee import Employee, Department, Designation, Location
 
 

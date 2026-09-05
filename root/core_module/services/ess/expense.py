@@ -1,5 +1,5 @@
 from core_module.abstract.base_service import BaseService
-from core_module.repository.ess.ess_repository import ExpenseClaimRepository
+from core_module.repository.ess.expense import ExpenseClaimRepository
 
 
 class ExpenseClaimService(BaseService):

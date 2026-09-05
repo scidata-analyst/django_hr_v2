@@ -1,5 +1,5 @@
 from core_module.abstract.base_service import BaseService
-from core_module.repository.ess.ess_repository import AnnouncementRepository
+from core_module.repository.ess.announcement import AnnouncementRepository
 
 
 class AnnouncementService(BaseService):

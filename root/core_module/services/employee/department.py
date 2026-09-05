@@ -1,5 +1,5 @@
 from core_module.abstract.base_service import BaseService
-from core_module.repository.employee.employee_repository import DepartmentRepository
+from core_module.repository.employee.department import DepartmentRepository
 
 
 class DepartmentService(BaseService):

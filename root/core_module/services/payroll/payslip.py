@@ -1,6 +1,6 @@
 from decimal import Decimal
 from core_module.abstract.base_service import BaseService
-from core_module.repository.payroll.payroll_repository import PayslipRepository
+from core_module.repository.payroll.payslip import PayslipRepository
 
 
 class PayslipService(BaseService):

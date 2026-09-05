@@ -1,5 +1,5 @@
 from core_module.abstract.base_service import BaseService
-from core_module.repository.payroll.payroll_repository import SalaryStructureRepository
+from core_module.repository.payroll.structure import SalaryStructureRepository
 
 
 class SalaryStructureService(BaseService):

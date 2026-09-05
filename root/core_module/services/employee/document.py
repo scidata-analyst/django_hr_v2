@@ -1,5 +1,5 @@
 from core_module.abstract.base_service import BaseService
-from core_module.repository.employee.employee_repository import DocumentRepository
+from core_module.repository.employee.document import DocumentRepository
 
 
 class DocumentService(BaseService):
