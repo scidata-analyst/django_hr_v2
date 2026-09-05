@@ -42,6 +42,7 @@ def loan_list(request):
         start = (page - 1) * page_size
         end = start + page_size
         page_qs = qs[start:end]
+
         return JsonResponse({
             'data': LoanSerializer.serialize_list(page_qs),
             'count': total,
@@ -49,11 +50,15 @@ def loan_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
+
     data = parse_body(request)
+
     try:
         instance, errors = loan_service.create_loan(data)
+
         if instance:
             return JsonResponse(LoanSerializer.serialize(instance), status=201)
+            
         return JsonResponse({'errors': errors}, status=400)
     except Exception as e:
         return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)

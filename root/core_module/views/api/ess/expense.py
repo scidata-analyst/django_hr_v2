@@ -42,6 +42,7 @@ def expense_claim_list(request):
         start = (page - 1) * page_size
         end = start + page_size
         page_qs = qs[start:end]
+
         return JsonResponse({
             'data': ExpenseClaimSerializer.serialize_list(page_qs),
             'count': total,
@@ -52,13 +53,17 @@ def expense_claim_list(request):
     try:
         if request.FILES or (request.content_type and 'multipart/form-data' in request.content_type):
             data = request.POST.dict()
+
             if 'receipt' in request.FILES:
                 data['receipt'] = request.FILES['receipt']
         else:
             data = parse_body(request)
+
         instance, errors = expense_service.submit_claim(data)
+
         if instance:
             return JsonResponse(ExpenseClaimSerializer.serialize(instance), status=201)
+            
         return JsonResponse({'errors': errors}, status=400)
     except Exception as e:
         return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)

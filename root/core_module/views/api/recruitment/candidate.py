@@ -47,6 +47,7 @@ def candidate_list(request):
         start = (page - 1) * page_size
         end = start + page_size
         page_qs = qs[start:end]
+
         return JsonResponse({
             'data': CandidateSerializer.serialize_list(page_qs),
             'count': total,
@@ -54,15 +55,20 @@ def candidate_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
+
     if request.FILES or (request.content_type and 'multipart/form-data' in request.content_type):
         data = request.POST.dict()
+
         if 'resume' in request.FILES:
             data['resume'] = request.FILES['resume']
     else:
         data = parse_body(request)
+
     instance, errors = candidate_service.create(**data)
+
     if instance:
         return JsonResponse(CandidateSerializer.serialize(instance), status=201)
+
     return JsonResponse({'errors': errors}, status=400)
 
 
@@ -72,19 +78,25 @@ def candidate_list(request):
 def candidate_detail(request, pk):
     if request.method == "GET":
         instance = candidate_service.get_by_id(pk)
+
         if instance is None:
             return JsonResponse({'error': 'Not found'}, status=404)
+
         return JsonResponse(CandidateSerializer.serialize(instance))
     elif request.method == "PUT":
         data = parse_body(request)
         instance, errors = candidate_service.update(pk, **data)
+
         if instance:
             return JsonResponse(CandidateSerializer.serialize(instance))
+
         return JsonResponse({'errors': errors}, status=400)
     elif request.method == "DELETE":
         success, errors = candidate_service.delete(pk)
+
         if success:
             return JsonResponse({'message': 'Deleted'}, status=204)
+
         return JsonResponse({'errors': errors}, status=404)
 
 
@@ -93,8 +105,10 @@ def candidate_detail(request, pk):
 @require_http_methods(["POST"])
 def candidate_advance(request, pk):
     instance, errors = candidate_service.advance_stage(pk)
+
     if instance:
         return JsonResponse(CandidateSerializer.serialize(instance))
+
     return JsonResponse({'errors': errors}, status=400)
 
 
@@ -103,8 +117,10 @@ def candidate_advance(request, pk):
 @require_http_methods(["POST"])
 def candidate_reject(request, pk):
     instance, errors = candidate_service.reject_candidate(pk)
+
     if instance:
         return JsonResponse(CandidateSerializer.serialize(instance))
+        
     return JsonResponse({'errors': errors}, status=400)
 
 

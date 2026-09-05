@@ -39,6 +39,7 @@ def bonus_list(request):
         start = (page - 1) * page_size
         end = start + page_size
         page_qs = qs[start:end]
+
         return JsonResponse({
             'data': BonusSerializer.serialize_list(page_qs),
             'count': total,
@@ -46,8 +47,11 @@ def bonus_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
+
     data = parse_body(request)
     instance, errors = bonus_service.create_bonus(data)
+
     if instance:
         return JsonResponse(BonusSerializer.serialize(instance), status=201)
+        
     return JsonResponse({'errors': errors}, status=400)

@@ -45,6 +45,7 @@ def onboarding_task_list(request):
         start = (page - 1) * page_size
         end = start + page_size
         page_qs = qs[start:end]
+
         return JsonResponse({
             'data': OnboardingTaskSerializer.serialize_list(page_qs),
             'count': total,
@@ -52,13 +53,18 @@ def onboarding_task_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
+
     data = parse_body(request)
+
     if 'employee_id' in data and 'create_checklist' in data:
         tasks = onboarding_service.create_onboarding_checklist(data['employee_id'])
         return JsonResponse({'data': OnboardingTaskSerializer.serialize_list(tasks), 'count': len(tasks)}, status=201)
+
     instance, errors = onboarding_service.create(**data)
+
     if instance:
         return JsonResponse(OnboardingTaskSerializer.serialize(instance), status=201)
+
     return JsonResponse({'errors': errors}, status=400)
 
 
@@ -68,17 +74,23 @@ def onboarding_task_list(request):
 def onboarding_task_detail(request, pk):
     if request.method == "GET":
         instance = onboarding_service.get_by_id(pk)
+
         if instance is None:
             return JsonResponse({'error': 'Not found'}, status=404)
+            
         return JsonResponse(OnboardingTaskSerializer.serialize(instance))
     elif request.method == "PUT":
         data = parse_body(request)
         instance, errors = onboarding_service.update(pk, **data)
+
         if instance:
             return JsonResponse(OnboardingTaskSerializer.serialize(instance))
+
         return JsonResponse({'errors': errors}, status=400)
     elif request.method == "DELETE":
         success, errors = onboarding_service.delete(pk)
+
         if success:
             return JsonResponse({'message': 'Deleted'}, status=204)
+
         return JsonResponse({'errors': errors}, status=404)

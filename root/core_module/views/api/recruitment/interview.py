@@ -27,15 +27,20 @@ def parse_body(request):
 def interview_list(request):
     if request.method == "GET":
         candidate = request.GET.get('candidate')
+
         if candidate:
             qs = interview_service.repository.get_by_candidate(candidate)
         else:
             qs = interview_service.get_all()
+
         return JsonResponse({'data': InterviewSerializer.serialize_list(qs), 'count': qs.count()})
+
     data = parse_body(request)
     instance, errors = interview_service.schedule_interview(data)
+
     if instance:
         return JsonResponse(InterviewSerializer.serialize(instance), status=201)
+
     return JsonResponse({'errors': errors}, status=400)
 
 
@@ -47,6 +52,8 @@ def interview_result(request, pk):
     instance, errors = interview_service.submit_result(
         pk, data.get('result'), data.get('feedback', ''), data.get('rating')
     )
+
     if instance:
         return JsonResponse(InterviewSerializer.serialize(instance))
+        
     return JsonResponse({'errors': errors}, status=400)

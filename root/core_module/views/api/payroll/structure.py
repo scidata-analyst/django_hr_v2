@@ -33,6 +33,7 @@ def salary_structure_list(request):
         start = (page - 1) * page_size
         end = start + page_size
         page_qs = qs[start:end]
+
         return JsonResponse({
             'data': SalaryStructureSerializer.serialize_list(page_qs),
             'count': total,
@@ -40,11 +41,15 @@ def salary_structure_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
+
     data = parse_body(request)
+
     try:
         instance, errors = salary_service.create(**data)
+
         if instance:
             return JsonResponse(SalaryStructureSerializer.serialize(instance), status=201)
+
         return JsonResponse({'errors': errors}, status=400)
     except Exception as e:
         return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
@@ -56,20 +61,27 @@ def salary_structure_list(request):
 def salary_structure_detail(request, pk):
     if request.method == "GET":
         instance = salary_service.get_by_id(pk)
+
         if instance is None:
             return JsonResponse({'error': 'Not found'}, status=404)
+
         return JsonResponse(SalaryStructureSerializer.serialize(instance))
     elif request.method == "PUT":
         data = parse_body(request)
+
         try:
             instance, errors = salary_service.update(pk, **data)
+
             if instance:
                 return JsonResponse(SalaryStructureSerializer.serialize(instance))
+
             return JsonResponse({'errors': errors}, status=400)
         except Exception as e:
             return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
     elif request.method == "DELETE":
         success, errors = salary_service.delete(pk)
+
         if success:
             return JsonResponse({'message': 'Deleted'}, status=204)
+            
         return JsonResponse({'errors': errors}, status=404)

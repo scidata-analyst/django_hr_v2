@@ -46,11 +46,15 @@ def offboarding_task_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
+
     data = parse_body(request)
+
     if 'employee_id' in data and 'create_checklist' in data:
         tasks = offboarding_service.create_offboarding_checklist(data['employee_id'])
         return JsonResponse({'data': OffboardingTaskSerializer.serialize_list(tasks), 'count': len(tasks)}, status=201)
+
     instance, errors = offboarding_service.create(**data)
+    
     if instance:
         return JsonResponse(OffboardingTaskSerializer.serialize(instance), status=201)
     return JsonResponse({'errors': errors}, status=400)

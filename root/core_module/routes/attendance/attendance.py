@@ -1,10 +1,10 @@
 """
-@module routes/attendance/attendance_api
+@module routes/attendance/attendance
 @description Attendance record CRUD and stats routes
 """
 
 from django.urls import path
-from core_module.views.api.attendance.attendance_api import attendance_list, attendance_detail, attendance_stats, employee_attendance_stats
+from core_module.views.api.attendance.attendance import attendance_list, attendance_detail, attendance_stats, employee_attendance_stats
 
 urlpatterns = [
     path('', attendance_list, name='attendance_list'),

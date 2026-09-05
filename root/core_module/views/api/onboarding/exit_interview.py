@@ -33,6 +33,7 @@ def exit_interview_list(request):
         start = (page - 1) * page_size
         end = start + page_size
         page_qs = qs[start:end]
+        
         return JsonResponse({
             'data': ExitInterviewSerializer.serialize_list(page_qs),
             'count': total,
@@ -40,8 +41,11 @@ def exit_interview_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
+
     data = parse_body(request)
     instance, errors = exit_service.create(**data)
+
     if instance:
         return JsonResponse(ExitInterviewSerializer.serialize(instance), status=201)
+
     return JsonResponse({'errors': errors}, status=400)
