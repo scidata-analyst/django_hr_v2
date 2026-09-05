@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
-from core_module.services.attendance.attendance_service import AttendanceService
+from core_module.services.attendance.attendance import AttendanceService
 from core_module.serializers.attendance_serializers import AttendanceSerializer
 
 attendance_service = AttendanceService()

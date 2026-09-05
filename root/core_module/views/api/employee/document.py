@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
-from core_module.services.employee.employee_service import DocumentService
+from core_module.services.employee.document import DocumentService
 from core_module.serializers.employee_serializers import DocumentSerializer
 
 document_service = DocumentService()

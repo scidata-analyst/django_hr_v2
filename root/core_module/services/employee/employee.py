@@ -1,11 +1,8 @@
 from django.db import IntegrityError
 from django.db.models import Count, Q
 from django.core.exceptions import ValidationError
-from django.db.models import ProtectedError, RestrictedError
 from core_module.abstract.base_service import BaseService
-from core_module.repository.employee.employee_repository import (
-    EmployeeRepository, DepartmentRepository, LocationRepository, DesignationRepository, DocumentRepository
-)
+from core_module.repository.employee.employee_repository import EmployeeRepository
 from core_module.models.employee.employee import Employee, Department, Designation, Location
 
 
@@ -30,8 +27,7 @@ class EmployeeService(BaseService):
     def create_employee(self, data):
         if 'employee_id' not in data or not data['employee_id']:
             data['employee_id'] = self.repository.generate_employee_id()
-        
-        # Validate FK fields exist
+
         errors = {}
         fk_checks = {
             'department_id': (Department, 'Department'),
@@ -43,10 +39,10 @@ class EmployeeService(BaseService):
             fk_id = data.get(fk_field)
             if fk_id and not model.objects.filter(pk=fk_id).exists():
                 errors[fk_field] = f'{label} with id {fk_id} does not exist.'
-        
+
         if errors:
             return None, errors
-        
+
         is_valid, errors = self.validate(**data)
         if not is_valid:
             return None, errors
@@ -60,8 +56,7 @@ class EmployeeService(BaseService):
 
     def update_employee(self, pk, data):
         data['pk'] = pk
-        
-        # Validate FK fields exist
+
         errors = {}
         fk_checks = {
             'department_id': (Department, 'Department'),
@@ -73,10 +68,10 @@ class EmployeeService(BaseService):
             fk_id = data.get(fk_field)
             if fk_id is not None and fk_id != '' and not model.objects.filter(pk=fk_id).exists():
                 errors[fk_field] = f'{label} with id {fk_id} does not exist.'
-        
+
         if errors:
             return None, errors
-        
+
         is_valid, errors = self.validate(**data)
         if not is_valid:
             return None, errors
@@ -110,26 +105,3 @@ class EmployeeService(BaseService):
             resigned=Count('id', filter=Q(status='resigned')),
             terminated=Count('id', filter=Q(status='terminated')),
         )
-
-
-class DepartmentService(BaseService):
-    def __init__(self):
-        super().__init__(DepartmentRepository())
-
-
-class LocationService(BaseService):
-    def __init__(self):
-        super().__init__(LocationRepository())
-
-
-class DesignationService(BaseService):
-    def __init__(self):
-        super().__init__(DesignationRepository())
-
-
-class DocumentService(BaseService):
-    def __init__(self):
-        super().__init__(DocumentRepository())
-
-    def get_by_employee(self, employee_id):
-        return self.repository.get_by_employee(employee_id)

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from core_module.services.employee.employee_service import EmployeeService
+from core_module.services.employee.employee import EmployeeService
 from core_module.models.employee.employee import Department
 
 

@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
-from core_module.services.recruitment.recruitment_service import JobPostingService
+from core_module.services.recruitment.job import JobPostingService
 from core_module.serializers.recruitment_serializers import JobPostingSerializer
 
 job_service = JobPostingService()

@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from core_module.decorators.permissions import require_login
 from core_module.decorators.safe_json import safe_json_handler
-from core_module.services.payroll.payroll_service import SalaryStructureService
+from core_module.services.payroll.structure import SalaryStructureService
 from core_module.serializers.payroll_serializers import SalaryStructureSerializer
 
 salary_service = SalaryStructureService()
