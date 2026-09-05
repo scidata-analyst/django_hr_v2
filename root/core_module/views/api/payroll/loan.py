@@ -3,9 +3,11 @@
 @description Loan CRUD, list and approval routes
 """
 import json
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from core_module.decorators.permissions import require_login
+from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.payroll.payroll_service import LoanService
 from core_module.serializers.payroll_serializers import LoanSerializer
 
@@ -19,7 +21,8 @@ def parse_body(request):
         return {}
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "POST"])
 def loan_list(request):
     if request.method == "GET":
@@ -27,14 +30,14 @@ def loan_list(request):
         status = request.GET.get('status')
         page = int(request.GET.get('page', 1))
         page_size = int(request.GET.get('page_size', 10))
-        
+
         if employee:
             qs = loan_service.repository.get_by_employee(employee)
         elif status:
             qs = loan_service.repository.get_by_status(status)
         else:
             qs = loan_service.get_all()
-        
+
         total = qs.count()
         start = (page - 1) * page_size
         end = start + page_size
@@ -56,7 +59,8 @@ def loan_list(request):
         return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "PUT", "DELETE"])
 def loan_detail(request, pk):
     if request.method == "GET":
@@ -80,7 +84,8 @@ def loan_detail(request, pk):
         return JsonResponse({'errors': errors}, status=404)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["POST"])
 def loan_approve(request, pk):
     data = parse_body(request)

@@ -51,7 +51,7 @@ class OffboardingTask(models.Model):
 
     TASK_TYPE_CHOICES = [
         ('exit_interview', 'Exit Interview'),
-        (' clearance', 'Clearance'),
+        ('clearance', 'Clearance'),
         ('knowledge_transfer', 'Knowledge Transfer'),
         ('equipment_return', 'Equipment Return'),
         ('access_revocation', 'Access Revocation'),

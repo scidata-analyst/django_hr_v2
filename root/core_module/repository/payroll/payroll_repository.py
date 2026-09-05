@@ -29,12 +29,24 @@ class PayslipRepository(BaseRepository):
 
     def get_payroll_summary(self, pay_period):
         payslips = self.model.objects.filter(pay_period=pay_period)
+        gross_fields = [
+            'basic_salary', 'house_rent', 'transport_allowance',
+            'medical_allowance', 'food_allowance', 'other_allowance',
+            'overtime_amount', 'bonus_amount'
+        ]
+        deduction_fields = [
+            'income_tax', 'provident_fund', 'insurance_deduction',
+            'other_deductions', 'loan_emi', 'absent_deduction', 'late_deduction'
+        ]
+        all_fields = gross_fields + deduction_fields
+        aggregations = payslips.aggregate(**{f"sum_{f}": Sum(f) for f in all_fields})
+        total_gross = sum((aggregations.get(f"sum_{f}") or 0) for f in gross_fields)
+        total_deductions = sum((aggregations.get(f"sum_{f}") or 0) for f in deduction_fields)
         return {
             'total_employees': payslips.count(),
-            'total_gross': payslips.aggregate(total=Sum('basic_salary'))['total'] or 0,
-            'total_deductions': payslips.aggregate(
-                total=Sum('income_tax') + Sum('provident_fund') + Sum('insurance_deduction')
-            )['total'] or 0,
+            'total_gross': total_gross,
+            'total_deductions': total_deductions,
+            'net_payroll': total_gross - total_deductions,
         }
 
 

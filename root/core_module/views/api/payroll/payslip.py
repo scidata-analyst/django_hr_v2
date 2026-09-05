@@ -3,9 +3,11 @@
 @description Payslip CRUD, list and bulk generate routes
 """
 import json
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from core_module.decorators.permissions import require_login
+from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.payroll.payroll_service import PayslipService
 from core_module.serializers.payroll_serializers import PayslipSerializer
 
@@ -19,7 +21,8 @@ def parse_body(request):
         return {}
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "POST"])
 def payslip_list(request):
     if request.method == "GET":
@@ -28,7 +31,7 @@ def payslip_list(request):
         month = request.GET.get('month')
         page = int(request.GET.get('page', 1))
         page_size = int(request.GET.get('page_size', 10))
-        
+
         if employee:
             qs = payslip_service.get_by_employee(employee)
         elif period:
@@ -37,7 +40,7 @@ def payslip_list(request):
             qs = payslip_service.repository.get_by_period(month)
         else:
             qs = payslip_service.get_all()
-        
+
         total = qs.count()
         start = (page - 1) * page_size
         end = start + page_size
@@ -59,7 +62,8 @@ def payslip_list(request):
         return JsonResponse({'errors': {'__all__': [str(e)]}}, status=500)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET"])
 def payslip_detail(request, pk):
     instance = payslip_service.get_by_id(pk)
@@ -68,7 +72,8 @@ def payslip_detail(request, pk):
     return JsonResponse(PayslipSerializer.serialize(instance))
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["POST"])
 def payslip_bulk_generate(request):
     data = parse_body(request)

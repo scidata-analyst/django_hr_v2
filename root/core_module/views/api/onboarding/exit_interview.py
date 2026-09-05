@@ -3,9 +3,11 @@
 @description Exit interview CRUD and list routes
 """
 import json
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from core_module.decorators.permissions import require_login
+from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.onboarding.onboarding_service import ExitInterviewService
 from core_module.serializers.onboarding_serializers import ExitInterviewSerializer
 
@@ -19,7 +21,8 @@ def parse_body(request):
         return {}
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "POST"])
 def exit_interview_list(request):
     if request.method == "GET":

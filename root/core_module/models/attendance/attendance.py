@@ -32,8 +32,8 @@ class Shift(models.Model):
         return f"{self.shift_name} ({self.shift_code})"
 
     def clean(self):
-        if self.start_time and self.end_time and self.start_time >= self.end_time:
-            raise ValidationError("End time must be after start time.")
+        if self.start_time and self.end_time and self.start_time == self.end_time:
+            raise ValidationError("Start time and end time cannot be identical.")
 
 
 class Attendance(models.Model):

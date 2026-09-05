@@ -86,6 +86,8 @@ class EmployeeSerializer:
             'reporting_manager_name': obj.reporting_manager.full_name if obj.reporting_manager else None,
             'office_location_id': obj.office_location_id,
             'office_location_name': obj.office_location.name if obj.office_location else None,
+            'location_id': obj.office_location_id,
+            'location_name': obj.office_location.name if obj.office_location else None,
             'employment_type': obj.employment_type,
             'employment_type_display': obj.get_employment_type_display(),
             'status': obj.status,

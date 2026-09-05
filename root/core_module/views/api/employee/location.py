@@ -5,8 +5,9 @@
 import json
 
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from core_module.decorators.permissions import require_login
+from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.employee.employee_service import LocationService
 from core_module.serializers.employee_serializers import LocationSerializer
 
@@ -20,7 +21,8 @@ def parse_body(request):
         return {}
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "POST"])
 def location_list(request):
     if request.method == "GET":
@@ -33,7 +35,8 @@ def location_list(request):
     return JsonResponse({'errors': errors}, status=400)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "PUT", "DELETE"])
 def location_detail(request, pk):
     if request.method == "GET":

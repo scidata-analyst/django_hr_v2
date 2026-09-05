@@ -3,9 +3,11 @@
 @description Job posting CRUD and list routes
 """
 import json
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from core_module.decorators.permissions import require_login
+from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.recruitment.recruitment_service import JobPostingService
 from core_module.serializers.recruitment_serializers import JobPostingSerializer
 
@@ -19,7 +21,8 @@ def parse_body(request):
         return {}
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "POST"])
 def job_posting_list(request):
     if request.method == "GET":
@@ -27,15 +30,15 @@ def job_posting_list(request):
         status = request.GET.get('status')
         page = int(request.GET.get('page', 1))
         page_size = int(request.GET.get('page_size', 10))
-        
+
         if search:
             qs = job_service.search_jobs(search)
         else:
             qs = job_service.get_all()
-        
+
         if status:
             qs = qs.filter(status=status)
-        
+
         total = qs.count()
         start = (page - 1) * page_size
         end = start + page_size
@@ -54,7 +57,8 @@ def job_posting_list(request):
     return JsonResponse({'errors': errors}, status=400)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "PUT", "DELETE"])
 def job_posting_detail(request, pk):
     if request.method == "GET":

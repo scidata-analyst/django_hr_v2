@@ -30,8 +30,8 @@ class AttendanceService(BaseService):
                 errors['date'] = 'Attendance already marked for this employee on this date.'
         check_in = kwargs.get('check_in_time')
         check_out = kwargs.get('check_out_time')
-        if check_in and check_out and check_in >= check_out:
-            errors['check_out_time'] = 'Check-out must be after check-in.'
+        if check_in and check_out and check_in == check_out:
+            errors['check_out_time'] = 'Check-out time cannot be identical to check-in time.'
         return len(errors) == 0, errors
 
     def mark_attendance(self, data):

@@ -3,9 +3,11 @@
 @description Candidate CRUD, pipeline and stage routes
 """
 import json
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from core_module.decorators.permissions import require_login
+from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.recruitment.recruitment_service import CandidateService
 from core_module.serializers.recruitment_serializers import CandidateSerializer
 
@@ -19,7 +21,8 @@ def parse_body(request):
         return {}
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "POST"])
 def candidate_list(request):
     if request.method == "GET":
@@ -28,7 +31,7 @@ def candidate_list(request):
         search = request.GET.get('search', '')
         page = int(request.GET.get('page', 1))
         page_size = int(request.GET.get('page_size', 10))
-        
+
         if search:
             qs = candidate_service.repository.search_candidates(search)
         elif stage:
@@ -37,7 +40,7 @@ def candidate_list(request):
             qs = candidate_service.repository.get_by_job(job)
         else:
             qs = candidate_service.get_all()
-        
+
         total = qs.count()
         start = (page - 1) * page_size
         end = start + page_size
@@ -49,14 +52,20 @@ def candidate_list(request):
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
         })
-    data = parse_body(request)
+    if request.FILES or (request.content_type and 'multipart/form-data' in request.content_type):
+        data = request.POST.dict()
+        if 'resume' in request.FILES:
+            data['resume'] = request.FILES['resume']
+    else:
+        data = parse_body(request)
     instance, errors = candidate_service.create(**data)
     if instance:
         return JsonResponse(CandidateSerializer.serialize(instance), status=201)
     return JsonResponse({'errors': errors}, status=400)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "PUT", "DELETE"])
 def candidate_detail(request, pk):
     if request.method == "GET":
@@ -77,7 +86,8 @@ def candidate_detail(request, pk):
         return JsonResponse({'errors': errors}, status=404)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["POST"])
 def candidate_advance(request, pk):
     instance, errors = candidate_service.advance_stage(pk)
@@ -86,7 +96,8 @@ def candidate_advance(request, pk):
     return JsonResponse({'errors': errors}, status=400)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["POST"])
 def candidate_reject(request, pk):
     instance, errors = candidate_service.reject_candidate(pk)
@@ -95,6 +106,8 @@ def candidate_reject(request, pk):
     return JsonResponse({'errors': errors}, status=400)
 
 
+@require_login
+@safe_json_handler
 def pipeline_summary(request):
     summary = candidate_service.get_pipeline_summary()
     return JsonResponse({'data': list(summary)})

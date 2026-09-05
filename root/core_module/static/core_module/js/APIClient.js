@@ -1,6 +1,6 @@
 /**
  * @class APIClient
- * @description REST API client for Laravel backend integration
+ * @description REST API client for Django backend integration with CSRF & FormData support
  */
 class APIClient {
     /**
@@ -18,6 +18,21 @@ class APIClient {
             'Accept': 'application/json',
             ...config.headers
         };
+    }
+
+    /**
+     * Extracts Django CSRF token from cookies or meta tags
+     * @returns {string|null} CSRF token
+     * @private
+     */
+    _getCSRFToken() {
+        if (typeof document !== 'undefined') {
+            const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+            if (match) return decodeURIComponent(match[1]);
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta) return meta.getAttribute('content');
+        }
+        return null;
     }
 
     /**
@@ -58,12 +73,31 @@ class APIClient {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
+        const isSafeMethod = ['GET', 'HEAD', 'OPTIONS', 'TRACE'].includes(method.toUpperCase());
+        const isFormData = typeof FormData !== 'undefined' && data instanceof FormData;
+
+        const requestHeaders = { ...this.headers };
+
+        if (!isSafeMethod) {
+            const csrf = this._getCSRFToken();
+            if (csrf) {
+                requestHeaders['X-CSRFToken'] = csrf;
+            }
+        }
+
+        if (isFormData) {
+            delete requestHeaders['Content-Type'];
+        }
+
         const options = {
             method,
-            headers: this.headers,
+            headers: requestHeaders,
             signal: controller.signal,
-            ...(data && { body: JSON.stringify(data) })
         };
+
+        if (data !== null && data !== undefined) {
+            options.body = isFormData ? data : JSON.stringify(data);
+        }
 
         try {
             const response = await fetch(url, options);

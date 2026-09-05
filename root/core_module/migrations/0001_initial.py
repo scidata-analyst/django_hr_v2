@@ -205,7 +205,7 @@ class Migration(migrations.Migration):
             name='OffboardingTask',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('task_type', models.CharField(choices=[('exit_interview', 'Exit Interview'), (' clearance', 'Clearance'), ('knowledge_transfer', 'Knowledge Transfer'), ('equipment_return', 'Equipment Return'), ('access_revocation', 'Access Revocation'), ('final_settlement', 'Final Settlement'), ('documents', 'Documents'), ('feedback', 'Feedback')], max_length=30)),
+                ('task_type', models.CharField(choices=[('exit_interview', 'Exit Interview'), ('clearance', 'Clearance'), ('knowledge_transfer', 'Knowledge Transfer'), ('equipment_return', 'Equipment Return'), ('access_revocation', 'Access Revocation'), ('final_settlement', 'Final Settlement'), ('documents', 'Documents'), ('feedback', 'Feedback')], max_length=30)),
                 ('task_name', models.CharField(max_length=100)),
                 ('description', models.TextField(blank=True)),
                 ('due_date', models.DateField(blank=True, null=True)),

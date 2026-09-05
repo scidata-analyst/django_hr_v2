@@ -3,9 +3,11 @@
 @description Interview schedule and result routes
 """
 import json
+
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from core_module.decorators.permissions import require_login
+from core_module.decorators.safe_json import safe_json_handler
 from core_module.services.recruitment.recruitment_service import InterviewService
 from core_module.serializers.recruitment_serializers import InterviewSerializer
 
@@ -19,7 +21,8 @@ def parse_body(request):
         return {}
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["GET", "POST"])
 def interview_list(request):
     if request.method == "GET":
@@ -36,7 +39,8 @@ def interview_list(request):
     return JsonResponse({'errors': errors}, status=400)
 
 
-@csrf_exempt
+@require_login
+@safe_json_handler
 @require_http_methods(["POST"])
 def interview_result(request, pk):
     data = parse_body(request)

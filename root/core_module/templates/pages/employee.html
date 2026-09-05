@@ -793,7 +793,7 @@
           <td style="font-weight:600;">${emp.employee_id || ''}</td>
           <td>${emp.department_name || '—'}</td>
           <td>${emp.designation_title || '—'}</td>
-          <td><i class="bi bi-geo-alt" style="color:var(--text-muted);"></i> ${emp.location_name || '—'}</td>
+          <td><i class="bi bi-geo-alt" style="color:var(--text-muted);"></i> ${emp.office_location_name || emp.location_name || '—'}</td>
           <td>${emp.join_date ? new Date(emp.join_date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : '—'}</td>
           <td><span class="badge-custom ${statusBadge}">${emp.status || '—'}</span></td>
           <td>
@@ -909,9 +909,9 @@
                 if (allFields[11]) allFields[11].value = emp.employee_id || '';
                 if (allFields[12]) allFields[12].value = emp.join_date || '';
                 if (allFields[13]) allFields[13].value = emp.department_id || '';
-                if (allFields[14]) allFields[14].value = emp.designation_title || '';
+                if (allFields[14]) allFields[14].value = emp.designation_id || '';
                 if (allFields[15]) allFields[15].value = emp.reporting_manager_id || '';
-                if (allFields[16]) allFields[16].value = emp.location_id || '';
+                if (allFields[16]) allFields[16].value = emp.office_location_id || emp.location_id || '';
                 if (allFields[17]) allFields[17].value = emp.employment_type || '';
                 if (allFields[18]) allFields[18].value = emp.status || '';
                 if (allFields[19]) allFields[19].value = emp.basic_salary || '';
@@ -1003,9 +1003,7 @@
                 const msg = e?.response?.data ? e.response.data : 'Validation error';
                 for (const key in msg.errors) {
                     console.log(`Field: ${key}, Error: ${msg.errors[key]}`);
-
                     showToast('❌', `Field: ${key}, Error: ${msg.errors[key]}`);
-                    sleep(5);
                 }
             }
         }
