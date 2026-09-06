@@ -1,8 +1,8 @@
 from django.db import models
-from core_module.models.attendance import Designation
-from core_module.models.attendance import Department
-from core_module.models.attendance import Document
-from core_module.models.attendance import Location
+from django.contrib.auth.models import User
+from core_module.models.employee.department import Department
+from core_module.models.employee.designation import Designation
+from core_module.models.employee.location import Location
 
 class Employee(models.Model):
     GENDER_CHOICES = [
