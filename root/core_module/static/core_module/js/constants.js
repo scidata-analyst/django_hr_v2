@@ -79,6 +79,7 @@ const API_ENDPOINTS = {
         },
         INTERVIEWS: {
             INDEX: '/core-module/recruitment/api/interview/',
+            STORE: '/core-module/recruitment/api/interview/',
             RESULT: (id) => `/core-module/recruitment/api/interview/${id}/result/`,
         },
     },

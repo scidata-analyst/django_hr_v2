@@ -107,7 +107,7 @@
                     <div class="page-header">
                         <div class="page-header-left">
                             <div class="page-title">Recruitment & Hiring</div>
-                            <div class="page-subtitle">47 open positions · 234 active candidates</div>
+                            <div class="page-subtitle" id="recruitment-subtitle">Loading recruitment overview...</div>
                         </div>
                         <div class="page-actions">
                             <button class="btn-outline-custom" data-bs-toggle="modal"
@@ -124,7 +124,7 @@
                                 <div class="stat-icon blue"><i class="bi bi-briefcase"></i></div>
                                 <div class="stat-info">
                                     <div class="stat-label">Open Positions</div>
-                                    <div class="stat-value">47</div>
+                                    <div class="stat-value" id="stat-open-positions">0</div>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +133,7 @@
                                 <div class="stat-icon amber"><i class="bi bi-person-lines-fill"></i></div>
                                 <div class="stat-info">
                                     <div class="stat-label">Applicants</div>
-                                    <div class="stat-value">234</div>
+                                    <div class="stat-value" id="stat-applicants">0</div>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +142,7 @@
                                 <div class="stat-icon purple"><i class="bi bi-camera-video"></i></div>
                                 <div class="stat-info">
                                     <div class="stat-label">Interviews Today</div>
-                                    <div class="stat-value">8</div>
+                                    <div class="stat-value" id="stat-interviews-today">0</div>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +151,7 @@
                                 <div class="stat-icon green"><i class="bi bi-person-check"></i></div>
                                 <div class="stat-info">
                                     <div class="stat-label">Hired This Month</div>
-                                    <div class="stat-value">12</div>
+                                    <div class="stat-value" id="stat-hired-month">0</div>
                                 </div>
                             </div>
                         </div>
@@ -263,7 +263,7 @@
                         </div>
                     </div>
                     <!-- Open Jobs -->
-                    <div class="card-custom">
+                    <div class="card-custom mb-3">
                         <div class="card-header-custom">
                             <div class="card-header-title">Open Job Postings</div>
                             <div class="d-flex gap-2 align-items-center">
@@ -609,6 +609,122 @@
         </div>
     </div>
 
+    <!-- ═══ modalInterview ═══ -->
+    <div class="modal fade" id="modalInterview" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+                <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-icon" style="background:#ede9fe">📅</div>
+                        <div>
+                            <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Schedule Interview</div>
+                            <div style="font-size:0.78rem;color:#64748b;">Pick a candidate, type and time slot</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px 24px;">
+
+                    <div id="form-global-error-interview" class="form-global-error"></div>
+                    <div class="form-grid">
+                        <div class="fg full" data-field-group="interview_candidate">
+                            <div class="fl">Candidate *</div><select class="fi" data-field="interview_candidate" id="interview-candidate-select">
+                                <option value="">Select Candidate</option>
+                            </select>
+                            <div class="field-error" data-error-for="interview_candidate"></div>
+                        </div>
+                        <div class="fg" data-field-group="interview_type">
+                            <div class="fl">Interview Type *</div><select class="fi" data-field="interview_type">
+                                <option value="phone">Phone</option>
+                                <option value="video" selected>Video</option>
+                                <option value="technical">Technical</option>
+                                <option value="hr">HR</option>
+                                <option value="final">Final</option>
+                            </select>
+                            <div class="field-error" data-error-for="interview_type"></div>
+                        </div>
+                        <div class="fg" data-field-group="interview_duration">
+                            <div class="fl">Duration (mins)</div><input class="fi" data-field="interview_duration" type="number" value="60" min="15" step="15" />
+                            <div class="field-error" data-error-for="interview_duration"></div>
+                        </div>
+                        <div class="fg full" data-field-group="interview_scheduled_at">
+                            <div class="fl">Scheduled At *</div><input class="fi" data-field="interview_scheduled_at" type="datetime-local" />
+                            <div class="field-error" data-error-for="interview_scheduled_at"></div>
+                        </div>
+                        <div class="fg" data-field-group="interview_interviewer">
+                            <div class="fl">Interviewer</div><select class="fi" data-field="interview_interviewer" id="interview-interviewer-select">
+                                <option value="">Select Interviewer (optional)</option>
+                            </select>
+                            <div class="field-error" data-error-for="interview_interviewer"></div>
+                        </div>
+                        <div class="fg" data-field-group="interview_location">
+                            <div class="fl">Location</div><input class="fi" data-field="interview_location" placeholder="e.g. Dhaka HQ, Room 301" />
+                            <div class="field-error" data-error-for="interview_location"></div>
+                        </div>
+                        <div class="fg full" data-field-group="interview_meeting_link">
+                            <div class="fl">Meeting Link</div><input class="fi" data-field="interview_meeting_link" type="url" placeholder="https://meet.example.com/..." />
+                            <div class="field-error" data-error-for="interview_meeting_link"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveInterview()">📅 Schedule
+                        Interview</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ modalOffer ═══ -->
+    <div class="modal fade" id="modalOffer" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+                <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="modal-icon" style="background:#d1fae5">📃</div>
+                        <div>
+                            <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Send Offer Letter</div>
+                            <div style="font-size:0.78rem;color:#64748b;">Move a candidate to the Offer stage</div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="padding:20px 24px;">
+
+                    <div id="form-global-error-offer" class="form-global-error"></div>
+                    <div class="form-grid">
+                        <div class="fg full" data-field-group="offer_candidate">
+                            <div class="fl">Candidate *</div><select class="fi" data-field="offer_candidate" id="offer-candidate-select">
+                                <option value="">Select Candidate (interview / offer stage)</option>
+                            </select>
+                            <div class="field-error" data-error-for="offer_candidate"></div>
+                        </div>
+                        <div class="fg" data-field-group="offer_salary">
+                            <div class="fl">Offered Salary ($)</div><input class="fi" data-field="offer_salary" type="number" placeholder="0" step="0.01" />
+                            <div class="field-error" data-error-for="offer_salary"></div>
+                        </div>
+                        <div class="fg" data-field-group="offer_joining_date">
+                            <div class="fl">Expected Joining Date</div><input class="fi" data-field="offer_joining_date" type="date" />
+                            <div class="field-error" data-error-for="offer_joining_date"></div>
+                        </div>
+                        <div class="fg full" data-field-group="offer_notes">
+                            <div class="fl">Offer Notes</div><textarea class="fi" data-field="offer_notes" rows="3" placeholder="Compensation breakup, benefits, remarks..."></textarea>
+                            <div class="field-error" data-error-for="offer_notes"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="sendOffer()">📃 Send
+                        Offer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ═══ modalDelete ═══ -->
     <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
@@ -897,6 +1013,15 @@
                 'source': 'source', 'current_stage': 'current_stage', 'experience_yrs': 'experience_yrs',
                 'current_salary': 'current_salary', 'expected_salary': 'expected_salary', 'notice_period': 'notice_period',
                 'resume': 'resume', 'cover_letter': 'cover_letter',
+                'interview_candidate': 'interview_candidate',
+                'interview_type': 'interview_type',
+                'interview_scheduled_at': 'interview_scheduled_at',
+                'interview_duration': 'interview_duration',
+                'interview_interviewer': 'interview_interviewer',
+                'interview_location': 'interview_location',
+                'interview_meeting_link': 'interview_meeting_link',
+                'offer_candidate': 'offer_candidate', 'offer_salary': 'offer_salary',
+                'offer_joining_date': 'offer_joining_date', 'offer_notes': 'offer_notes',
             };
             let hasFieldError = false;
             for (const [key, val] of Object.entries(errors)) {
@@ -1037,6 +1162,63 @@
                 }
             }catch(e){ console.error(e); }
         }
+        function setStatText(id, val){
+            const el=document.getElementById(id);
+            if(el) el.textContent=(val==null||isNaN(val))?0:Number(val).toLocaleString();
+        }
+        async function loadRecruitmentStats(){
+            try{
+                const [jobsActive, candidatesAll, interviewsAll, hiredAll]=await Promise.all([
+                    indexJobs({status:'active',page:1,page_size:1}).catch(()=>null),
+                    indexCandidates({page:1,page_size:1}).catch(()=>null),
+                    indexInterviews({page:1,page_size:100}).catch(()=>null),
+                    indexCandidates({stage:'hired',page:1,page_size:100}).catch(()=>null),
+                ]);
+                const openPositions=jobsActive?.count??0;
+                const applicants=candidatesAll?.count??0;
+                const todayStr=new Date().toISOString().slice(0,10);
+                let interviewsToday=0;
+                (interviewsAll?.data||[]).forEach(iv=>{ if((iv.scheduled_at||'').slice(0,10)===todayStr) interviewsToday++; });
+                const now=new Date();
+                let hiredMonth=0;
+                (hiredAll?.data||[]).forEach(c=>{
+                    const d=c.created_at?new Date(c.created_at):null;
+                    if(d&&!isNaN(d)&&d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear()) hiredMonth++;
+                });
+                setStatText('stat-open-positions',openPositions);
+                setStatText('stat-applicants',applicants);
+                setStatText('stat-interviews-today',interviewsToday);
+                setStatText('stat-hired-month',hiredMonth);
+                const sub=document.getElementById('recruitment-subtitle');
+                if(sub) sub.textContent=`${openPositions} open positions · ${applicants} active candidates`;
+            }catch(e){ console.error('stats',e); }
+        }
+        function fillSelect(selId, placeholder, options){
+            const sel=document.getElementById(selId);
+            if(!sel) return;
+            const cur=sel.value;
+            sel.innerHTML=`<option value="">${placeholder}</option>`+options.join('');
+            if(cur) sel.value=cur;
+        }
+        function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        async function loadInterviewFormData(){
+            try{
+                const [cands, emps]=await Promise.all([
+                    indexCandidates({page:1,page_size:100}).catch(()=>({data:[]})),
+                    api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX,{page:1,page_size:100}).catch(()=>({data:[]})),
+                ]);
+                const candData=cands?.data||[];
+                const empData=emps?.data||[];
+                fillSelect('interview-candidate-select','Select Candidate',
+                    candData.filter(c=>!['hired','rejected'].includes(c.current_stage))
+                        .map(c=>`<option value="${c.id}" data-stage="${c.current_stage}">${escHtml(c.full_name)} (${escHtml(c.applied_for_title||'—')})</option>`));
+                fillSelect('offer-candidate-select','Select Candidate (interview / offer stage)',
+                    candData.filter(c=>['interview','offer'].includes(c.current_stage))
+                        .map(c=>`<option value="${c.id}" data-stage="${c.current_stage}">${escHtml(c.full_name)} (${escHtml(c.applied_for_title||'—')})</option>`));
+                fillSelect('interview-interviewer-select','Select Interviewer (optional)',
+                    empData.map(e=>`<option value="${e.id}">${escHtml(((e.first_name||'')+' '+(e.last_name||'')).trim()||e.employee_id||('Employee #'+e.id))}</option>`));
+            }catch(e){ console.error('interview form data',e); }
+        }
         async function editJob(id){
             try{
                 const j=await getJob(id);
@@ -1063,7 +1245,7 @@
         }
         async function deleteJob(id){
             if(!confirm('Delete this job posting?')) return;
-            try{ await deleteJobAPI(id); showToast('🗑️','Job deleted'); loadJobs(1); loadCandidates(1); }catch(e){ showToast('❌','Failed');}
+            try{ await deleteJobAPI(id); showToast('🗑️','Job deleted'); loadJobs(1); loadCandidates(1); loadRecruitmentStats(); }catch(e){ showToast('❌','Failed');}
         }
         async function viewCandidate(id){
             try{
@@ -1093,13 +1275,13 @@
         }
         async function deleteCandidate(id){
             if(!confirm('Delete this candidate?')) return;
-            try{ await deleteCandidateAPI(id); showToast('🗑️','Candidate deleted'); loadCandidates(candidatesPage); }catch(e){ showToast('❌','Failed');}
+            try{ await deleteCandidateAPI(id); showToast('🗑️','Candidate deleted'); loadCandidates(candidatesPage); loadPipeline(); loadRecruitmentStats(); loadInterviewFormData(); }catch(e){ showToast('❌','Failed');}
         }
         async function advanceCandidate(id){
-            try{ await advanceCandidateAPI(id); showToast('✅','Candidate advanced'); loadCandidates(candidatesPage); loadPipeline(); }catch(e){ showToast('❌','Failed to advance'); }
+            try{ await advanceCandidateAPI(id); showToast('✅','Candidate advanced'); loadCandidates(candidatesPage); loadPipeline(); loadRecruitmentStats(); loadInterviewFormData(); }catch(e){ showToast('❌','Failed to advance'); }
         }
         async function rejectCandidate(id){
-            try{ await rejectCandidateAPI(id); showToast('✅','Candidate rejected'); loadCandidates(candidatesPage); }catch(e){ showToast('❌','Failed');}
+            try{ await rejectCandidateAPI(id); showToast('✅','Candidate rejected'); loadCandidates(candidatesPage); loadPipeline(); loadRecruitmentStats(); loadInterviewFormData(); }catch(e){ showToast('❌','Failed');}
         }
         function resetJobForm(){
             const modal=document.getElementById('modalJob');
@@ -1159,7 +1341,7 @@
                 else { await createJob(data); showToast('✅','Job created'); }
                 bootstrap.Modal.getInstance(modal).hide();
                 resetJobForm();
-                loadJobs(1); loadPipeline();
+                loadJobs(1); loadPipeline(); loadRecruitmentStats();
             }catch(e){
                 console.error(e);
                 const errData=e?.response?.data||e?.data||{};
@@ -1198,7 +1380,7 @@
                 bootstrap.Modal.getInstance(modal).hide();
                 resetCandidateForm();
                 loadCandidates(candidatesPage);
-                loadPipeline();
+                loadPipeline(); loadRecruitmentStats(); loadInterviewFormData();
             }catch(e){
                 console.error(e);
                 const errData=e?.response?.data||e?.data||{};
@@ -1206,12 +1388,109 @@
                 if(errors&&Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-candidate'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
             }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Save Candidate';}}
         }
+        // Translate backend error keys to this page's modal field names
+        // before passing them to showFieldErrors (which queries globally).
+        function remapErrors(errors, mapping){
+            const out={};
+            Object.entries(errors||{}).forEach(([k,v])=>{ out[mapping[k]||k]=v; });
+            return out;
+        }
+        const INTERVIEW_ERROR_MAP={candidate:'interview_candidate',candidate_id:'interview_candidate',interview_type:'interview_type',scheduled_at:'interview_scheduled_at',duration_mins:'interview_duration',interviewer:'interview_interviewer',interviewer_id:'interview_interviewer',location:'interview_location',meeting_link:'interview_meeting_link'};
+        const OFFER_ERROR_MAP={expected_salary:'offer_salary'};
         async function saveInterview(){
             const modal=document.getElementById('modalInterview');
             if(!modal) return;
-            // Interview modal not defined in this template? keep dummy
-            showToast('✅','Interview scheduled');
-            if(modal) bootstrap.Modal.getInstance(modal)?.hide();
+            clearFieldErrors();
+            const candidateId=getModalFieldValue('modalInterview','interview_candidate');
+            const scheduledAt=getModalFieldValue('modalInterview','interview_scheduled_at');
+            if(!candidateId){ showFieldErrors({interview_candidate:['Candidate is required']}); return; }
+            if(!scheduledAt){ showFieldErrors({interview_scheduled_at:['Scheduled date & time is required']}); return; }
+            const data={
+                candidate_id: parseInt(candidateId),
+                interview_type: getModalFieldValue('modalInterview','interview_type')||'video',
+                scheduled_at: scheduledAt,
+                duration_mins: parseInt(getModalFieldValue('modalInterview','interview_duration'))||60,
+            };
+            const interviewer=getModalFieldValue('modalInterview','interview_interviewer');
+            if(interviewer) data.interviewer_id=parseInt(interviewer);
+            const location=getModalFieldValue('modalInterview','interview_location');
+            if(location) data.location=location;
+            const link=getModalFieldValue('modalInterview','interview_meeting_link');
+            if(link) data.meeting_link=link;
+            const btn=modal.querySelector('[onclick="saveInterview()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='⏳ Scheduling...';}
+            try{
+                const created=await createInterview(data);
+                // Move the candidate into the interview stage so the pipeline stays coherent
+                try{
+                    let cand=await getCandidate(candidateId).catch(()=>null);
+                    let guard=0;
+                    while(cand&&(cand.current_stage==='applied'||cand.current_stage==='screening')&&guard<3){
+                        await advanceCandidateAPI(candidateId).catch(()=>null);
+                        cand=await getCandidate(candidateId).catch(()=>null);
+                        guard++;
+                    }
+                }catch(_e){ console.error('stage advance',_e); }
+                showToast('✅','Interview scheduled'+(created&&created.candidate_name?` for ${created.candidate_name}`:''));
+                const inst=bootstrap.Modal.getInstance(modal); if(inst) inst.hide();
+                resetInterviewForm();
+                loadCandidates(candidatesPage); loadPipeline(); loadRecruitmentStats();
+            }catch(e){
+                console.error(e);
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors&&Object.keys(errors).length){ const mapped=remapErrors(errors,INTERVIEW_ERROR_MAP); showFieldErrors(mapped); const fk=Object.keys(mapped)[0]; const fm=Array.isArray(mapped[fk])?mapped[fk][0]:mapped[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed to schedule'; const ge=document.getElementById('form-global-error-interview'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'📅 Schedule Interview';}}
+        }
+        async function sendOffer(){
+            const modal=document.getElementById('modalOffer');
+            if(!modal) return;
+            clearFieldErrors();
+            const candidateId=getModalFieldValue('modalOffer','offer_candidate');
+            if(!candidateId){ showFieldErrors({offer_candidate:['Candidate is required']}); return; }
+            const salary=getModalFieldValue('modalOffer','offer_salary');
+            const joining=getModalFieldValue('modalOffer','offer_joining_date');
+            const notes=getModalFieldValue('modalOffer','offer_notes');
+            const btn=modal.querySelector('[onclick="sendOffer()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='⏳ Sending...';}
+            try{
+                if(salary){ await updateCandidateAPI(candidateId,{expected_salary:salary}).catch(err=>{ throw err; }); }
+                // Move the candidate up to (but not past) the offer stage
+                let cand=await getCandidate(candidateId).catch(()=>null);
+                let guard=0;
+                while(cand&&['applied','screening','interview'].includes(cand.current_stage)&&guard<4){
+                    await advanceCandidateAPI(candidateId).catch(()=>null);
+                    cand=await getCandidate(candidateId).catch(()=>null);
+                    guard++;
+                }
+                const cname=cand?cand.full_name:'candidate';
+                showToast('📃',`Offer letter sent to ${cname}`+(salary?` — $${Number(salary).toLocaleString()}`:'')+(joining?` · joining ${joining}`:''));
+                if(notes) console.info('Offer notes:', notes);
+                const inst=bootstrap.Modal.getInstance(modal); if(inst) inst.hide();
+                resetOfferForm();
+                loadCandidates(candidatesPage); loadPipeline(); loadRecruitmentStats();
+            }catch(e){
+                console.error(e);
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors&&Object.keys(errors).length){ const mapped=remapErrors(errors,OFFER_ERROR_MAP); showFieldErrors(mapped); const fk=Object.keys(mapped)[0]; const fm=Array.isArray(mapped[fk])?mapped[fk][0]:mapped[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed to send offer'; const ge=document.getElementById('form-global-error-offer'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'📃 Send Offer';}}
+        }
+        function resetInterviewForm(){
+            const modal=document.getElementById('modalInterview');
+            if(!modal) return;
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalInterview','interview_type','video');
+            setModalFieldValue('modalInterview','interview_duration','60');
+        }
+        function resetOfferForm(){
+            const modal=document.getElementById('modalOffer');
+            if(!modal) return;
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
         }
         async function loadDropdowns(){
             try{
@@ -1248,6 +1527,8 @@
             loadCandidates(1);
             loadPipeline();
             loadDropdowns();
+            loadRecruitmentStats();
+            loadInterviewFormData();
             // search debounce
             let jobSearchTimeout, candSearchTimeout;
             const jobSearch=document.getElementById('jobs-filter-search');
@@ -1259,17 +1540,21 @@
             const candStage=document.getElementById('candidate-filter-stage');
             if(candStage) candStage.addEventListener('change', ()=>{ candidatesPage=1; loadCandidates(1); });
             // modal handlers
-            ['modalJob','modalCandidate'].forEach(mid=>{
+            ['modalJob','modalCandidate','modalInterview','modalOffer'].forEach(mid=>{
                 const el=document.getElementById(mid);
                 if(!el) return;
                 el.addEventListener('hidden.bs.modal', ()=>{ clearFieldErrors(); });
                 el.addEventListener('show.bs.modal', ()=>{ clearFieldErrors(); });
             });
+            const modalInterviewEl=document.getElementById('modalInterview');
+            if(modalInterviewEl) modalInterviewEl.addEventListener('show.bs.modal', ()=>{ resetInterviewForm(); loadInterviewFormData(); });
+            const modalOfferEl=document.getElementById('modalOffer');
+            if(modalOfferEl) modalOfferEl.addEventListener('show.bs.modal', ()=>{ resetOfferForm(); loadInterviewFormData(); });
             const addJobBtn=document.querySelector('[data-bs-target="#modalJob"]');
             if(addJobBtn) addJobBtn.addEventListener('click', ()=>{ resetJobForm(); });
             const addCandBtn=document.querySelector('[data-bs-target="#modalCandidate"]');
             if(addCandBtn) addCandBtn.addEventListener('click', ()=>{ resetCandidateForm(); });
-            document.querySelectorAll('#modalJob .fi, #modalCandidate .fi').forEach(input=>{
+            document.querySelectorAll('#modalJob .fi, #modalCandidate .fi, #modalInterview .fi, #modalOffer .fi').forEach(input=>{
                 input.addEventListener('input', ()=>{
                     input.classList.remove('is-invalid');
                     const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');

@@ -189,7 +189,7 @@
                                         </thead>
                                         <tbody id="onboarding-tbody">
                                             <tr>
-                                                <td colspan="8"
+                                                <td colspan="6"
                                                     style="text-align:center;padding:40px;color:var(--text-muted);">
                                                     Loading...</td>
                                             </tr>
@@ -217,78 +217,23 @@
                         <div class="col-xl-5">
                             <div class="card-custom mb-3">
                                 <div class="card-header-custom">
-                                    <div class="card-header-title">Exit Clearance</div><span
-                                        class="badge-custom badge-danger">3
-                                        Pending</span>
+                                    <div class="card-header-title">Exit Clearance</div><span id="exit-clearance-count"
+                                        class="badge-custom badge-gray">…</span>
                                 </div>
                                 <div class="card-body-custom">
-                                    <div style="display:flex;flex-direction:column;gap:12px;">
-                                        <div
-                                            style="padding:12px;background:#fef2f2;border-radius:8px;border-left:3px solid var(--danger);">
-                                            <div
-                                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                                                <span style="font-size:0.8rem;font-weight:600;">Farhan Rahim</span><span
-                                                    class="badge-custom badge-danger">Exit Mar 31</span>
-                                            </div>
-                                            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                                                <span class="badge-custom badge-success"
-                                                    style="font-size:0.62rem;">Resignation ✓</span>
-                                                <span class="badge-custom badge-success" style="font-size:0.62rem;">IT
-                                                    Return ✓</span>
-                                                <span class="badge-custom badge-warning"
-                                                    style="font-size:0.62rem;">Final Pay ⏳</span>
-                                                <span class="badge-custom badge-warning"
-                                                    style="font-size:0.62rem;">Interview ⏳</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            style="padding:12px;background:#fffbeb;border-radius:8px;border-left:3px solid var(--accent);">
-                                            <div
-                                                style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                                                <span style="font-size:0.8rem;font-weight:600;">Ritu Sharma</span><span
-                                                    class="badge-custom badge-warning">Exit Apr 15</span>
-                                            </div>
-                                            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                                                <span class="badge-custom badge-success"
-                                                    style="font-size:0.62rem;">Resignation ✓</span>
-                                                <span class="badge-custom badge-warning" style="font-size:0.62rem;">IT
-                                                    Return ⏳</span>
-                                                <span class="badge-custom badge-danger" style="font-size:0.62rem;">Final
-                                                    Pay ✗</span>
-                                                <span class="badge-custom badge-danger"
-                                                    style="font-size:0.62rem;">Interview ✗</span>
-                                            </div>
-                                        </div>
+                                    <div id="exit-clearance-list" style="display:flex;flex-direction:column;gap:12px;">
+                                        <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.78rem;">Loading exit clearances...</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-custom">
                                 <div class="card-header-custom">
-                                    <div class="card-header-title">Probation Tracker</div>
+                                    <div class="card-header-title">Probation Tracker</div><span id="probation-count"
+                                        class="badge-custom badge-gray">…</span>
                                 </div>
                                 <div class="card-body-custom">
-                                    <div style="display:flex;flex-direction:column;gap:8px;">
-                                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                                            <div>
-                                                <div style="font-size:0.78rem;font-weight:600;">Mehedi Rahman</div>
-                                                <div style="font-size:0.68rem;color:var(--text-muted);">Finance · Joined
-                                                    Jun 2023</div>
-                                            </div><span class="badge-custom badge-warning">3 mo left</span>
-                                        </div>
-                                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                                            <div>
-                                                <div style="font-size:0.78rem;font-weight:600;">Sufia Khatun</div>
-                                                <div style="font-size:0.68rem;color:var(--text-muted);">HR · Joined Dec
-                                                    2023</div>
-                                            </div><span class="badge-custom badge-info">1 mo left</span>
-                                        </div>
-                                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                                            <div>
-                                                <div style="font-size:0.78rem;font-weight:600;">Imran Hossain</div>
-                                                <div style="font-size:0.68rem;color:var(--text-muted);">Engineering ·
-                                                    Joined Jan 2024</div>
-                                            </div><span class="badge-custom badge-success">Confirmed ✓</span>
-                                        </div>
+                                    <div id="probation-tracker-list" style="display:flex;flex-direction:column;gap:8px;">
+                                        <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.78rem;">Loading probation tracker...</div>
                                     </div>
                                 </div>
                             </div>
@@ -778,6 +723,26 @@
         }
         function getPageSize(id, fallback){ const sel=document.getElementById(id); return sel? parseInt(sel.value)||fallback : fallback; }
 
+        function escHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        // Distinct badge per onboarding task type — offer letters get the 📃 spotlight treatment
+        const ONBOARDING_TYPE_META={
+            'offer_letter':{icon:'📃',cls:'badge-purple',label:'Offer Letter'},
+            'document_verification':{icon:'📄',cls:'badge-info',label:'Doc Verify'},
+            'orientation':{icon:'👋',cls:'badge-primary',label:'Orientation'},
+            'it_setup':{icon:'💻',cls:'badge-gray',label:'IT Setup'},
+            'equipment':{icon:'🖥️',cls:'badge-warning',label:'Equipment'},
+            'training':{icon:'🎓',cls:'badge-success',label:'Training'},
+            'team_introduction':{icon:'🤝',cls:'badge-pink',label:'Team Intro'},
+            'probation_review':{icon:'⭐',cls:'badge-warning',label:'Probation'},
+        };
+        function taskTypeBadge(type, display){
+            const meta=ONBOARDING_TYPE_META[type];
+            const label=meta?meta.label:(display||type||'—');
+            const cls=meta?meta.cls:'badge-gray';
+            const icon=meta?meta.icon+' ':'';
+            return `<span class="badge-custom ${cls}">${icon}${escHtml(label)}</span>`;
+        }
+
         let onboardingPage=1;
         async function loadOnboardingTasks(page){
             onboardingPage=page||1;
@@ -801,44 +766,137 @@
                     const badge=t.status==='completed'?'badge-success':t.status==='in_progress'?'badge-warning':'badge-gray';
                     const tr=document.createElement('tr');
                     tr.setAttribute('data-id', t.id);
-                    tr.innerHTML=`<td style="font-weight:600;">${t.employee_name||'—'}</td><td>${t.task_name||'—'}</td><td>${t.task_type_display||t.task_type||'—'}</td><td>${t.due_date||'—'}</td><td><span class="badge-custom ${badge}">${t.status}</span></td><td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editOnboarding(${t.id})">✏ Edit</button><button class="btn-del" onclick="deleteOnboarding(${t.id})">🗑</button></div></td>`;
+                    tr.innerHTML=`<td style="font-weight:600;">${t.employee_name||'—'}</td><td>${t.task_name||'—'}</td><td>${taskTypeBadge(t.task_type, t.task_type_display)}</td><td>${t.due_date||'—'}</td><td><span class="badge-custom ${badge}">${t.status}</span></td><td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editOnboarding(${t.id})">✏ Edit</button><button class="btn-del" onclick="deleteOnboarding(${t.id})">🗑</button></div></td>`;
                     tbody.appendChild(tr);
                 });
                 renderPaginationServer(result.count||result.data.length, onboardingPage, pageSize, 'onboarding-pagination','onboarding-pagination-info','loadOnboardingTasks');
             }catch(e){ console.error(e); }
         }
-        async function loadOffboardingTasks(){
+        // Short labels for offboarding clearance steps
+        const OFFBOARDING_STEP_META={
+            'exit_interview':{label:'Interview'},
+            'clearance':{label:'Clearance'},
+            'knowledge_transfer':{label:'Knowledge'},
+            'equipment_return':{label:'IT Return'},
+            'access_revocation':{label:'Access'},
+            'final_settlement':{label:'Final Pay'},
+            'documents':{label:'Docs'},
+            'feedback':{label:'Feedback'},
+        };
+        function fmtDayMonth(iso){
+            if(!iso) return '';
+            const d=new Date(iso+'T00:00:00');
+            if(isNaN(d)) return iso;
+            return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        }
+        function clearanceStepBadge(t, today){
+            let cls, mark;
+            if(t.status==='completed'){ cls='badge-success'; mark='✓'; }
+            else if(t.status==='in_progress'){ cls='badge-info'; mark='⏳'; }
+            else if(t.status==='not_applicable'){ cls='badge-gray'; mark='–'; }
+            else{
+                const overdue=t.due_date&&new Date(t.due_date+'T00:00:00')<today;
+                cls=overdue?'badge-danger':'badge-warning'; mark='⏳';
+            }
+            const meta=OFFBOARDING_STEP_META[t.task_type];
+            const label=meta?meta.label:(t.task_type_display||t.task_type||'Step');
+            return `<span class="badge-custom ${cls}" style="font-size:0.62rem;cursor:pointer;" title="${escHtml(t.task_name||label)} — click to edit" onclick="editOffboarding(${t.id})">${escHtml(label)} ${mark}</span>`;
+        }
+        async function loadExitClearance(){
+            const list=document.getElementById('exit-clearance-list');
+            const countEl=document.getElementById('exit-clearance-count');
             try{
-                const result=await indexOffboardingTasks({page:1, page_size:10});
-                const tbody=document.querySelectorAll('#page-onboarding .table-custom tbody')[1];
-                if(!tbody||!result?.data) return;
-                tbody.innerHTML='';
-                if(result.data.length===0){
-                    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">No offboarding tasks</td></tr>';
+                const [tasksRes, interviewsRes]=await Promise.all([
+                    indexOffboardingTasks({page:1,page_size:100}).catch(()=>({data:[]})),
+                    indexExitInterviews({page:1,page_size:100}).catch(()=>({data:[]})),
+                ]);
+                const tasks=tasksRes?.data||[];
+                const interviewed=new Set((interviewsRes?.data||[]).map(ei=>String(ei.employee_id)));
+                const groups={}; const order=[];
+                tasks.forEach(t=>{
+                    const key=String(t.employee_id);
+                    if(!groups[key]){ groups[key]={name:t.employee_name||('Employee #'+t.employee_id),tasks:[]}; order.push(key); }
+                    groups[key].tasks.push(t);
+                });
+                const pendingGroups=order.filter(eid=>groups[eid].tasks.some(t=>t.status==='pending'||t.status==='in_progress'));
+                if(countEl){
+                    if(pendingGroups.length>0){ countEl.className='badge-custom badge-danger'; countEl.textContent=`${pendingGroups.length} Pending`; }
+                    else { countEl.className='badge-custom badge-success'; countEl.textContent='All clear'; }
+                }
+                if(!list) return;
+                if(order.length===0){
+                    list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.78rem;">No exit clearances — all clear ✅</div>';
                     return;
                 }
-                result.data.forEach(t=>{
-                    const badge=t.status==='completed'?'badge-success':t.status==='in_progress'?'badge-warning':'badge-gray';
-                    const tr=document.createElement('tr');
-                    tr.setAttribute('data-id', t.id);
-                    tr.innerHTML=`<td style="font-weight:600;">${t.employee_name||'—'}</td><td>${t.task_name}</td><td>${t.task_type}</td><td>${t.due_date||'—'}</td><td><span class="badge-custom ${badge}">${t.status}</span></td><td><button class="btn-edit" onclick="editOffboarding(${t.id})">✏ Edit</button></td>`;
-                    tbody.appendChild(tr);
-                });
-            }catch(e){ console.error(e); }
+                const today=new Date(); today.setHours(0,0,0,0);
+                list.innerHTML=order.slice(0,4).map(eid=>{
+                    const g=groups[eid];
+                    const open=g.tasks.filter(t=>t.status==='pending'||t.status==='in_progress');
+                    const dueDates=open.map(t=>t.due_date).filter(Boolean).sort();
+                    const dueLabel=dueDates.length?('Due '+fmtDayMonth(dueDates[0])):'On track';
+                    const anyOverdue=open.some(t=>t.due_date&&new Date(t.due_date+'T00:00:00')<today);
+                    const border=open.length===0?'var(--success)':(anyOverdue?'var(--danger)':'var(--accent)');
+                    const bg=open.length===0?'#f0fdf4':(anyOverdue?'#fef2f2':'#fffbeb');
+                    const dueCls=open.length===0?'badge-success':(anyOverdue?'badge-danger':'badge-warning');
+                    const ivBadge=interviewed.has(eid)
+                        ? '<span class="badge-custom badge-success" style="font-size:0.62rem;">Interview ✓</span>' : '';
+                    return `<div style="padding:12px;background:${bg};border-radius:8px;border-left:3px solid ${border};">`
+                        + `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">`
+                        + `<span style="font-size:0.8rem;font-weight:600;">${escHtml(g.name)}</span>`
+                        + `<span class="badge-custom ${dueCls}">${dueLabel}</span></div>`
+                        + `<div style="display:flex;gap:6px;flex-wrap:wrap;">${ivBadge}${g.tasks.map(t=>clearanceStepBadge(t,today)).join('')}</div></div>`;
+                }).join('');
+                if(order.length>4){
+                    list.innerHTML+=`<div style="text-align:center;font-size:0.72rem;color:var(--text-muted);">+ ${order.length-4} more in exit process</div>`;
+                }
+            }catch(e){ console.error('exit clearance',e); if(list) list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.78rem;">Could not load exit clearances</div>'; }
         }
-        async function loadExitInterviews(){
+        // Standard probation period in months (not modeled in DB; 6mo is the local norm)
+        const PROBATION_MONTHS=6;
+        function probationRemaining(joinIso){
+            if(!joinIso) return null;
+            const j=new Date(joinIso+'T00:00:00');
+            const now=new Date();
+            if(isNaN(j)) return null;
+            let elapsed=(now.getFullYear()-j.getFullYear())*12+(now.getMonth()-j.getMonth());
+            if(now.getDate()<j.getDate()) elapsed--;
+            return PROBATION_MONTHS-Math.max(0,elapsed);
+        }
+        async function loadProbationTracker(){
+            const list=document.getElementById('probation-tracker-list');
+            const countEl=document.getElementById('probation-count');
             try{
-                const result=await indexExitInterviews({page:1, page_size:10});
-                const tbody=document.querySelectorAll('#page-onboarding .table-custom tbody')[2];
-                if(!tbody||!result?.data) return;
-                tbody.innerHTML='';
-                result.data.forEach(ei=>{
-                    const tr=document.createElement('tr');
-                    tr.setAttribute('data-id', ei.id);
-                    tr.innerHTML=`<td style="font-weight:600;">${ei.employee_name||'—'}</td><td>${ei.interview_date||'—'}</td><td>${ei.reason_for_leaving?ei.reason_for_leaving.substring(0,50)+'...':'—'}</td><td>${ei.rating?'⭐'.repeat(ei.rating):'—'}</td><td><span class="badge-custom badge-info">Completed</span></td>`;
-                    tbody.appendChild(tr);
-                });
-            }catch(e){ console.error(e); }
+                const res=await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX,{page:1,page_size:100,status:'probation'}).catch(()=>({data:[],count:0}));
+                const emps=(res?.data||[]).slice().sort((a,b)=>String(a.join_date||'').localeCompare(String(b.join_date||'')));
+                const total=(typeof res?.count==='number')?res.count:emps.length;
+                if(countEl){
+                    if(total>0){ countEl.className='badge-custom badge-warning'; countEl.textContent=`${total} in probation`; }
+                    else { countEl.className='badge-custom badge-success'; countEl.textContent='None'; }
+                }
+                if(!list) return;
+                if(emps.length===0){
+                    list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.78rem;">No employees in probation 🎉</div>';
+                    return;
+                }
+                list.innerHTML=emps.slice(0,5).map(e=>{
+                    const name=escHtml((((e.first_name||'')+' '+(e.last_name||'')).trim())||e.employee_id||('Employee #'+e.id));
+                    const dept=escHtml(e.department_name||'—');
+                    const jd=e.join_date?new Date(e.join_date+'T00:00:00'):null;
+                    const joinedLabel=(jd&&!isNaN(jd))?jd.toLocaleDateString('en-US',{month:'short',year:'numeric'}):'—';
+                    const remaining=probationRemaining(e.join_date);
+                    let badge;
+                    if(remaining==null) badge='<span class="badge-custom badge-gray">—</span>';
+                    else if(remaining<0) badge='<span class="badge-custom badge-danger">Review overdue</span>';
+                    else if(remaining<=1) badge=`<span class="badge-custom badge-info">${remaining} mo left</span>`;
+                    else badge=`<span class="badge-custom badge-warning">${remaining} mo left</span>`;
+                    return `<div style="display:flex;justify-content:space-between;align-items:center;">`
+                        + `<div><div style="font-size:0.78rem;font-weight:600;">${name}</div>`
+                        + `<div style="font-size:0.68rem;color:var(--text-muted);">${dept} · Joined ${joinedLabel}</div></div>${badge}</div>`;
+                }).join('');
+                if(emps.length>5){
+                    list.innerHTML+=`<div style="text-align:center;font-size:0.72rem;color:var(--text-muted);">+ ${emps.length-5} more in probation</div>`;
+                }
+            }catch(e){ console.error('probation',e); if(list) list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:0.78rem;">Could not load probation tracker</div>'; }
         }
         function resetOnboardingForm(){
             const modal=document.getElementById('modalOnboarding');
@@ -966,7 +1024,7 @@
                 else { await createOffboardingTask(data); showToast('✅','Offboarding created'); }
                 bootstrap.Modal.getInstance(modal).hide();
                 resetOffboardingForm();
-                loadOffboardingTasks();
+                loadExitClearance();
                 loadOnboardingTasks(1);
             }catch(e){
                 console.error(e);
@@ -991,8 +1049,8 @@
         }
         $(function () {
             loadOnboardingTasks(1);
-            loadOffboardingTasks();
-            loadExitInterviews();
+            loadExitClearance();
+            loadProbationTracker();
             loadDropdownsOnboarding();
             let searchTimeout;
             const searchInput=document.getElementById('onboarding-search');

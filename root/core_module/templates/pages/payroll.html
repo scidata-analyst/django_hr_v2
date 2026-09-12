@@ -15,11 +15,37 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <meta name="csrf-token" content="{{ csrf_token }}">
     <style>
-        .field-error { font-size: 0.68rem; color: #ef4444; margin-top: 4px; min-height: 14px; line-height: 1.3; }
-        .fi.is-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.08) !important; }
-        .form-global-error { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.78rem; margin-bottom:12px; display:none; }
-        .form-global-error.show { display:block; }
-        .fg.has-error .fl { color:#ef4444; }
+        .field-error {
+            font-size: 0.68rem;
+            color: #ef4444;
+            margin-top: 4px;
+            min-height: 14px;
+            line-height: 1.3;
+        }
+
+        .fi.is-invalid {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08) !important;
+        }
+
+        .form-global-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .form-global-error.show {
+            display: block;
+        }
+
+        .fg.has-error .fl {
+            color: #ef4444;
+        }
     </style>
 </head>
 
@@ -161,12 +187,15 @@
                     </div>
                     <div class="row g-3">
                         <div class="col-xl-8">
-                            <div class="card-custom">
+                            <div class="card-custom mb-4">
                                 <div class="card-header-custom">
                                     <div class="card-header-title">Salary Breakdown by Department</div>
                                     <div class="d-flex gap-2 align-items-center">
-                                        <input id="payroll-breakdown-search" type="text" placeholder="Search department..." style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:140px;" />
-                                        <select id="payroll-breakdown-period" class="form-control-custom" style="width:130px;padding:5px 8px;">
+                                        <input id="payroll-breakdown-search" type="text"
+                                            placeholder="Search department..."
+                                            style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:140px;" />
+                                        <select id="payroll-breakdown-period" class="form-control-custom"
+                                            style="width:130px;padding:5px 8px;">
                                             <option value="">All Periods</option>
                                             <option value="March 2026">March 2026</option>
                                             <option value="February 2026">February 2026</option>
@@ -177,12 +206,30 @@
                                     <table class="table-custom" style="font-size:0.78rem;">
                                         <thead>
                                             <tr>
-                                                <th style="padding:8px 10px;white-space:nowrap;cursor:pointer;" onclick="sortPayrollBreakdown('department')">Department <span id="sort-department-icon" style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
-                                                <th style="padding:8px 10px;text-align:center;cursor:pointer;" onclick="sortPayrollBreakdown('employees')">Employees <span id="sort-employees-icon" style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
-                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;" onclick="sortPayrollBreakdown('basic_salary')">Basic Salary <span id="sort-basic_salary-icon" style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
-                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;" onclick="sortPayrollBreakdown('allowances')">Allowances <span id="sort-allowances-icon" style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
-                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;" onclick="sortPayrollBreakdown('deductions')">Deductions <span id="sort-deductions-icon" style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
-                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;" onclick="sortPayrollBreakdown('net_pay')">Net Pay <span id="sort-net_pay-icon" style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
+                                                <th style="padding:8px 10px;white-space:nowrap;cursor:pointer;"
+                                                    onclick="sortPayrollBreakdown('department')">Department <span
+                                                        id="sort-department-icon"
+                                                        style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
+                                                <th style="padding:8px 10px;text-align:center;cursor:pointer;"
+                                                    onclick="sortPayrollBreakdown('employees')">Employees <span
+                                                        id="sort-employees-icon"
+                                                        style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
+                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;"
+                                                    onclick="sortPayrollBreakdown('basic_salary')">Basic Salary <span
+                                                        id="sort-basic_salary-icon"
+                                                        style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
+                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;"
+                                                    onclick="sortPayrollBreakdown('allowances')">Allowances <span
+                                                        id="sort-allowances-icon"
+                                                        style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
+                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;"
+                                                    onclick="sortPayrollBreakdown('deductions')">Deductions <span
+                                                        id="sort-deductions-icon"
+                                                        style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
+                                                <th style="padding:8px 10px;text-align:right;cursor:pointer;"
+                                                    onclick="sortPayrollBreakdown('net_pay')">Net Pay <span
+                                                        id="sort-net_pay-icon"
+                                                        style="font-size:0.6rem;color:var(--text-muted);">↕</span></th>
                                                 <th style="padding:8px 10px;text-align:center;">Status</th>
                                             </tr>
                                         </thead>
@@ -195,15 +242,20 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                                    <div id="payroll-breakdown-pagination-info" style="font-size:0.68rem;color:var(--text-muted);"></div>
+                                <div
+                                    style="padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                                    <div id="payroll-breakdown-pagination-info"
+                                        style="font-size:0.68rem;color:var(--text-muted);"></div>
                                     <div style="display:flex;gap:8px;align-items:center;">
-                                        <select id="payroll-breakdown-page-size" style="padding:5px 8px;font-size:0.68rem;border:1px solid var(--border);border-radius:6px;" onchange="loadPayrollBreakdown(1)">
+                                        <select id="payroll-breakdown-page-size"
+                                            style="padding:5px 8px;font-size:0.68rem;border:1px solid var(--border);border-radius:6px;"
+                                            onchange="loadPayrollBreakdown(1)">
                                             <option value="5" selected>5 per page</option>
                                             <option value="10">10 per page</option>
                                             <option value="25">25 per page</option>
                                         </select>
-                                        <div id="payroll-breakdown-pagination" style="display:flex;gap:4px;align-items:center;"></div>
+                                        <div id="payroll-breakdown-pagination"
+                                            style="display:flex;gap:4px;align-items:center;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -252,13 +304,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-custom">
+                            <div class="card-custom mb-4">
                                 <div class="card-header-custom">
                                     <div class="card-header-title">Active Loans</div>
                                 </div>
                                 <div class="card-body-custom">
-                                    <div id="active-loans-container" style="display:flex;flex-direction:column;gap:10px;">
-                                        <div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.75rem;">Loading loans...</div>
+                                    <div id="active-loans-container"
+                                        style="display:flex;flex-direction:column;gap:10px;">
+                                        <div
+                                            style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.75rem;">
+                                            Loading loans...</div>
                                     </div>
                                 </div>
                             </div>
@@ -270,7 +325,8 @@
                         <div class="card-header-custom">
                             <div class="card-header-title">Salary Structures</div>
                             <div class="d-flex gap-2 align-items-center">
-                                <input id="structures-search" type="text" placeholder="Search structures..." style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:150px;" />
+                                <input id="structures-search" type="text" placeholder="Search structures..."
+                                    style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:150px;" />
                                 <button class="btn-primary-custom" style="padding:6px 14px;font-size:0.75rem;"
                                     data-bs-toggle="modal" data-bs-target="#modalSalaryStructure"><i
                                         class="bi bi-plus-lg"></i> Add Structure</button>
@@ -368,7 +424,8 @@
                         <div class="card-header-custom">
                             <div class="card-header-title">Loan Management</div>
                             <div class="d-flex gap-2 align-items-center">
-                                <input id="loans-search" type="text" placeholder="Search loans..." style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:130px;" />
+                                <input id="loans-search" type="text" placeholder="Search loans..."
+                                    style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:130px;" />
                                 <button class="btn-primary-custom" style="padding:6px 14px;font-size:0.75rem;"
                                     data-bs-toggle="modal" data-bs-target="#modalLoan"><i class="bi bi-plus-lg"></i> New
                                     Loan</button>
@@ -417,9 +474,11 @@
                         <div class="card-header-custom">
                             <div class="card-header-title">Bonus Records</div>
                             <div class="d-flex gap-2 align-items-center">
-                                <input id="bonuses-search" type="text" placeholder="Search bonuses..." style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:130px;" />
+                                <input id="bonuses-search" type="text" placeholder="Search bonuses..."
+                                    style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:130px;" />
                                 <button class="btn-primary-custom" style="padding:6px 14px;font-size:0.75rem;"
-                                    data-bs-toggle="modal" data-bs-target="#modalBonus"><i class="bi bi-plus-lg"></i> Add
+                                    data-bs-toggle="modal" data-bs-target="#modalBonus"><i class="bi bi-plus-lg"></i>
+                                    Add
                                     Bonus</button>
                             </div>
                         </div>
@@ -489,53 +548,65 @@
                     <div id="form-global-error-structure" class="form-global-error"></div>
                     <div class="form-grid">
                         <div class="fg" data-field-group="structure_name">
-                            <div class="fl">Structure Name *</div><input class="fi" data-field="structure_name" placeholder="e.g. Senior Engineer Grade A" />
+                            <div class="fl">Structure Name *</div><input class="fi" data-field="structure_name"
+                                placeholder="e.g. Senior Engineer Grade A" />
                             <div class="field-error" data-error-for="structure_name"></div>
                         </div>
                         <div class="fg" data-field-group="grade_level">
-                            <div class="fl">Grade/Level</div><input class="fi" data-field="grade_level" placeholder="e.g. Grade 5" />
+                            <div class="fl">Grade/Level</div><input class="fi" data-field="grade_level"
+                                placeholder="e.g. Grade 5" />
                             <div class="field-error" data-error-for="grade_level"></div>
                         </div>
                         <div class="form-section">Earnings</div>
                         <div class="fg" data-field-group="basic_salary">
-                            <div class="fl">Basic Salary ($) *</div><input class="fi" data-field="basic_salary" type="number" placeholder="0.00" step="0.01" />
+                            <div class="fl">Basic Salary ($) *</div><input class="fi" data-field="basic_salary"
+                                type="number" placeholder="0.00" step="0.01" />
                             <div class="field-error" data-error-for="basic_salary"></div>
                         </div>
                         <div class="fg" data-field-group="house_rent_percent">
-                            <div class="fl">House Rent Allowance (%)</div><input class="fi" data-field="house_rent_percent" type="number" value="20" step="0.01" />
+                            <div class="fl">House Rent Allowance (%)</div><input class="fi"
+                                data-field="house_rent_percent" type="number" value="20" step="0.01" />
                             <div class="field-error" data-error-for="house_rent_percent"></div>
                         </div>
                         <div class="fg" data-field-group="transport_allowance">
-                            <div class="fl">Transport Allowance ($)</div><input class="fi" data-field="transport_allowance" type="number" value="100" step="0.01" />
+                            <div class="fl">Transport Allowance ($)</div><input class="fi"
+                                data-field="transport_allowance" type="number" value="100" step="0.01" />
                             <div class="field-error" data-error-for="transport_allowance"></div>
                         </div>
                         <div class="fg" data-field-group="medical_allowance">
-                            <div class="fl">Medical Allowance ($)</div><input class="fi" data-field="medical_allowance" type="number" value="80" step="0.01" />
+                            <div class="fl">Medical Allowance ($)</div><input class="fi" data-field="medical_allowance"
+                                type="number" value="80" step="0.01" />
                             <div class="field-error" data-error-for="medical_allowance"></div>
                         </div>
                         <div class="fg" data-field-group="food_allowance">
-                            <div class="fl">Food Allowance ($)</div><input class="fi" data-field="food_allowance" type="number" value="50" step="0.01" />
+                            <div class="fl">Food Allowance ($)</div><input class="fi" data-field="food_allowance"
+                                type="number" value="50" step="0.01" />
                             <div class="field-error" data-error-for="food_allowance"></div>
                         </div>
                         <div class="fg" data-field-group="other_allowance">
-                            <div class="fl">Other Allowance ($)</div><input class="fi" data-field="other_allowance" type="number" value="0" step="0.01" />
+                            <div class="fl">Other Allowance ($)</div><input class="fi" data-field="other_allowance"
+                                type="number" value="0" step="0.01" />
                             <div class="field-error" data-error-for="other_allowance"></div>
                         </div>
                         <div class="form-section">Deductions</div>
                         <div class="fg" data-field-group="income_tax_percent">
-                            <div class="fl">Income Tax (%)</div><input class="fi" data-field="income_tax_percent" type="number" value="10" step="0.01" />
+                            <div class="fl">Income Tax (%)</div><input class="fi" data-field="income_tax_percent"
+                                type="number" value="10" step="0.01" />
                             <div class="field-error" data-error-for="income_tax_percent"></div>
                         </div>
                         <div class="fg" data-field-group="provident_fund_percent">
-                            <div class="fl">Provident Fund (%)</div><input class="fi" data-field="provident_fund_percent" type="number" value="8" step="0.01" />
+                            <div class="fl">Provident Fund (%)</div><input class="fi"
+                                data-field="provident_fund_percent" type="number" value="8" step="0.01" />
                             <div class="field-error" data-error-for="provident_fund_percent"></div>
                         </div>
                         <div class="fg" data-field-group="insurance_premium">
-                            <div class="fl">Insurance Premium ($)</div><input class="fi" data-field="insurance_premium" type="number" value="30" step="0.01" />
+                            <div class="fl">Insurance Premium ($)</div><input class="fi" data-field="insurance_premium"
+                                type="number" value="30" step="0.01" />
                             <div class="field-error" data-error-for="insurance_premium"></div>
                         </div>
                         <div class="fg" data-field-group="other_deductions">
-                            <div class="fl">Other Deductions ($)</div><input class="fi" data-field="other_deductions" type="number" value="0" step="0.01" />
+                            <div class="fl">Other Deductions ($)</div><input class="fi" data-field="other_deductions"
+                                type="number" value="0" step="0.01" />
                             <div class="field-error" data-error-for="other_deductions"></div>
                         </div>
                     </div>
@@ -683,7 +754,8 @@
                     <div id="form-global-error-loan" class="form-global-error"></div>
                     <div class="form-grid">
                         <div class="fg" data-field-group="employee">
-                            <div class="fl">Employee *</div><select class="fi" data-field="employee" id="loan-employee-select">
+                            <div class="fl">Employee *</div><select class="fi" data-field="employee"
+                                id="loan-employee-select">
                                 <option value="">Select Employee</option>
                             </select>
                             <div class="field-error" data-error-for="employee"></div>
@@ -699,19 +771,23 @@
                             <div class="field-error" data-error-for="loan_type"></div>
                         </div>
                         <div class="fg" data-field-group="loan_amount">
-                            <div class="fl">Loan Amount ($) *</div><input class="fi" data-field="loan_amount" type="number" placeholder="0.00" step="0.01" />
+                            <div class="fl">Loan Amount ($) *</div><input class="fi" data-field="loan_amount"
+                                type="number" placeholder="0.00" step="0.01" />
                             <div class="field-error" data-error-for="loan_amount"></div>
                         </div>
                         <div class="fg" data-field-group="disbursement_date">
-                            <div class="fl">Disbursement Date</div><input class="fi" data-field="disbursement_date" type="date" />
+                            <div class="fl">Disbursement Date</div><input class="fi" data-field="disbursement_date"
+                                type="date" />
                             <div class="field-error" data-error-for="disbursement_date"></div>
                         </div>
                         <div class="fg" data-field-group="repayment_period">
-                            <div class="fl">Repayment Period (months)</div><input class="fi" data-field="repayment_period" type="number" value="12" />
+                            <div class="fl">Repayment Period (months)</div><input class="fi"
+                                data-field="repayment_period" type="number" value="12" />
                             <div class="field-error" data-error-for="repayment_period"></div>
                         </div>
                         <div class="fg" data-field-group="interest_rate">
-                            <div class="fl">Interest Rate (%)</div><input class="fi" data-field="interest_rate" type="number" value="0" placeholder="0 = no interest" step="0.01" />
+                            <div class="fl">Interest Rate (%)</div><input class="fi" data-field="interest_rate"
+                                type="number" value="0" placeholder="0 = no interest" step="0.01" />
                             <div class="field-error" data-error-for="interest_rate"></div>
                         </div>
                         <div class="fg" data-field-group="status">
@@ -723,7 +799,8 @@
                             <div class="field-error" data-error-for="status"></div>
                         </div>
                         <div class="fg full" data-field-group="purpose_notes">
-                            <div class="fl">Purpose / Notes</div><textarea class="fi" data-field="purpose_notes" rows="3" placeholder="Reason for loan..."></textarea>
+                            <div class="fl">Purpose / Notes</div><textarea class="fi" data-field="purpose_notes"
+                                rows="3" placeholder="Reason for loan..."></textarea>
                             <div class="field-error" data-error-for="purpose_notes"></div>
                         </div>
                     </div>
@@ -757,7 +834,8 @@
                     <div id="form-global-error-bonus" class="form-global-error"></div>
                     <div class="form-grid">
                         <div class="fg" data-field-group="employee">
-                            <div class="fl">Employee *</div><select class="fi" data-field="employee" id="bonus-employee-select">
+                            <div class="fl">Employee *</div><select class="fi" data-field="employee"
+                                id="bonus-employee-select">
                                 <option value="">Select Employee</option>
                                 <option value="all">All Employees</option>
                             </select>
@@ -775,7 +853,8 @@
                             <div class="field-error" data-error-for="bonus_type"></div>
                         </div>
                         <div class="fg" data-field-group="amount">
-                            <div class="fl">Amount ($) *</div><input class="fi" data-field="amount" type="number" placeholder="0.00" step="0.01" />
+                            <div class="fl">Amount ($) *</div><input class="fi" data-field="amount" type="number"
+                                placeholder="0.00" step="0.01" />
                             <div class="field-error" data-error-for="amount"></div>
                         </div>
                         <div class="fg" data-field-group="pay_month">
@@ -783,7 +862,8 @@
                             <div class="field-error" data-error-for="pay_month"></div>
                         </div>
                         <div class="fg full" data-field-group="remarks">
-                            <div class="fl">Remarks</div><input class="fi" data-field="remarks" placeholder="Reason for bonus..." />
+                            <div class="fl">Remarks</div><input class="fi" data-field="remarks"
+                                placeholder="Reason for bonus..." />
                             <div class="field-error" data-error-for="remarks"></div>
                         </div>
                         <div class="fg" data-field-group="taxable">
@@ -839,7 +919,7 @@
     <script src="{% static 'core_module/js/constants.js' %}"></script>
     <script src="{% static 'core_module/js/APIClient.js' %}"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
     </script>
@@ -1035,7 +1115,7 @@
             document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
             document.querySelectorAll('.fi.is-invalid').forEach(el => el.classList.remove('is-invalid'));
             document.querySelectorAll('.fg.has-error').forEach(el => el.classList.remove('has-error'));
-            document.querySelectorAll('.form-global-error').forEach(el => { el.textContent=''; el.classList.remove('show'); });
+            document.querySelectorAll('.form-global-error').forEach(el => { el.textContent = ''; el.classList.remove('show'); });
         }
         function showFieldErrors(errors) {
             clearFieldErrors();
@@ -1055,7 +1135,7 @@
             for (const [key, val] of Object.entries(errors)) {
                 const msg = Array.isArray(val) ? val.join(', ') : String(val);
                 if (key === '__all__' || key === 'error') {
-                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = msg; el.classList.add('show'); }});
+                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = msg; el.classList.add('show'); } });
                     hasFieldError = true; continue;
                 }
                 const field = fieldMap[key] || key;
@@ -1064,7 +1144,7 @@
                 if (errorEl) { errorEl.textContent = msg; hasFieldError = true; }
                 if (input) { input.classList.add('is-invalid'); const fg = input.closest('.fg'); if (fg) fg.classList.add('has-error'); hasFieldError = true; }
                 if (!errorEl && !input) {
-                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = `${key}: ${msg}`; el.classList.add('show'); }});
+                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = `${key}: ${msg}`; el.classList.add('show'); } });
                 }
             }
         }
@@ -1140,7 +1220,7 @@
                     </tr>`;
                 }).join('');
                 renderPaginationServer(result.count || result.data.length, structuresPage, pageSize, 'structures-pagination', 'structures-pagination-info', 'loadStructures');
-            } catch (e) { console.error('load structures failed', e); showToast('❌','Failed to load structures'); }
+            } catch (e) { console.error('load structures failed', e); showToast('❌', 'Failed to load structures'); }
         }
         async function loadPayslips(page) {
             payslipsPage = page || 1;
@@ -1170,7 +1250,7 @@
                     </tr>`;
                 }).join('');
                 renderPaginationServer(result.count || result.data.length, payslipsPage, pageSize, 'payslips-pagination', 'payslips-pagination-info', 'loadPayslips');
-            } catch (e) { console.error(e); showToast('❌','Failed to load payslips'); }
+            } catch (e) { console.error(e); showToast('❌', 'Failed to load payslips'); }
         }
         async function loadLoans(page) {
             loansPage = page || 1;
@@ -1200,7 +1280,7 @@
                     </tr>`;
                 }).join('');
                 renderPaginationServer(result.count || result.data.length, loansPage, pageSize, 'loans-pagination', 'loans-pagination-info', 'loadLoans');
-            } catch (e) { console.error(e); showToast('❌','Failed to load loans'); }
+            } catch (e) { console.error(e); showToast('❌', 'Failed to load loans'); }
         }
         async function loadBonuses(page) {
             bonusesPage = page || 1;
@@ -1229,19 +1309,19 @@
                     </tr>`;
                 }).join('');
                 renderPaginationServer(result.count || result.data.length, bonusesPage, pageSize, 'bonuses-pagination', 'bonuses-pagination-info', 'loadBonuses');
-            } catch (e) { console.error(e); showToast('❌','Failed to load bonuses'); }
+            } catch (e) { console.error(e); showToast('❌', 'Failed to load bonuses'); }
         }
         // ── Payroll Stats (dynamic) — mirrors attendance loadAttendanceStats ──
         function formatCurrency(val) {
             const n = parseFloat(val || 0);
             if (isNaN(n)) return '$0';
-            return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+            return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
         }
         function formatCompact(val) {
             const n = parseFloat(val || 0);
             if (isNaN(n)) return '$0';
-            if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
-            if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
+            if (n >= 1000000) return '$' + (n / 1000000).toFixed(2) + 'M';
+            if (n >= 1000) return '$' + (n / 1000).toFixed(1) + 'K';
             return '$' + n.toLocaleString();
         }
 
@@ -1269,7 +1349,7 @@
                     if (dedEl) dedEl.textContent = formatCompact(stats.total_deductions);
                     if (netEl) netEl.textContent = formatCompact(stats.net_payroll);
                     if (bonusEl) bonusEl.textContent = formatCompact(stats.total_bonuses);
-                    const period = stats.pay_period ? stats.pay_period : new Date().toLocaleDateString('en-US', {month:'short', year:'numeric'});
+                    const period = stats.pay_period ? stats.pay_period : new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
                     if (grossSub) grossSub.textContent = `${stats.payslip_count || 0} payslips • ${period}`;
                     if (dedSub) dedSub.textContent = stats.total_deductions > 0 ? `Tax + Benefits • ${formatCurrency(stats.total_deductions)}` : 'No deductions';
                     if (netSub) netSub.textContent = stats.payslip_count > 0 ? `Ready to disburse • ${formatCurrency(stats.net_payroll)}` : 'No payroll yet';
@@ -1278,27 +1358,27 @@
                 }
                 // Fallback: compute on frontend by fetching data
                 const [payslipsRes, bonusesRes] = await Promise.all([
-                    api.index(API_ENDPOINTS.PAYROLL.PAYSLIPS.INDEX, {page:1, page_size:100}).catch(()=>({data:[]})),
-                    api.index(API_ENDPOINTS.PAYROLL.BONUSES.INDEX, {page:1, page_size:100}).catch(()=>({data:[]}))
+                    api.index(API_ENDPOINTS.PAYROLL.PAYSLIPS.INDEX, { page: 1, page_size: 100 }).catch(() => ({ data: [] })),
+                    api.index(API_ENDPOINTS.PAYROLL.BONUSES.INDEX, { page: 1, page_size: 100 }).catch(() => ({ data: [] }))
                 ]);
                 const payslips = payslipsRes?.data || [];
                 let gross = 0, deductions = 0;
                 payslips.forEach(p => {
                     // Use returned gross_salary/total_deductions if available, else sum fields
                     if (p.gross_salary != null) gross += parseFloat(p.gross_salary) || 0;
-                    else gross += (parseFloat(p.basic_salary)||0) + (parseFloat(p.house_rent)||0) + (parseFloat(p.transport_allowance)||0) + (parseFloat(p.medical_allowance)||0) + (parseFloat(p.food_allowance)||0) + (parseFloat(p.other_allowance)||0) + (parseFloat(p.overtime_amount)||0) + (parseFloat(p.bonus_amount)||0);
+                    else gross += (parseFloat(p.basic_salary) || 0) + (parseFloat(p.house_rent) || 0) + (parseFloat(p.transport_allowance) || 0) + (parseFloat(p.medical_allowance) || 0) + (parseFloat(p.food_allowance) || 0) + (parseFloat(p.other_allowance) || 0) + (parseFloat(p.overtime_amount) || 0) + (parseFloat(p.bonus_amount) || 0);
                     if (p.total_deductions != null) deductions += parseFloat(p.total_deductions) || 0;
-                    else deductions += (parseFloat(p.income_tax)||0) + (parseFloat(p.provident_fund)||0) + (parseFloat(p.insurance_deduction)||0) + (parseFloat(p.other_deductions)||0) + (parseFloat(p.loan_emi)||0) + (parseFloat(p.absent_deduction)||0) + (parseFloat(p.late_deduction)||0);
+                    else deductions += (parseFloat(p.income_tax) || 0) + (parseFloat(p.provident_fund) || 0) + (parseFloat(p.insurance_deduction) || 0) + (parseFloat(p.other_deductions) || 0) + (parseFloat(p.loan_emi) || 0) + (parseFloat(p.absent_deduction) || 0) + (parseFloat(p.late_deduction) || 0);
                 });
                 const net = gross - deductions;
                 let totalBonuses = 0;
-                (bonusesRes?.data || []).forEach(b => { totalBonuses += parseFloat(b.amount)||0; });
-                const bonusCount = bonusesRes?.count ?? (bonusesRes?.data||[]).length;
+                (bonusesRes?.data || []).forEach(b => { totalBonuses += parseFloat(b.amount) || 0; });
+                const bonusCount = bonusesRes?.count ?? (bonusesRes?.data || []).length;
                 if (grossEl) grossEl.textContent = formatCompact(gross);
                 if (dedEl) dedEl.textContent = formatCompact(deductions);
                 if (netEl) netEl.textContent = formatCompact(net);
                 if (bonusEl) bonusEl.textContent = formatCompact(totalBonuses);
-                if (grossSub) grossSub.textContent = `${payslips.length} payslips • ${new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'})}`;
+                if (grossSub) grossSub.textContent = `${payslips.length} payslips • ${new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`;
                 if (dedSub) dedSub.textContent = deductions > 0 ? `${formatCurrency(deductions)} deductions` : 'No deductions';
                 if (netSub) netSub.textContent = payslips.length ? `${formatCurrency(net)} net` : 'No payroll yet';
                 if (bonusSub) bonusSub.textContent = bonusCount ? `${bonusCount} bonuses • ${formatCurrency(totalBonuses)}` : 'No bonuses';
@@ -1337,7 +1417,7 @@
             const pageSize = getPageSize('payroll-breakdown-page-size', 5);
             const search = document.getElementById('payroll-breakdown-search')?.value?.trim() || '';
             const period = document.getElementById('payroll-breakdown-period')?.value || '';
-            console.log('loadPayrollBreakdown called', {breakdownPage, pageSize, search, period, sortBy: breakdownSortBy, sortDir: breakdownSortDir});
+            console.log('loadPayrollBreakdown called', { breakdownPage, pageSize, search, period, sortBy: breakdownSortBy, sortDir: breakdownSortDir });
             try {
                 const params = { page: breakdownPage, page_size: pageSize, sort_by: breakdownSortBy, sort_direction: breakdownSortDir };
                 if (search) params.search = search;
@@ -1401,11 +1481,11 @@
             if (!container) return;
             try {
                 // Reuse loan list API, filter active
-                const res = await api.index(API_ENDPOINTS.PAYROLL.LOANS.INDEX, {page:1, page_size:100, sort_by:'id', sort_direction:'desc'}).catch(()=>({data:[]}));
+                const res = await api.index(API_ENDPOINTS.PAYROLL.LOANS.INDEX, { page: 1, page_size: 100, sort_by: 'id', sort_direction: 'desc' }).catch(() => ({ data: [] }));
                 let loans = res?.data || [];
                 // Prefer active, then pending, then all
                 const active = loans.filter(l => l.status === 'active');
-                const display = active.length ? active.slice(0,4) : loans.slice(0,4);
+                const display = active.length ? active.slice(0, 4) : loans.slice(0, 4);
                 if (!display || display.length === 0) {
                     container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.75rem;">No active loans</div>';
                     return;
@@ -1417,8 +1497,8 @@
                     const left = item.monthly_emi ? `EMI ${formatCurrency(item.monthly_emi)}` : '';
                     return `<div style="display:flex;justify-content:space-between;align-items:center;">
                         <div>
-                            <div style="font-size:0.78rem;font-weight:600;">${item.employee_name||'—'}</div>
-                            <div style="font-size:0.68rem;color:var(--text-muted);">${formatCurrency(item.loan_amount)} · ${months} ${left ? '· '+left : ''}</div>
+                            <div style="font-size:0.78rem;font-weight:600;">${item.employee_name || '—'}</div>
+                            <div style="font-size:0.68rem;color:var(--text-muted);">${formatCurrency(item.loan_amount)} · ${months} ${left ? '· ' + left : ''}</div>
                         </div><span class="badge-custom ${badge}">${badgeText}</span>
                     </div>`;
                 }).join('');
@@ -1429,7 +1509,7 @@
         }
 
         async function viewStructure(id) {
-            try { const s = await getStructure(id); showToast('ℹ️', s.structure_name); } catch(e){}
+            try { const s = await getStructure(id); showToast('ℹ️', s.structure_name); } catch (e) { }
         }
         async function editStructure(id) {
             try {
@@ -1437,21 +1517,21 @@
                 const modal = document.getElementById('modalSalaryStructure');
                 if (!modal || !s) return;
                 clearFieldErrors();
-                setModalFieldValue('modalSalaryStructure','structure_name', s.structure_name);
-                setModalFieldValue('modalSalaryStructure','grade_level', s.grade_level);
-                setModalFieldValue('modalSalaryStructure','basic_salary', s.basic_salary);
-                setModalFieldValue('modalSalaryStructure','house_rent_percent', s.house_rent_percent);
-                setModalFieldValue('modalSalaryStructure','transport_allowance', s.transport_allowance);
-                setModalFieldValue('modalSalaryStructure','medical_allowance', s.medical_allowance);
-                setModalFieldValue('modalSalaryStructure','food_allowance', s.food_allowance);
-                setModalFieldValue('modalSalaryStructure','other_allowance', s.other_allowance);
-                setModalFieldValue('modalSalaryStructure','income_tax_percent', s.income_tax_percent);
-                setModalFieldValue('modalSalaryStructure','provident_fund_percent', s.provident_fund_percent);
-                setModalFieldValue('modalSalaryStructure','insurance_premium', s.insurance_premium);
-                setModalFieldValue('modalSalaryStructure','other_deductions', s.other_deductions);
+                setModalFieldValue('modalSalaryStructure', 'structure_name', s.structure_name);
+                setModalFieldValue('modalSalaryStructure', 'grade_level', s.grade_level);
+                setModalFieldValue('modalSalaryStructure', 'basic_salary', s.basic_salary);
+                setModalFieldValue('modalSalaryStructure', 'house_rent_percent', s.house_rent_percent);
+                setModalFieldValue('modalSalaryStructure', 'transport_allowance', s.transport_allowance);
+                setModalFieldValue('modalSalaryStructure', 'medical_allowance', s.medical_allowance);
+                setModalFieldValue('modalSalaryStructure', 'food_allowance', s.food_allowance);
+                setModalFieldValue('modalSalaryStructure', 'other_allowance', s.other_allowance);
+                setModalFieldValue('modalSalaryStructure', 'income_tax_percent', s.income_tax_percent);
+                setModalFieldValue('modalSalaryStructure', 'provident_fund_percent', s.provident_fund_percent);
+                setModalFieldValue('modalSalaryStructure', 'insurance_premium', s.insurance_premium);
+                setModalFieldValue('modalSalaryStructure', 'other_deductions', s.other_deductions);
                 modal.setAttribute('data-edit-id', id);
                 new bootstrap.Modal(modal).show();
-            } catch(e){ console.error(e); showToast('❌','Failed to load');}
+            } catch (e) { console.error(e); showToast('❌', 'Failed to load'); }
         }
         async function editLoan(id) {
             try {
@@ -1459,17 +1539,17 @@
                 const modal = document.getElementById('modalLoan');
                 if (!modal || !l) return;
                 clearFieldErrors();
-                setModalFieldValue('modalLoan','employee', l.employee_id);
-                setModalFieldValue('modalLoan','loan_type', l.loan_type);
-                setModalFieldValue('modalLoan','loan_amount', l.loan_amount);
-                setModalFieldValue('modalLoan','disbursement_date', l.disbursement_date);
-                setModalFieldValue('modalLoan','repayment_period', l.repayment_period);
-                setModalFieldValue('modalLoan','interest_rate', l.interest_rate);
-                setModalFieldValue('modalLoan','status', l.status);
-                setModalFieldValue('modalLoan','purpose_notes', l.purpose_notes);
+                setModalFieldValue('modalLoan', 'employee', l.employee_id);
+                setModalFieldValue('modalLoan', 'loan_type', l.loan_type);
+                setModalFieldValue('modalLoan', 'loan_amount', l.loan_amount);
+                setModalFieldValue('modalLoan', 'disbursement_date', l.disbursement_date);
+                setModalFieldValue('modalLoan', 'repayment_period', l.repayment_period);
+                setModalFieldValue('modalLoan', 'interest_rate', l.interest_rate);
+                setModalFieldValue('modalLoan', 'status', l.status);
+                setModalFieldValue('modalLoan', 'purpose_notes', l.purpose_notes);
                 modal.setAttribute('data-edit-id', id);
                 new bootstrap.Modal(modal).show();
-            } catch(e){ console.error(e); }
+            } catch (e) { console.error(e); }
         }
         async function editBonus(id) {
             try {
@@ -1477,25 +1557,25 @@
                 const modal = document.getElementById('modalBonus');
                 if (!modal || !b) return;
                 clearFieldErrors();
-                if (b.is_all_employees) setModalFieldValue('modalBonus','employee','all');
-                else setModalFieldValue('modalBonus','employee', b.employee_id);
-                setModalFieldValue('modalBonus','bonus_type', b.bonus_type);
-                setModalFieldValue('modalBonus','amount', b.amount);
-                setModalFieldValue('modalBonus','pay_month', b.pay_month ? b.pay_month.split('T')[0] : '');
-                setModalFieldValue('modalBonus','remarks', b.remarks);
-                setModalFieldValue('modalBonus','taxable', b.taxable ? 'true' : 'false');
-                setModalFieldValue('modalBonus','status', b.status);
+                if (b.is_all_employees) setModalFieldValue('modalBonus', 'employee', 'all');
+                else setModalFieldValue('modalBonus', 'employee', b.employee_id);
+                setModalFieldValue('modalBonus', 'bonus_type', b.bonus_type);
+                setModalFieldValue('modalBonus', 'amount', b.amount);
+                setModalFieldValue('modalBonus', 'pay_month', b.pay_month ? b.pay_month.split('T')[0] : '');
+                setModalFieldValue('modalBonus', 'remarks', b.remarks);
+                setModalFieldValue('modalBonus', 'taxable', b.taxable ? 'true' : 'false');
+                setModalFieldValue('modalBonus', 'status', b.status);
                 modal.setAttribute('data-edit-id', id);
                 new bootstrap.Modal(modal).show();
-            } catch(e){ console.error(e); }
+            } catch (e) { console.error(e); }
         }
-        async function viewLoan(id){ try{ const l=await getLoan(id); showToast('ℹ️', l.employee_name+' '+l.loan_amount); }catch(e){} }
-        async function viewBonus(id){ try{ const b=await getBonus(id); showToast('ℹ️', b.employee_name+' '+b.amount); }catch(e){} }
-        async function viewPayslip(id){ try{ const p=await getPayslip(id); showToast('ℹ️', p.employee_name||'Payslip'); }catch(e){} }
-        async function approveLoan(id){ try{ await approveLoanAPI(id); showToast('✅','Loan approved'); loadLoans(loansPage); loadActiveLoansCard(); loadPayrollStats(); }catch(e){ showToast('❌','Failed'); }}
-        async function deleteStructure(id){ if(!confirm('Delete this structure?'))return; try{ await deleteStructureAPI(id); showToast('🗑️','Deleted'); loadStructures(structuresPage);}catch(e){showToast('❌','Failed');}}
-        async function deleteLoan(id){ if(!confirm('Delete this loan?'))return; try{ await deleteLoanAPI(id); showToast('🗑️','Deleted'); loadLoans(loansPage); loadActiveLoansCard(); loadPayrollStats();}catch(e){showToast('❌','Failed');}}
-        async function deleteBonus(id){ if(!confirm('Delete this bonus?'))return; try{ await deleteBonusAPI(id); showToast('🗑️','Deleted'); loadBonuses(bonusesPage); loadPayrollStats();}catch(e){showToast('❌','Failed');}}
+        async function viewLoan(id) { try { const l = await getLoan(id); showToast('ℹ️', l.employee_name + ' ' + l.loan_amount); } catch (e) { } }
+        async function viewBonus(id) { try { const b = await getBonus(id); showToast('ℹ️', b.employee_name + ' ' + b.amount); } catch (e) { } }
+        async function viewPayslip(id) { try { const p = await getPayslip(id); showToast('ℹ️', p.employee_name || 'Payslip'); } catch (e) { } }
+        async function approveLoan(id) { try { await approveLoanAPI(id); showToast('✅', 'Loan approved'); loadLoans(loansPage); loadActiveLoansCard(); loadPayrollStats(); } catch (e) { showToast('❌', 'Failed'); } }
+        async function deleteStructure(id) { if (!confirm('Delete this structure?')) return; try { await deleteStructureAPI(id); showToast('🗑️', 'Deleted'); loadStructures(structuresPage); } catch (e) { showToast('❌', 'Failed'); } }
+        async function deleteLoan(id) { if (!confirm('Delete this loan?')) return; try { await deleteLoanAPI(id); showToast('🗑️', 'Deleted'); loadLoans(loansPage); loadActiveLoansCard(); loadPayrollStats(); } catch (e) { showToast('❌', 'Failed'); } }
+        async function deleteBonus(id) { if (!confirm('Delete this bonus?')) return; try { await deleteBonusAPI(id); showToast('🗑️', 'Deleted'); loadBonuses(bonusesPage); loadPayrollStats(); } catch (e) { showToast('❌', 'Failed'); } }
 
         async function saveStructure() {
             const modal = document.getElementById('modalSalaryStructure');
@@ -1503,164 +1583,164 @@
             const editId = modal.getAttribute('data-edit-id');
             clearFieldErrors();
             const data = {
-                structure_name: getModalFieldValue('modalSalaryStructure','structure_name'),
-                grade_level: getModalFieldValue('modalSalaryStructure','grade_level'),
-                basic_salary: getModalFieldValue('modalSalaryStructure','basic_salary') || 0,
-                house_rent_percent: getModalFieldValue('modalSalaryStructure','house_rent_percent') || 0,
-                transport_allowance: getModalFieldValue('modalSalaryStructure','transport_allowance') || 0,
-                medical_allowance: getModalFieldValue('modalSalaryStructure','medical_allowance') || 0,
-                food_allowance: getModalFieldValue('modalSalaryStructure','food_allowance') || 0,
-                other_allowance: getModalFieldValue('modalSalaryStructure','other_allowance') || 0,
-                income_tax_percent: getModalFieldValue('modalSalaryStructure','income_tax_percent') || 0,
-                provident_fund_percent: getModalFieldValue('modalSalaryStructure','provident_fund_percent') || 0,
-                insurance_premium: getModalFieldValue('modalSalaryStructure','insurance_premium') || 0,
-                other_deductions: getModalFieldValue('modalSalaryStructure','other_deductions') || 0,
+                structure_name: getModalFieldValue('modalSalaryStructure', 'structure_name'),
+                grade_level: getModalFieldValue('modalSalaryStructure', 'grade_level'),
+                basic_salary: getModalFieldValue('modalSalaryStructure', 'basic_salary') || 0,
+                house_rent_percent: getModalFieldValue('modalSalaryStructure', 'house_rent_percent') || 0,
+                transport_allowance: getModalFieldValue('modalSalaryStructure', 'transport_allowance') || 0,
+                medical_allowance: getModalFieldValue('modalSalaryStructure', 'medical_allowance') || 0,
+                food_allowance: getModalFieldValue('modalSalaryStructure', 'food_allowance') || 0,
+                other_allowance: getModalFieldValue('modalSalaryStructure', 'other_allowance') || 0,
+                income_tax_percent: getModalFieldValue('modalSalaryStructure', 'income_tax_percent') || 0,
+                provident_fund_percent: getModalFieldValue('modalSalaryStructure', 'provident_fund_percent') || 0,
+                insurance_premium: getModalFieldValue('modalSalaryStructure', 'insurance_premium') || 0,
+                other_deductions: getModalFieldValue('modalSalaryStructure', 'other_deductions') || 0,
             };
-            if (!data.structure_name) { showFieldErrors({structure_name:['Structure name required']}); return; }
-            if (!data.basic_salary) { showFieldErrors({basic_salary:['Basic salary required']}); return; }
+            if (!data.structure_name) { showFieldErrors({ structure_name: ['Structure name required'] }); return; }
+            if (!data.basic_salary) { showFieldErrors({ basic_salary: ['Basic salary required'] }); return; }
             const btn = modal.querySelector('[onclick="saveStructure()"]');
-            const orig = btn?btn.innerHTML:'';
-            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
-            try{
-                if(editId){ await updateStructureAPI(editId, data); showToast('✅','Structure updated'); modal.removeAttribute('data-edit-id'); }
-                else { await createStructure(data); showToast('✅','Structure created'); }
+            const orig = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '\u23F3 Saving...'; }
+            try {
+                if (editId) { await updateStructureAPI(editId, data); showToast('✅', 'Structure updated'); modal.removeAttribute('data-edit-id'); }
+                else { await createStructure(data); showToast('✅', 'Structure created'); }
                 bootstrap.Modal.getInstance(modal).hide();
                 resetStructureForm(); loadStructures(structuresPage);
-            }catch(e){
+            } catch (e) {
                 console.error(e);
                 const errData = e?.response?.data || e?.data || {};
                 const errors = errData.errors || errData || {};
-                if (errors && Object.keys(errors).length) { showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-structure'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
-            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Save Structure';}}
+                if (errors && Object.keys(errors).length) { showFieldErrors(errors); const fk = Object.keys(errors)[0]; const fm = Array.isArray(errors[fk]) ? errors[fk][0] : errors[fk]; showToast('❌', `${fk}: ${fm}`); } else { const msg = e?.message || 'Failed'; const ge = document.getElementById('form-global-error-structure'); if (ge) { ge.textContent = msg; ge.classList.add('show'); } showToast('❌', msg); }
+            } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig || '💾 Save Structure'; } }
         }
-        function resetStructureForm(){
-            const modal=document.getElementById('modalSalaryStructure');
-            if(!modal) return;
+        function resetStructureForm() {
+            const modal = document.getElementById('modalSalaryStructure');
+            if (!modal) return;
             modal.removeAttribute('data-edit-id');
             clearFieldErrors();
-            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
-            setModalFieldValue('modalSalaryStructure','house_rent_percent','20');
-            setModalFieldValue('modalSalaryStructure','transport_allowance','100');
-            setModalFieldValue('modalSalaryStructure','medical_allowance','80');
-            setModalFieldValue('modalSalaryStructure','food_allowance','50');
-            setModalFieldValue('modalSalaryStructure','other_allowance','0');
-            setModalFieldValue('modalSalaryStructure','income_tax_percent','10');
-            setModalFieldValue('modalSalaryStructure','provident_fund_percent','8');
-            setModalFieldValue('modalSalaryStructure','insurance_premium','30');
-            setModalFieldValue('modalSalaryStructure','other_deductions','0');
+            modal.querySelectorAll('[data-field]').forEach(el => { if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; });
+            setModalFieldValue('modalSalaryStructure', 'house_rent_percent', '20');
+            setModalFieldValue('modalSalaryStructure', 'transport_allowance', '100');
+            setModalFieldValue('modalSalaryStructure', 'medical_allowance', '80');
+            setModalFieldValue('modalSalaryStructure', 'food_allowance', '50');
+            setModalFieldValue('modalSalaryStructure', 'other_allowance', '0');
+            setModalFieldValue('modalSalaryStructure', 'income_tax_percent', '10');
+            setModalFieldValue('modalSalaryStructure', 'provident_fund_percent', '8');
+            setModalFieldValue('modalSalaryStructure', 'insurance_premium', '30');
+            setModalFieldValue('modalSalaryStructure', 'other_deductions', '0');
         }
         async function saveLoan() {
-            const modal=document.getElementById('modalLoan');
-            if(!modal) return;
-            const editId=modal.getAttribute('data-edit-id');
+            const modal = document.getElementById('modalLoan');
+            if (!modal) return;
+            const editId = modal.getAttribute('data-edit-id');
             clearFieldErrors();
-            const data={
-                employee_id: getModalFieldValue('modalLoan','employee') || null,
-                loan_type: getModalFieldValue('modalLoan','loan_type') || 'personal',
-                loan_amount: getModalFieldValue('modalLoan','loan_amount') || 0,
-                disbursement_date: getModalFieldValue('modalLoan','disbursement_date') || null,
-                repayment_period: parseInt(getModalFieldValue('modalLoan','repayment_period')) || 12,
-                interest_rate: getModalFieldValue('modalLoan','interest_rate') || 0,
-                status: getModalFieldValue('modalLoan','status') || 'pending',
-                purpose_notes: getModalFieldValue('modalLoan','purpose_notes') || '',
+            const data = {
+                employee_id: getModalFieldValue('modalLoan', 'employee') || null,
+                loan_type: getModalFieldValue('modalLoan', 'loan_type') || 'personal',
+                loan_amount: getModalFieldValue('modalLoan', 'loan_amount') || 0,
+                disbursement_date: getModalFieldValue('modalLoan', 'disbursement_date') || null,
+                repayment_period: parseInt(getModalFieldValue('modalLoan', 'repayment_period')) || 12,
+                interest_rate: getModalFieldValue('modalLoan', 'interest_rate') || 0,
+                status: getModalFieldValue('modalLoan', 'status') || 'pending',
+                purpose_notes: getModalFieldValue('modalLoan', 'purpose_notes') || '',
             };
             data.employee = data.employee_id;
-            if(!data.employee_id){ showFieldErrors({employee:['Employee required']}); return; }
-            if(!data.loan_amount){ showFieldErrors({loan_amount:['Amount required']}); return; }
-            const btn=modal.querySelector('[onclick="saveLoan()"]');
-            const orig=btn?btn.innerHTML:'';
-            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
-            try{
-                if(editId){ await updateLoanAPI(editId, data); showToast('✅','Loan updated'); modal.removeAttribute('data-edit-id'); }
-                else { await createLoan(data); showToast('✅','Loan created'); }
+            if (!data.employee_id) { showFieldErrors({ employee: ['Employee required'] }); return; }
+            if (!data.loan_amount) { showFieldErrors({ loan_amount: ['Amount required'] }); return; }
+            const btn = modal.querySelector('[onclick="saveLoan()"]');
+            const orig = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '\u23F3 Saving...'; }
+            try {
+                if (editId) { await updateLoanAPI(editId, data); showToast('✅', 'Loan updated'); modal.removeAttribute('data-edit-id'); }
+                else { await createLoan(data); showToast('✅', 'Loan created'); }
                 bootstrap.Modal.getInstance(modal).hide();
                 resetLoanForm(); loadLoans(loansPage); loadActiveLoansCard(); loadPayrollStats();
-            }catch(e){
+            } catch (e) {
                 console.error(e);
-                const errData=e?.response?.data||e?.data||{};
-                const errors=errData.errors||errData||{};
-                if(errors&&Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-loan'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
-            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Save Loan';}}
+                const errData = e?.response?.data || e?.data || {};
+                const errors = errData.errors || errData || {};
+                if (errors && Object.keys(errors).length) { showFieldErrors(errors); const fk = Object.keys(errors)[0]; const fm = Array.isArray(errors[fk]) ? errors[fk][0] : errors[fk]; showToast('❌', `${fk}: ${fm}`); } else { const msg = e?.message || 'Failed'; const ge = document.getElementById('form-global-error-loan'); if (ge) { ge.textContent = msg; ge.classList.add('show'); } showToast('❌', msg); }
+            } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig || '💾 Save Loan'; } }
         }
-        function resetLoanForm(){
-            const modal=document.getElementById('modalLoan');
-            if(!modal) return;
+        function resetLoanForm() {
+            const modal = document.getElementById('modalLoan');
+            if (!modal) return;
             modal.removeAttribute('data-edit-id');
             clearFieldErrors();
-            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
-            setModalFieldValue('modalLoan','loan_type','personal');
-            setModalFieldValue('modalLoan','repayment_period','12');
-            setModalFieldValue('modalLoan','interest_rate','0');
-            setModalFieldValue('modalLoan','status','pending');
+            modal.querySelectorAll('[data-field]').forEach(el => { if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; });
+            setModalFieldValue('modalLoan', 'loan_type', 'personal');
+            setModalFieldValue('modalLoan', 'repayment_period', '12');
+            setModalFieldValue('modalLoan', 'interest_rate', '0');
+            setModalFieldValue('modalLoan', 'status', 'pending');
         }
-        async function saveBonus(){
-            const modal=document.getElementById('modalBonus');
-            if(!modal) return;
-            const editId=modal.getAttribute('data-edit-id');
+        async function saveBonus() {
+            const modal = document.getElementById('modalBonus');
+            if (!modal) return;
+            const editId = modal.getAttribute('data-edit-id');
             clearFieldErrors();
-            const empVal=getModalFieldValue('modalBonus','employee');
-            const isAll = empVal==='all';
-            const data={
-                employee_id: isAll ? null : (empVal||null),
+            const empVal = getModalFieldValue('modalBonus', 'employee');
+            const isAll = empVal === 'all';
+            const data = {
+                employee_id: isAll ? null : (empVal || null),
                 is_all_employees: isAll,
-                bonus_type: getModalFieldValue('modalBonus','bonus_type') || 'performance',
-                amount: getModalFieldValue('modalBonus','amount') || 0,
-                pay_month: getModalFieldValue('modalBonus','pay_month') || null,
-                remarks: getModalFieldValue('modalBonus','remarks') || '',
-                taxable: getModalFieldValue('modalBonus','taxable') === 'true',
-                status: getModalFieldValue('modalBonus','status') || 'pending',
+                bonus_type: getModalFieldValue('modalBonus', 'bonus_type') || 'performance',
+                amount: getModalFieldValue('modalBonus', 'amount') || 0,
+                pay_month: getModalFieldValue('modalBonus', 'pay_month') || null,
+                remarks: getModalFieldValue('modalBonus', 'remarks') || '',
+                taxable: getModalFieldValue('modalBonus', 'taxable') === 'true',
+                status: getModalFieldValue('modalBonus', 'status') || 'pending',
             };
             // alias for backend that checks employee
             if (!isAll) data.employee = data.employee_id;
-            if(!data.amount){ showFieldErrors({amount:['Amount required']}); return; }
-            if(!isAll && !data.employee_id){ showFieldErrors({employee:['Employee required or select All']}); return; }
-            if(data.pay_month && data.pay_month.length===7) data.pay_month = data.pay_month + '-01';
-            const btn=modal.querySelector('[onclick="saveBonus()"]');
-            const orig=btn?btn.innerHTML:'';
-            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
-            try{
-                if(editId){ await updateBonusAPI(editId, data); showToast('✅','Bonus updated'); modal.removeAttribute('data-edit-id'); }
-                else { await createBonus(data); showToast('✅','Bonus created'); }
+            if (!data.amount) { showFieldErrors({ amount: ['Amount required'] }); return; }
+            if (!isAll && !data.employee_id) { showFieldErrors({ employee: ['Employee required or select All'] }); return; }
+            if (data.pay_month && data.pay_month.length === 7) data.pay_month = data.pay_month + '-01';
+            const btn = modal.querySelector('[onclick="saveBonus()"]');
+            const orig = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '\u23F3 Saving...'; }
+            try {
+                if (editId) { await updateBonusAPI(editId, data); showToast('✅', 'Bonus updated'); modal.removeAttribute('data-edit-id'); }
+                else { await createBonus(data); showToast('✅', 'Bonus created'); }
                 bootstrap.Modal.getInstance(modal).hide();
                 resetBonusForm(); loadBonuses(bonusesPage); loadPayrollStats();
-            }catch(e){
+            } catch (e) {
                 console.error(e);
-                const errData=e?.response?.data||e?.data||{};
-                const errors=errData.errors||errData||{};
-                if(errors&&Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-bonus'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
-            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Add Bonus';}}
+                const errData = e?.response?.data || e?.data || {};
+                const errors = errData.errors || errData || {};
+                if (errors && Object.keys(errors).length) { showFieldErrors(errors); const fk = Object.keys(errors)[0]; const fm = Array.isArray(errors[fk]) ? errors[fk][0] : errors[fk]; showToast('❌', `${fk}: ${fm}`); } else { const msg = e?.message || 'Failed'; const ge = document.getElementById('form-global-error-bonus'); if (ge) { ge.textContent = msg; ge.classList.add('show'); } showToast('❌', msg); }
+            } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig || '💾 Add Bonus'; } }
         }
-        function resetBonusForm(){
-            const modal=document.getElementById('modalBonus');
-            if(!modal) return;
+        function resetBonusForm() {
+            const modal = document.getElementById('modalBonus');
+            if (!modal) return;
             modal.removeAttribute('data-edit-id');
             clearFieldErrors();
-            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
-            setModalFieldValue('modalBonus','bonus_type','performance');
-            setModalFieldValue('modalBonus','taxable','true');
-            setModalFieldValue('modalBonus','status','pending');
+            modal.querySelectorAll('[data-field]').forEach(el => { if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; });
+            setModalFieldValue('modalBonus', 'bonus_type', 'performance');
+            setModalFieldValue('modalBonus', 'taxable', 'true');
+            setModalFieldValue('modalBonus', 'status', 'pending');
         }
-        async function loadDropdownsPayroll(){
-            try{
-                const emps = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, {page:1, page_size:100}).catch(()=>({data:[]}));
+        async function loadDropdownsPayroll() {
+            try {
+                const emps = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { page: 1, page_size: 100 }).catch(() => ({ data: [] }));
                 const empData = emps?.data || [];
-                ['loan-employee-select','bonus-employee-select'].forEach(id=>{
-                    const sel=document.getElementById(id);
-                    if(sel){
-                        const cur=sel.value;
+                ['loan-employee-select', 'bonus-employee-select'].forEach(id => {
+                    const sel = document.getElementById(id);
+                    if (sel) {
+                        const cur = sel.value;
                         // keep All option for bonus
-                        const isBonus = id==='bonus-employee-select';
-                        let html='<option value="">Select Employee</option>';
-                        if(isBonus) html+='<option value="all">All Employees</option>';
-                        html+=empData.map(e=>`<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('');
-                        sel.innerHTML=html;
-                        if(cur) sel.value=cur;
+                        const isBonus = id === 'bonus-employee-select';
+                        let html = '<option value="">Select Employee</option>';
+                        if (isBonus) html += '<option value="all">All Employees</option>';
+                        html += empData.map(e => `<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('');
+                        sel.innerHTML = html;
+                        if (cur) sel.value = cur;
                     }
                 });
-            }catch(e){ console.error(e); }
+            } catch (e) { console.error(e); }
         }
 
-        function saveForm(){ const m=document.querySelector('.modal.show'); if(m){ const inst=bootstrap.Modal.getInstance(m); if(inst) inst.hide(); } showToast('\u2705','Record saved successfully!'); }
+        function saveForm() { const m = document.querySelector('.modal.show'); if (m) { const inst = bootstrap.Modal.getInstance(m); if (inst) inst.hide(); } showToast('\u2705', 'Record saved successfully!'); }
         $(function () {
             loadStructures(1);
             loadPayslips(1);
@@ -1672,44 +1752,44 @@
             loadDropdownsPayroll();
             // search debounces
             let sTimeout, lTimeout, bTimeout, bdTimeout;
-            const sSearch=document.getElementById('structures-search');
-            if(sSearch) sSearch.addEventListener('input', ()=>{ clearTimeout(sTimeout); sTimeout=setTimeout(()=>{structuresPage=1; loadStructures(1);},400); });
-            const lSearch=document.getElementById('loans-search');
-            if(lSearch) lSearch.addEventListener('input', ()=>{ clearTimeout(lTimeout); lTimeout=setTimeout(()=>{loansPage=1; loadLoans(1);},400); });
-            const bSearch=document.getElementById('bonuses-search');
-            if(bSearch) bSearch.addEventListener('input', ()=>{ clearTimeout(bTimeout); bTimeout=setTimeout(()=>{bonusesPage=1; loadBonuses(1);},400); });
-            const bdSearch=document.getElementById('payroll-breakdown-search');
-            if(bdSearch) bdSearch.addEventListener('input', ()=>{ clearTimeout(bdTimeout); bdTimeout=setTimeout(()=>{breakdownPage=1; loadPayrollBreakdown(1);},400); });
-            const bdPeriod=document.getElementById('payroll-breakdown-period');
-            if(bdPeriod) bdPeriod.addEventListener('change', ()=>{ breakdownPage=1; loadPayrollBreakdown(1); });
+            const sSearch = document.getElementById('structures-search');
+            if (sSearch) sSearch.addEventListener('input', () => { clearTimeout(sTimeout); sTimeout = setTimeout(() => { structuresPage = 1; loadStructures(1); }, 400); });
+            const lSearch = document.getElementById('loans-search');
+            if (lSearch) lSearch.addEventListener('input', () => { clearTimeout(lTimeout); lTimeout = setTimeout(() => { loansPage = 1; loadLoans(1); }, 400); });
+            const bSearch = document.getElementById('bonuses-search');
+            if (bSearch) bSearch.addEventListener('input', () => { clearTimeout(bTimeout); bTimeout = setTimeout(() => { bonusesPage = 1; loadBonuses(1); }, 400); });
+            const bdSearch = document.getElementById('payroll-breakdown-search');
+            if (bdSearch) bdSearch.addEventListener('input', () => { clearTimeout(bdTimeout); bdTimeout = setTimeout(() => { breakdownPage = 1; loadPayrollBreakdown(1); }, 400); });
+            const bdPeriod = document.getElementById('payroll-breakdown-period');
+            if (bdPeriod) bdPeriod.addEventListener('change', () => { breakdownPage = 1; loadPayrollBreakdown(1); });
 
             // modal handlers
-            ['modalSalaryStructure','modalLoan','modalBonus'].forEach(mid=>{
-                const el=document.getElementById(mid);
-                if(!el) return;
-                el.addEventListener('hidden.bs.modal', ()=>{ clearFieldErrors(); });
-                el.addEventListener('show.bs.modal', ()=>{ clearFieldErrors(); });
+            ['modalSalaryStructure', 'modalLoan', 'modalBonus'].forEach(mid => {
+                const el = document.getElementById(mid);
+                if (!el) return;
+                el.addEventListener('hidden.bs.modal', () => { clearFieldErrors(); });
+                el.addEventListener('show.bs.modal', () => { clearFieldErrors(); });
             });
-            const addStructBtn=document.querySelector('[data-bs-target="#modalSalaryStructure"]');
-            if(addStructBtn) addStructBtn.addEventListener('click', ()=>{ resetStructureForm(); });
-            const addLoanBtn=document.querySelector('[data-bs-target="#modalLoan"]');
-            if(addLoanBtn) addLoanBtn.addEventListener('click', ()=>{ resetLoanForm(); });
-            const addBonusBtn=document.querySelector('[data-bs-target="#modalBonus"]');
-            if(addBonusBtn) addBonusBtn.addEventListener('click', ()=>{ resetBonusForm(); });
+            const addStructBtn = document.querySelector('[data-bs-target="#modalSalaryStructure"]');
+            if (addStructBtn) addStructBtn.addEventListener('click', () => { resetStructureForm(); });
+            const addLoanBtn = document.querySelector('[data-bs-target="#modalLoan"]');
+            if (addLoanBtn) addLoanBtn.addEventListener('click', () => { resetLoanForm(); });
+            const addBonusBtn = document.querySelector('[data-bs-target="#modalBonus"]');
+            if (addBonusBtn) addBonusBtn.addEventListener('click', () => { resetBonusForm(); });
 
-            document.querySelectorAll('#modalSalaryStructure .fi, #modalLoan .fi, #modalBonus .fi').forEach(input=>{
-                input.addEventListener('input', ()=>{
+            document.querySelectorAll('#modalSalaryStructure .fi, #modalLoan .fi, #modalBonus .fi').forEach(input => {
+                input.addEventListener('input', () => {
                     input.classList.remove('is-invalid');
-                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
-                    const field=input.getAttribute('data-field');
-                    if(field){
-                        const errEl=document.querySelector(`[data-error-for="${field}"]`);
-                        if(errEl) errEl.textContent='';
+                    const fg = input.closest('.fg'); if (fg) fg.classList.remove('has-error');
+                    const field = input.getAttribute('data-field');
+                    if (field) {
+                        const errEl = document.querySelector(`[data-error-for="${field}"]`);
+                        if (errEl) errEl.textContent = '';
                     }
                 });
-                input.addEventListener('change', ()=>{
+                input.addEventListener('change', () => {
                     input.classList.remove('is-invalid');
-                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
+                    const fg = input.closest('.fg'); if (fg) fg.classList.remove('has-error');
                 });
             });
         });
