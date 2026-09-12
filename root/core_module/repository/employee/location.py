@@ -8,10 +8,10 @@ class LocationRepository(BaseRepository):
         super().__init__(Location)
 
     def get_active(self):
-        return self.model.objects.filter(is_active=True).annotate(employee_count=Count('employee_set'))
+        return self.model.objects.filter(is_active=True).annotate(employee_count=Count('employee'))
 
     def get_by_type(self, location_type):
-        return self.model.objects.filter(location_type=location_type).annotate(employee_count=Count('employee_set'))
+        return self.model.objects.filter(location_type=location_type).annotate(employee_count=Count('employee'))
 
     def get_all(self):
-        return self.model.objects.annotate(employee_count=Count('employee_set'))
+        return self.model.objects.annotate(employee_count=Count('employee'))

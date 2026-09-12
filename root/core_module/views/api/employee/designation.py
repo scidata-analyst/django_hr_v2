@@ -26,11 +26,41 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def designation_list(request):
     if request.method == "GET":
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
         dept = request.GET.get('department')
+        search = request.GET.get('search', '').strip()
+        sort_by = request.GET.get('sort_by', 'level')
+        sort_direction = request.GET.get('sort_direction', 'asc')
+        has_pagination = 'page' in request.GET or 'page_size' in request.GET
+
         if dept:
             qs = designation_service.repository.get_by_department(dept)
         else:
             qs = designation_service.get_all()
+
+        if search:
+            from django.db.models import Q
+            qs = qs.filter(Q(title__icontains=search) | Q(department__name__icontains=search))
+
+        allowed_sort = {
+            'id': 'id',
+            'title': 'title',
+            'level': 'level',
+            'created_at': 'created_at',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='level')
+        if has_pagination:
+            _, _, _, page, page_size = parse_pagination_params(request, default_sort='level', default_direction='asc')
+            page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
+            return JsonResponse({
+                'data': DesignationSerializer.serialize_list(page_qs),
+                'count': total,
+                'page': page,
+                'page_size': page_size,
+                'total_pages': total_pages,
+                'sort_by': sort_by,
+                'sort_direction': sort_direction,
+            })
         return JsonResponse({'data': DesignationSerializer.serialize_list(qs), 'count': qs.count()})
     data = parse_body(request)
     instance, errors = designation_service.create(**data)

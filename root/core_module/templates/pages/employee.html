@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>HRMSPro — Employee Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +14,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <style>
+        .field-error { font-size: 0.68rem; color: #ef4444; margin-top: 4px; min-height: 14px; line-height: 1.3; }
+        .fi.is-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.08) !important; }
+        .form-global-error { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.78rem; margin-bottom:12px; display:none; }
+        .form-global-error.show { display:block; }
+        .fg.has-error .fl { color:#ef4444; }
+    </style>
 </head>
 
 <body>
@@ -239,111 +247,144 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error" class="form-global-error"></div>
                     <div class="form-grid">
                         <div class="form-section">Personal Information</div>
-                        <div class="fg">
-                            <div class="fl">First Name *</div><input class="fi" placeholder="e.g. Kabir" />
+                        <div class="fg" data-field-group="first_name">
+                            <div class="fl">First Name *</div><input class="fi" data-field="first_name" placeholder="e.g. Kabir" />
+                            <div class="field-error" data-error-for="first_name"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Last Name *</div><input class="fi" placeholder="e.g. Hossain" />
+                        <div class="fg" data-field-group="last_name">
+                            <div class="fl">Last Name *</div><input class="fi" data-field="last_name" placeholder="e.g. Hossain" />
+                            <div class="field-error" data-error-for="last_name"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Date of Birth</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="date_of_birth">
+                            <div class="fl">Date of Birth</div><input class="fi" data-field="date_of_birth" type="date" />
+                            <div class="field-error" data-error-for="date_of_birth"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Gender</div><select class="fi">
-                                <option>Male</option>
-                                <option>Female</option>
-                                <option>Other</option>
+                        <div class="fg" data-field-group="gender">
+                            <div class="fl">Gender</div><select class="fi" data-field="gender">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
                             </select>
+                            <div class="field-error" data-error-for="gender"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">National ID / Passport</div><input class="fi" placeholder="NID Number" />
+                        <div class="fg" data-field-group="national_id">
+                            <div class="fl">National ID / Passport</div><input class="fi" data-field="national_id" placeholder="NID Number" />
+                            <div class="field-error" data-error-for="national_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Blood Group</div><select class="fi">
-                                <option>A+</option>
-                                <option>A-</option>
-                                <option>B+</option>
-                                <option>B-</option>
-                                <option>O+</option>
-                                <option>O-</option>
-                                <option>AB+</option>
-                                <option>AB-</option>
+                        <div class="fg" data-field-group="blood_group">
+                            <div class="fl">Blood Group</div><select class="fi" data-field="blood_group">
+                                <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
                             </select>
+                            <div class="field-error" data-error-for="blood_group"></div>
                         </div>
                         <div class="form-section">Contact Information</div>
-                        <div class="fg">
-                            <div class="fl">Personal Email *</div><input class="fi" type="email"
+                        <div class="fg" data-field-group="personal_email">
+                            <div class="fl">Personal Email *</div><input class="fi" data-field="personal_email" type="email"
                                 placeholder="personal@email.com" />
+                            <div class="field-error" data-error-for="personal_email"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Work Email</div><input class="fi" type="email"
+                        <div class="fg" data-field-group="work_email">
+                            <div class="fl">Work Email</div><input class="fi" data-field="work_email" type="email"
                                 placeholder="work@company.com" />
+                            <div class="field-error" data-error-for="work_email"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Phone Number</div><input class="fi" placeholder="+880 1XXX XXXXXX" />
+                        <div class="fg" data-field-group="phone_number">
+                            <div class="fl">Phone Number</div><input class="fi" data-field="phone_number" placeholder="+880 1XXX XXXXXX" />
+                            <div class="field-error" data-error-for="phone_number"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Emergency Contact</div><input class="fi" placeholder="Name & Phone" />
+                        <div class="fg" data-field-group="emergency_contact_name">
+                            <div class="fl">Emergency Contact Name</div><input class="fi" data-field="emergency_contact_name" placeholder="Contact Name" />
+                            <div class="field-error" data-error-for="emergency_contact_name"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Current Address</div><textarea class="fi" rows="3"
+                        <div class="fg" data-field-group="emergency_contact_phone">
+                            <div class="fl">Emergency Contact Phone</div><input class="fi" data-field="emergency_contact_phone" placeholder="+880 1XXX XXXXXX" />
+                            <div class="field-error" data-error-for="emergency_contact_phone"></div>
+                        </div>
+                        <div class="fg full" data-field-group="current_address">
+                            <div class="fl">Current Address</div><textarea class="fi" data-field="current_address" rows="3"
                                 placeholder="Full address..."></textarea>
+                            <div class="field-error" data-error-for="current_address"></div>
                         </div>
                         <div class="form-section">Employment Details</div>
-                        <div class="fg">
-                            <div class="fl">Employee ID</div><input class="fi" id="emp-empid"
+                        <div class="fg" data-field-group="employee_id">
+                            <div class="fl">Employee ID</div><input class="fi" data-field="employee_id" id="emp-empid"
                                 placeholder="Auto-generated" />
+                            <div class="field-error" data-error-for="employee_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Join Date *</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="join_date">
+                            <div class="fl">Join Date *</div><input class="fi" data-field="join_date" type="date" />
+                            <div class="field-error" data-error-for="join_date"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Department *</div><select class="fi" id="modal-dept-select">
+                        <div class="fg" data-field-group="department">
+                            <div class="fl">Department *</div><select class="fi" data-field="department" id="modal-dept-select">
                                 <option value="">Select Department</option>
                             </select>
+                            <div class="field-error" data-error-for="department"></div>
+                            <div class="field-error" data-error-for="department_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Designation *</div><input class="fi" id="emp-designation"
-                                placeholder="e.g. Senior Developer" />
+                        <div class="fg" data-field-group="designation">
+                            <div class="fl">Designation</div><select class="fi" data-field="designation" id="modal-designation-select">
+                                <option value="">Select Designation</option>
+                            </select>
+                            <div class="field-error" data-error-for="designation"></div>
+                            <div class="field-error" data-error-for="designation_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Reporting Manager</div><select class="fi" id="modal-mgr-select">
+                        <div class="fg" data-field-group="reporting_manager">
+                            <div class="fl">Reporting Manager</div><select class="fi" data-field="reporting_manager" id="modal-mgr-select">
                                 <option value="">Select Manager</option>
                             </select>
+                            <div class="field-error" data-error-for="reporting_manager"></div>
+                            <div class="field-error" data-error-for="reporting_manager_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Office Location</div><select class="fi" id="modal-loc-select">
+                        <div class="fg" data-field-group="office_location">
+                            <div class="fl">Office Location</div><select class="fi" data-field="office_location" id="modal-loc-select">
                                 <option value="">Select Location</option>
                             </select>
+                            <div class="field-error" data-error-for="office_location"></div>
+                            <div class="field-error" data-error-for="office_location_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Employment Type</div><select class="fi">
+                        <div class="fg" data-field-group="employment_type">
+                            <div class="fl">Employment Type</div><select class="fi" data-field="employment_type">
                                 <option value="full_time">Full-time</option>
                                 <option value="part_time">Part-time</option>
                                 <option value="contract">Contract</option>
                                 <option value="intern">Intern</option>
                             </select>
+                            <div class="field-error" data-error-for="employment_type"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Status</div><select class="fi">
+                        <div class="fg" data-field-group="status">
+                            <div class="fl">Status</div><select class="fi" data-field="status">
                                 <option value="active">Active</option>
                                 <option value="probation">Probation</option>
                                 <option value="resigned">Resigned</option>
                                 <option value="terminated">Terminated</option>
                             </select>
+                            <div class="field-error" data-error-for="status"></div>
                         </div>
                         <div class="form-section">Salary (Basic)</div>
-                        <div class="fg">
-                            <div class="fl">Basic Salary ($)</div><input class="fi" type="number" placeholder="0.00" />
+                        <div class="fg" data-field-group="basic_salary">
+                            <div class="fl">Basic Salary ($)</div><input class="fi" data-field="basic_salary" type="number" placeholder="0.00" step="0.01" />
+                            <div class="field-error" data-error-for="basic_salary"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Pay Frequency</div><select class="fi">
+                        <div class="fg" data-field-group="pay_frequency">
+                            <div class="fl">Pay Frequency</div><select class="fi" data-field="pay_frequency">
                                 <option value="monthly">Monthly</option>
                                 <option value="bi_weekly">Bi-weekly</option>
                                 <option value="weekly">Weekly</option>
                             </select>
+                            <div class="field-error" data-error-for="pay_frequency"></div>
                         </div>
                     </div>
                 </div>
@@ -827,6 +868,61 @@
             if (statusSelect) statusSelect.addEventListener('change', () => { empPage = 1; loadEmployees(1); });
         }
 
+        function clearFieldErrors() {
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.fi.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.fg.has-error').forEach(el => el.classList.remove('has-error'));
+            const globalErr = document.getElementById('form-global-error');
+            if (globalErr) { globalErr.textContent=''; globalErr.classList.remove('show'); }
+        }
+        function showFieldErrors(errors) {
+            clearFieldErrors();
+            if (!errors || typeof errors !== 'object') return;
+            const fieldMap = {
+                'first_name': 'first_name', 'last_name': 'last_name', 'date_of_birth': 'date_of_birth',
+                'gender': 'gender', 'national_id': 'national_id', 'blood_group': 'blood_group',
+                'personal_email': 'personal_email', 'work_email': 'work_email', 'phone_number': 'phone_number',
+                'emergency_contact_name': 'emergency_contact_name', 'emergency_contact_phone': 'emergency_contact_phone',
+                'current_address': 'current_address', 'employee_id': 'employee_id', 'join_date': 'join_date',
+                'department': 'department', 'department_id': 'department',
+                'designation': 'designation', 'designation_id': 'designation',
+                'reporting_manager': 'reporting_manager', 'reporting_manager_id': 'reporting_manager',
+                'office_location': 'office_location', 'office_location_id': 'office_location',
+                'employment_type': 'employment_type', 'status': 'status', 'basic_salary': 'basic_salary', 'pay_frequency': 'pay_frequency',
+            };
+            let hasFieldError = false;
+            for (const [key, val] of Object.entries(errors)) {
+                const msg = Array.isArray(val) ? val.join(', ') : String(val);
+                if (key === '__all__' || key === 'error') {
+                    const globalErr = document.getElementById('form-global-error');
+                    if (globalErr) { globalErr.textContent = msg; globalErr.classList.add('show'); hasFieldError = true; }
+                    continue;
+                }
+                const field = fieldMap[key] || key;
+                const errorEl = document.querySelector(`[data-error-for="${key}"]`) || document.querySelector(`[data-error-for="${field}"]`);
+                const input = document.querySelector(`[data-field="${field}"]`) || document.querySelector(`[data-field="${key}"]`);
+                if (errorEl) { errorEl.textContent = msg; hasFieldError = true; }
+                if (input) { input.classList.add('is-invalid'); const fg = input.closest('.fg'); if (fg) fg.classList.add('has-error'); hasFieldError = true; }
+                // fallback to global if no field matched
+                if (!errorEl && !input) {
+                    const globalErr = document.getElementById('form-global-error');
+                    if (globalErr) { globalErr.textContent = `${key}: ${msg}`; globalErr.classList.add('show'); }
+                }
+            }
+            if (!hasFieldError && (errors.__all__ || errors.error)) {
+                const globalErr = document.getElementById('form-global-error');
+                if (globalErr) { const m = errors.__all__ || errors.error; globalErr.textContent = Array.isArray(m) ? m.join(', ') : m; globalErr.classList.add('show'); }
+            }
+        }
+        function getFieldValue(field) {
+            const el = document.querySelector(`[data-field="${field}"]`);
+            return el ? el.value.trim() : '';
+        }
+        function setFieldValue(field, value) {
+            const el = document.querySelector(`[data-field="${field}"]`);
+            if (el) el.value = value || '';
+        }
+
         async function loadDropdowns() {
             try {
                 const [depts, locs, desigs, emps] = await Promise.all([
@@ -854,6 +950,11 @@
                 const modalMgr = document.getElementById('modal-mgr-select');
                 if (modalMgr && emps && emps.data) {
                     modalMgr.innerHTML = '<option value="">Select Manager</option>' + emps.data.map(e => `<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('');
+                }
+
+                const modalDesig = document.getElementById('modal-designation-select');
+                if (modalDesig && desigs && desigs.data) {
+                    modalDesig.innerHTML = '<option value="">Select Designation</option>' + desigs.data.map(d => `<option value="${d.id}">${d.title}</option>`).join('');
                 }
             } catch (e) {
                 console.error('Failed to load dropdowns:', e);
@@ -893,34 +994,50 @@
                 const emp = await getEmployee(id);
                 const modal = document.getElementById('modalEmployee');
                 if (!modal) return;
-                const formGrid = modal.querySelector('.form-grid');
-                const allFields = formGrid.querySelectorAll('.fi');
-                if (allFields[0]) allFields[0].value = emp.first_name || '';
-                if (allFields[1]) allFields[1].value = emp.last_name || '';
-                if (allFields[2]) allFields[2].value = emp.date_of_birth || '';
-                if (allFields[3]) allFields[3].value = emp.gender || '';
-                if (allFields[4]) allFields[4].value = emp.national_id || '';
-                if (allFields[5]) allFields[5].value = emp.blood_group || '';
-                if (allFields[6]) allFields[6].value = emp.personal_email || '';
-                if (allFields[7]) allFields[7].value = emp.work_email || '';
-                if (allFields[8]) allFields[8].value = emp.phone_number || '';
-                if (allFields[9]) allFields[9].value = emp.emergency_contact_name || '';
-                if (allFields[10]) allFields[10].value = emp.current_address || '';
-                if (allFields[11]) allFields[11].value = emp.employee_id || '';
-                if (allFields[12]) allFields[12].value = emp.join_date || '';
-                if (allFields[13]) allFields[13].value = emp.department_id || '';
-                if (allFields[14]) allFields[14].value = emp.designation_id || '';
-                if (allFields[15]) allFields[15].value = emp.reporting_manager_id || '';
-                if (allFields[16]) allFields[16].value = emp.office_location_id || emp.location_id || '';
-                if (allFields[17]) allFields[17].value = emp.employment_type || '';
-                if (allFields[18]) allFields[18].value = emp.status || '';
-                if (allFields[19]) allFields[19].value = emp.basic_salary || '';
-                if (allFields[20]) allFields[20].value = emp.pay_frequency || '';
+                clearFieldErrors();
+                setFieldValue('first_name', emp.first_name);
+                setFieldValue('last_name', emp.last_name);
+                setFieldValue('date_of_birth', emp.date_of_birth);
+                setFieldValue('gender', emp.gender);
+                setFieldValue('national_id', emp.national_id);
+                setFieldValue('blood_group', emp.blood_group);
+                setFieldValue('personal_email', emp.personal_email);
+                setFieldValue('work_email', emp.work_email);
+                setFieldValue('phone_number', emp.phone_number);
+                setFieldValue('emergency_contact_name', emp.emergency_contact_name);
+                setFieldValue('emergency_contact_phone', emp.emergency_contact_phone);
+                setFieldValue('current_address', emp.current_address);
+                setFieldValue('employee_id', emp.employee_id);
+                setFieldValue('join_date', emp.join_date);
+                setFieldValue('department', emp.department_id);
+                setFieldValue('designation', emp.designation_id);
+                setFieldValue('reporting_manager', emp.reporting_manager_id);
+                setFieldValue('office_location', emp.office_location_id || emp.location_id);
+                setFieldValue('employment_type', emp.employment_type);
+                setFieldValue('status', emp.status);
+                setFieldValue('basic_salary', emp.basic_salary);
+                setFieldValue('pay_frequency', emp.pay_frequency);
                 modal.setAttribute('data-edit-id', id);
                 new bootstrap.Modal(modal).show();
             } catch (e) {
                 console.error('Failed to load employee for edit:', e);
+                showToast('❌', 'Failed to load employee data');
             }
+        }
+        function resetEmployeeForm() {
+            const modal = document.getElementById('modalEmployee');
+            if (!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            // clear all fields
+            modal.querySelectorAll('[data-field]').forEach(el => {
+                if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                else el.value = '';
+            });
+            // set defaults
+            setFieldValue('employment_type', 'full_time');
+            setFieldValue('status', 'active');
+            setFieldValue('pay_frequency', 'monthly');
         }
 
         /**
@@ -947,45 +1064,51 @@
             const modal = document.getElementById('modalEmployee');
             if (!modal) return;
             const editId = modal.getAttribute('data-edit-id');
-            const formGrid = modal.querySelector('.form-grid');
-            const allFields = formGrid.querySelectorAll('.fi');
-
-            const genderMap = { 'Male': 'male', 'Female': 'female', 'Other': 'other' };
-            const bloodMap = { 'A+': 'A+', 'A-': 'A-', 'B+': 'B+', 'B-': 'B-', 'O+': 'O+', 'O-': 'O-', 'AB+': 'AB+', 'AB-': 'AB-' };
-
-            const rawGender = allFields[3]?.value || '';
-            const rawBlood = allFields[5]?.value || '';
-            const rawJoinDate = allFields[12]?.value || '';
-            const rawSalary = allFields[19]?.value || '';
+            clearFieldErrors();
 
             const data = {
-                first_name: allFields[0]?.value || '',
-                last_name: allFields[1]?.value || '',
-                date_of_birth: allFields[2]?.value || null,
-                gender: genderMap[rawGender] || rawGender || '',
-                national_id: allFields[4]?.value || '',
-                blood_group: bloodMap[rawBlood] || rawBlood || '',
-                personal_email: allFields[6]?.value || '',
-                work_email: allFields[7]?.value || '',
-                phone_number: allFields[8]?.value || '',
-                emergency_contact_name: allFields[9]?.value || '',
-                current_address: allFields[10]?.value || '',
-                employee_id: allFields[11]?.value || '',
-                join_date: rawJoinDate || null,
-                department: allFields[13]?.value || null,
-                designation: allFields[14]?.value || null,
-                reporting_manager: allFields[15]?.value || null,
-                office_location: allFields[16]?.value || null,
-                employment_type: allFields[17]?.value || 'full_time',
-                status: allFields[18]?.value || 'active',
-                basic_salary: rawSalary || null,
-                pay_frequency: allFields[20]?.value || 'monthly',
+                first_name: getFieldValue('first_name'),
+                last_name: getFieldValue('last_name'),
+                date_of_birth: getFieldValue('date_of_birth') || null,
+                gender: getFieldValue('gender'),
+                national_id: getFieldValue('national_id'),
+                blood_group: getFieldValue('blood_group'),
+                personal_email: getFieldValue('personal_email'),
+                work_email: getFieldValue('work_email'),
+                phone_number: getFieldValue('phone_number'),
+                emergency_contact_name: getFieldValue('emergency_contact_name'),
+                emergency_contact_phone: getFieldValue('emergency_contact_phone'),
+                current_address: getFieldValue('current_address'),
+                employee_id: getFieldValue('employee_id'),
+                join_date: getFieldValue('join_date') || null,
+                department: getFieldValue('department') || null,
+                designation: getFieldValue('designation') || null,
+                reporting_manager: getFieldValue('reporting_manager') || null,
+                office_location: getFieldValue('office_location') || null,
+                employment_type: getFieldValue('employment_type') || 'full_time',
+                status: getFieldValue('status') || 'active',
+                basic_salary: getFieldValue('basic_salary') || null,
+                pay_frequency: getFieldValue('pay_frequency') || 'monthly',
             };
 
+            // Normalize empty strings to null for optional FKs - delete if empty so backend sees None
             if (!data.department) delete data.department;
             if (!data.designation) delete data.designation;
             if (!data.reporting_manager) delete data.reporting_manager;
             if (!data.office_location) delete data.office_location;
+            // Convert empty date strings to null
+            if (data.date_of_birth === '') data.date_of_birth = null;
+            if (data.join_date === '') data.join_date = null;
+            if (data.basic_salary === '') data.basic_salary = null;
+            // Handle optional empty personal fields
+            if (data.national_id === '') data.national_id = '';
+            if (data.blood_group === '') data.blood_group = '';
+            if (data.gender === '') data.gender = '';
+
+            // Disable save button to prevent double submit
+            const saveBtn = modal.querySelector('[onclick="saveEmployee()"]');
+            const originalBtnText = saveBtn ? saveBtn.innerHTML : '';
+            if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '⏳ Saving...'; }
 
             try {
                 if (editId) {
@@ -997,14 +1120,28 @@
                     showToast('✅', 'Employee created!');
                 }
                 bootstrap.Modal.getInstance(modal).hide();
-                loadEmployees(1);
+                resetEmployeeForm();
+                loadEmployees(empPage);
                 loadEmployeeStats();
             } catch (e) {
-                const msg = e?.response?.data ? e.response.data : 'Validation error';
-                for (const key in msg.errors) {
-                    console.log(`Field: ${key}, Error: ${msg.errors[key]}`);
-                    showToast('❌', `Field: ${key}, Error: ${msg.errors[key]}`);
+                console.error('Save employee failed:', e);
+                const errorData = e?.response?.data || e?.data || {};
+                const errors = errorData.errors || errorData || {};
+                // Show field-specific errors under inputs
+                if (errors && typeof errors === 'object' && Object.keys(errors).length > 0) {
+                    showFieldErrors(errors);
+                    // Also toast first error for visibility
+                    const firstKey = Object.keys(errors)[0];
+                    const firstMsg = Array.isArray(errors[firstKey]) ? errors[firstKey][0] : errors[firstKey];
+                    showToast('❌', `${firstKey}: ${firstMsg}`);
+                } else {
+                    const msg = e?.message || 'Failed to save employee';
+                    const globalErr = document.getElementById('form-global-error');
+                    if (globalErr) { globalErr.textContent = msg; globalErr.classList.add('show'); }
+                    showToast('❌', msg);
                 }
+            } finally {
+                if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = originalBtnText || '💾 Save Employee'; }
             }
         }
 
@@ -1036,6 +1173,50 @@
             loadEmployeeStats();
             initEmployeeFilters();
             initPageSize();
+
+            // Clear form and errors when Add Employee modal is opened via data-bs-target
+            const addBtn = document.querySelector('[data-bs-target="#modalEmployee"]');
+            if (addBtn) {
+                addBtn.addEventListener('click', () => {
+                    resetEmployeeForm();
+                });
+            }
+            // Also handle modal hidden to clear errors
+            const modalEl = document.getElementById('modalEmployee');
+            if (modalEl) {
+                modalEl.addEventListener('hidden.bs.modal', () => {
+                    clearFieldErrors();
+                    // don't remove edit id here - resetEmployeeForm handles it on next Add
+                    // but clear global error
+                });
+                modalEl.addEventListener('show.bs.modal', () => {
+                    // if not editing, ensure form is reset (Add mode)
+                    if (!modalEl.getAttribute('data-edit-id')) {
+                        // keep existing values if coming from edit, else reset handled by Add button
+                    }
+                });
+            }
+            // Live clear field error on input
+            document.querySelectorAll('#modalEmployee .fi').forEach(input => {
+                input.addEventListener('input', () => {
+                    input.classList.remove('is-invalid');
+                    const fg = input.closest('.fg');
+                    if (fg) fg.classList.remove('has-error');
+                    const field = input.getAttribute('data-field');
+                    if (field) {
+                        const errEl = document.querySelector(`[data-error-for="${field}"]`);
+                        if (errEl) errEl.textContent = '';
+                        // also clear _id variants
+                        const errEl2 = document.querySelector(`[data-error-for="${field}_id"]`);
+                        if (errEl2) errEl2.textContent = '';
+                    }
+                });
+                input.addEventListener('change', () => {
+                    input.classList.remove('is-invalid');
+                    const fg = input.closest('.fg');
+                    if (fg) fg.classList.remove('has-error');
+                });
+            });
         });
 
         $(function () {

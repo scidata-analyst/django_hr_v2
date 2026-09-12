@@ -26,20 +26,34 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def announcement_list(request):
     if request.method == "GET":
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='id')
         qs = announcement_service.get_active_announcements()
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+        if search:
+            from django.db.models import Q
+            qs = qs.filter(
+                Q(title__icontains=search) |
+                Q(content__icontains=search) |
+                Q(priority__icontains=search)
+            )
+        allowed_sort = {
+            'id': 'id',
+            'title': 'title',
+            'priority': 'priority',
+            'created_at': 'created_at',
+            'published_at': 'published_at',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='id')
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
 
         return JsonResponse({
             'data': AnnouncementSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
 
     try:

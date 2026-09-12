@@ -18,7 +18,9 @@ class TalentProfileRepository(BaseRepository):
 
     def search_profiles(self, query):
         return self.model.objects.filter(
-            Q(employee_name__icontains=query) |
+            Q(employee__first_name__icontains=query) |
+            Q(employee__last_name__icontains=query) |
+            Q(employee__employee_id__icontains=query) |
             Q(current_role__icontains=query) |
             Q(next_role__icontains=query) |
             Q(development_areas__icontains=query)
@@ -44,6 +46,7 @@ class SuccessionPlanRepository(BaseRepository):
     def search_plans(self, query):
         return self.model.objects.filter(
             Q(position__icontains=query) |
-            Q(incumbent_name__icontains=query) |
-            Q(successor1_name__icontains=query)
+            Q(primary_successor__first_name__icontains=query) |
+            Q(primary_successor__last_name__icontains=query) |
+            Q(readiness_level__icontains=query)
         )

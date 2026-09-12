@@ -28,9 +28,32 @@ def onboarding_task_list(request):
     if request.method == "GET":
         employee = request.GET.get('employee')
         status = request.GET.get('status')
-        search = request.GET.get('search', '')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        search = request.GET.get('search', '').strip()
+        sort_by = request.GET.get('sort_by', 'id')
+        sort_direction = request.GET.get('sort_direction', 'desc')
+        try:
+            page = int(request.GET.get('page', 1))
+            page_size = int(request.GET.get('page_size', 10))
+            if page < 1:
+                page = 1
+            if page_size < 1:
+                page_size = 10
+            if page_size > 100:
+                page_size = 100
+        except (ValueError, TypeError):
+            page, page_size = 1, 10
+
+        allowed_sort = {
+            'id': 'id',
+            'task_name': 'task_name',
+            'status': 'status',
+            'due_date': 'due_date',
+            'created_at': 'created_at',
+        }
+        sort_field = allowed_sort.get(sort_by, 'id')
+        if sort_direction not in ['asc', 'desc']:
+            sort_direction = 'desc'
+        ordering = sort_field if sort_direction == 'asc' else f'-{sort_field}'
 
         if search:
             qs = onboarding_service.repository.search_tasks(search)
@@ -40,6 +63,16 @@ def onboarding_task_list(request):
             qs = onboarding_service.repository.get_by_status(status)
         else:
             qs = onboarding_service.get_all()
+
+        if search and employee:
+            try:
+                qs = qs.filter(employee_id=int(employee))
+            except (ValueError, TypeError):
+                pass
+        if search and status:
+            qs = qs.filter(status=status)
+
+        qs = qs.order_by(ordering)
 
         total = qs.count()
         start = (page - 1) * page_size
@@ -52,6 +85,8 @@ def onboarding_task_list(request):
             'page': page,
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
 
     data = parse_body(request)

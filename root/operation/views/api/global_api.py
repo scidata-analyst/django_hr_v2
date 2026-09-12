@@ -19,31 +19,52 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def office_list(request):
     if request.method == "GET":
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='name', default_direction='asc')
         country = request.GET.get('country')
         status = request.GET.get('status')
-        search = request.GET.get('search', '')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
-        
+
+        qs = office_service.get_all()
+
         if search:
-            qs = office_service.search_offices(search)
-        elif country:
-            qs = office_service.get_by_country(country)
-        elif status:
-            qs = office_service.get_by_status(status)
-        else:
-            qs = office_service.get_all()
-        
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(country__icontains=search) |
+                Q(city__icontains=search) |
+                Q(office_type__icontains=search) |
+                Q(status__icontains=search) |
+                Q(full_address__icontains=search)
+            )
+
+        if country:
+            qs = qs.filter(country__iexact=country)
+        if status:
+            qs = qs.filter(status=status)
+
+        allowed_sort = {
+            'id': 'id',
+            'name': 'name',
+            'country': 'country',
+            'city': 'city',
+            'office_type': 'office_type',
+            'status': 'status',
+            'created_at': 'created_at',
+            'capacity': 'capacity',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='name')
+        qs = qs.select_related('hr_contact')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': OfficeSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = office_service.create(**data)

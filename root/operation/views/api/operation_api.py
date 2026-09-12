@@ -36,28 +36,48 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def benefit_plan_list(request):
     if request.method == "GET":
-        search = request.GET.get('search', '')
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='plan_name', default_direction='asc')
         status = request.GET.get('status')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
-        
+
+        qs = benefit_plan_service.get_all()
+
         if search:
-            qs = benefit_plan_service.repository.search_plans(search)
-        elif status:
-            qs = benefit_plan_service.repository.get_by_status(status)
-        else:
-            qs = benefit_plan_service.get_all()
-        
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+            qs = qs.filter(
+                Q(plan_name__icontains=search) |
+                Q(plan_type__icontains=search) |
+                Q(coverage_details__icontains=search)
+            )
+
+        if status:
+            if status == 'active':
+                qs = qs.filter(is_active=True)
+            elif status == 'inactive':
+                qs = qs.filter(is_active=False)
+            else:
+                qs = qs.filter(is_active=(status.lower() == 'true'))
+
+        allowed_sort = {
+            'id': 'id',
+            'plan_name': 'plan_name',
+            'plan_type': 'plan_type',
+            'cost_per_month': 'cost_per_month',
+            'created_at': 'created_at',
+            'is_active': 'is_active',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='plan_name')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': BenefitPlanSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = benefit_plan_service.create(**data)
@@ -92,25 +112,49 @@ def benefit_plan_detail(request, pk):
 @require_http_methods(["GET", "POST"])
 def benefit_enrollment_list(request):
     if request.method == "GET":
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='enrollment_date', default_direction='desc')
         employee = request.GET.get('employee')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
-        
+        status = request.GET.get('status')
+
         if employee:
             qs = benefit_enrollment_service.get_by_employee(employee)
         else:
             qs = benefit_enrollment_service.get_all()
-        
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+
+        if search:
+            qs = qs.filter(
+                Q(employee__first_name__icontains=search) |
+                Q(employee__last_name__icontains=search) |
+                Q(employee__employee_id__icontains=search) |
+                Q(plan__plan_name__icontains=search) |
+                Q(status__icontains=search)
+            )
+
+        if status:
+            qs = qs.filter(status=status)
+
+        allowed_sort = {
+            'id': 'id',
+            'enrollment_date': 'enrollment_date',
+            'status': 'status',
+            'created_at': 'created_at',
+            'coverage_start': 'coverage_start',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='enrollment_date')
+        qs = qs.select_related('employee', 'plan')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': BenefitEnrollmentSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = benefit_enrollment_service.enroll(data)
@@ -124,19 +168,57 @@ def benefit_enrollment_list(request):
 @require_http_methods(["GET", "POST"])
 def safety_incident_list(request):
     if request.method == "GET":
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
-        qs = safety_service.get_open_incidents()
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='incident_date', default_direction='desc')
+        status = request.GET.get('status')
+        severity = request.GET.get('severity')
+        employee = request.GET.get('employee')
+
+        qs = safety_service.get_all() if search or status or severity or employee else safety_service.get_open_incidents()
+
+        if search:
+            qs = qs.filter(
+                Q(description__icontains=search) |
+                Q(location__icontains=search) |
+                Q(severity__icontains=search) |
+                Q(status__icontains=search) |
+                Q(reported_by__first_name__icontains=search) |
+                Q(reported_by__last_name__icontains=search)
+            )
+
+        if status:
+            qs = qs.filter(status=status)
+        if severity:
+            qs = qs.filter(severity=severity)
+        if employee:
+            qs = qs.filter(reported_by_id=employee)
+
+        # If no filters and no search, keep open incidents only; otherwise show filtered set
+        # To preserve original behavior (open incidents when no filters), we already handled
+        # but if search applies, we filter on all; so for non-search case we already used get_open_incidents
+        # Ensure sorting
+        allowed_sort = {
+            'id': 'id',
+            'incident_date': 'incident_date',
+            'severity': 'severity',
+            'status': 'status',
+            'created_at': 'created_at',
+            'location': 'location',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='incident_date')
+        qs = qs.select_related('reported_by', 'assigned_to')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': SafetyIncidentSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = safety_service.report_incident(data)
@@ -160,28 +242,44 @@ def safety_incident_resolve(request, pk):
 @require_http_methods(["GET", "POST"])
 def policy_list(request):
     if request.method == "GET":
-        search = request.GET.get('search', '')
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='effective_date', default_direction='desc')
         category = request.GET.get('category')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
-        
+
+        qs = policy_service.get_all()
+
         if search:
-            qs = policy_service.repository.search_policies(search)
-        elif category:
-            qs = policy_service.repository.get_by_category(category)
-        else:
-            qs = policy_service.get_all()
-        
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+            qs = qs.filter(
+                Q(policy_name__icontains=search) |
+                Q(category__icontains=search) |
+                Q(description__icontains=search)
+            )
+
+        if category:
+            qs = qs.filter(category=category)
+
+        allowed_sort = {
+            'id': 'id',
+            'policy_name': 'policy_name',
+            'category': 'category',
+            'effective_date': 'effective_date',
+            'created_at': 'created_at',
+            'version': 'version',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='effective_date')
+        qs = qs.select_related('created_by')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': PolicyDocumentSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = policy_service.create(**data)
@@ -224,19 +322,49 @@ def policy_acknowledge(request, pk):
 @require_http_methods(["GET", "POST"])
 def compliance_list(request):
     if request.method == "GET":
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='created_at', default_direction='desc')
+        status = request.GET.get('status')
+        category = request.GET.get('category')
+
         qs = compliance_service.get_all()
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+
+        if search:
+            qs = qs.filter(
+                Q(checklist_name__icontains=search) |
+                Q(category__icontains=search) |
+                Q(description__icontains=search) |
+                Q(status__icontains=search) |
+                Q(notes__icontains=search)
+            )
+
+        if status:
+            qs = qs.filter(status=status)
+        if category:
+            qs = qs.filter(category=category)
+
+        allowed_sort = {
+            'id': 'id',
+            'checklist_name': 'checklist_name',
+            'category': 'category',
+            'status': 'status',
+            'due_date': 'due_date',
+            'created_at': 'created_at',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='created_at')
+        qs = qs.select_related('assigned_to')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': ComplianceChecklistSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = compliance_service.create(**data)
@@ -287,19 +415,47 @@ def report_turnover(request):
 @require_http_methods(["GET", "POST"])
 def integration_list(request):
     if request.method == "GET":
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='name', default_direction='asc')
+        status = request.GET.get('status')
+        integration_type = request.GET.get('type') or request.GET.get('integration_type')
+
         qs = integration_service.get_all()
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+
+        if search:
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(integration_type__icontains=search) |
+                Q(status__icontains=search) |
+                Q(webhook_url__icontains=search)
+            )
+
+        if status:
+            qs = qs.filter(status=status)
+        if integration_type:
+            qs = qs.filter(integration_type=integration_type)
+
+        allowed_sort = {
+            'id': 'id',
+            'name': 'name',
+            'integration_type': 'integration_type',
+            'status': 'status',
+            'created_at': 'created_at',
+            'is_enabled': 'is_enabled',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='name')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': IntegrationSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = integration_service.create(**data)

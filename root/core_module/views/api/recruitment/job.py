@@ -26,10 +26,33 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def job_posting_list(request):
     if request.method == "GET":
-        search = request.GET.get('search', '')
+        search = request.GET.get('search', '').strip()
         status = request.GET.get('status')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        sort_by = request.GET.get('sort_by', 'id')
+        sort_direction = request.GET.get('sort_direction', 'desc')
+        try:
+            page = int(request.GET.get('page', 1))
+            page_size = int(request.GET.get('page_size', 10))
+            if page < 1:
+                page = 1
+            if page_size < 1:
+                page_size = 10
+            if page_size > 100:
+                page_size = 100
+        except (ValueError, TypeError):
+            page, page_size = 1, 10
+
+        allowed_sort = {
+            'id': 'id',
+            'job_title': 'job_title',
+            'status': 'status',
+            'created_at': 'created_at',
+            'vacancies': 'vacancies',
+        }
+        sort_field = allowed_sort.get(sort_by, 'id')
+        if sort_direction not in ['asc', 'desc']:
+            sort_direction = 'desc'
+        ordering = sort_field if sort_direction == 'asc' else f'-{sort_field}'
 
         if search:
             qs = job_service.search_jobs(search)
@@ -38,6 +61,8 @@ def job_posting_list(request):
 
         if status:
             qs = qs.filter(status=status)
+
+        qs = qs.order_by(ordering)
 
         total = qs.count()
         start = (page - 1) * page_size
@@ -50,6 +75,8 @@ def job_posting_list(request):
             'page': page,
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
 
     data = parse_body(request)

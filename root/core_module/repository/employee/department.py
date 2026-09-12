@@ -8,10 +8,10 @@ class DepartmentRepository(BaseRepository):
         super().__init__(Department)
 
     def get_with_employee_count(self):
-        return self.model.objects.annotate(employee_count=Count('employee_set'))
+        return self.model.objects.annotate(employee_count=Count('employee'))
 
     def get_all(self):
-        return self.model.objects.annotate(employee_count=Count('employee_set'))
+        return self.model.objects.annotate(employee_count=Count('employee'))
 
     def search_departments(self, query):
-        return self.search(['name', 'description'], query).annotate(employee_count=Count('employee_set'))
+        return self.search(['name', 'description'], query).annotate(employee_count=Count('employee'))

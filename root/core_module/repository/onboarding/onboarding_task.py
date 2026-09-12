@@ -19,4 +19,4 @@ class OnboardingTaskRepository(BaseRepository):
         return self.model.objects.filter(status='in_progress')
 
     def search_tasks(self, query):
-        return self.search(['employee_name', 'task_name'], query)
+        return self.search(['task_name', 'task_type', 'status', 'employee__first_name', 'employee__last_name', 'employee__employee_id'], query)

@@ -102,7 +102,7 @@ const API_ENDPOINTS = {
  * @property {Object} HEADERS     - Default HTTP headers sent with every request.
  */
 const API_CONFIG = {
-    BASE_URL: 'http://localhost:9003',
+    BASE_URL: '',
     TIMEOUT: 10000,
     HEADERS: {
         'Content-Type': 'application/json',

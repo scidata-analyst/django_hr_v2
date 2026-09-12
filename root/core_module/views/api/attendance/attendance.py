@@ -31,10 +31,42 @@ def attendance_list(request):
         employee = request.GET.get('employee')
         start = request.GET.get('start_date')
         end = request.GET.get('end_date')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        search = request.GET.get('search', '').strip()
+        sort_by = request.GET.get('sort_by', 'id')
+        sort_direction = request.GET.get('sort_direction', 'desc')
+        try:
+            page = int(request.GET.get('page', 1))
+            page_size = int(request.GET.get('page_size', 10))
+            if page < 1:
+                page = 1
+            if page_size < 1:
+                page_size = 10
+            if page_size > 100:
+                page_size = 100
+        except (ValueError, TypeError):
+            page, page_size = 1, 10
 
-        if employee and start and end:
+        allowed_sort = {
+            'id': 'id',
+            'date': 'date',
+            'status': 'status',
+            'created_at': 'created_at',
+            'employee': 'employee_id',
+        }
+        sort_field = allowed_sort.get(sort_by, 'id')
+        if sort_direction not in ['asc', 'desc']:
+            sort_direction = 'desc'
+        ordering = sort_field if sort_direction == 'asc' else f'-{sort_field}'
+
+        if search:
+            from django.db.models import Q
+            qs = attendance_service.get_all().filter(
+                Q(employee__first_name__icontains=search) |
+                Q(employee__last_name__icontains=search) |
+                Q(employee__employee_id__icontains=search) |
+                Q(status__icontains=search)
+            )
+        elif employee and start and end:
             qs = attendance_service.repository.get_by_employee_and_date_range(employee, start, end)
         elif date:
             qs = attendance_service.repository.get_by_date(date)
@@ -43,7 +75,7 @@ def attendance_list(request):
         else:
             qs = attendance_service.repository.get_by_date(dt.today())
 
-        qs = qs.select_related('employee', 'shift')
+        qs = qs.select_related('employee', 'shift').order_by(ordering)
 
         total = qs.count()
         start_idx = (page - 1) * page_size
@@ -56,6 +88,8 @@ def attendance_list(request):
             'page': page,
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
 
     data = parse_body(request)

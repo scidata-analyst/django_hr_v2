@@ -28,17 +28,58 @@ def leave_list(request):
     if request.method == "GET":
         status = request.GET.get('status')
         employee = request.GET.get('employee')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        search = request.GET.get('search', '').strip()
+        sort_by = request.GET.get('sort_by', 'id')
+        sort_direction = request.GET.get('sort_direction', 'desc')
+        try:
+            page = int(request.GET.get('page', 1))
+            page_size = int(request.GET.get('page_size', 10))
+            if page < 1:
+                page = 1
+            if page_size < 1:
+                page_size = 10
+            if page_size > 100:
+                page_size = 100
+        except (ValueError, TypeError):
+            page, page_size = 1, 10
 
-        if status:
+        allowed_sort = {
+            'id': 'id',
+            'from_date': 'from_date',
+            'to_date': 'to_date',
+            'status': 'status',
+            'created_at': 'created_at',
+            'leave_type': 'leave_type',
+        }
+        sort_field = allowed_sort.get(sort_by, 'id')
+        if sort_direction not in ['asc', 'desc']:
+            sort_direction = 'desc'
+        ordering = sort_field if sort_direction == 'asc' else f'-{sort_field}'
+
+        if search:
+            from django.db.models import Q
+            qs = leave_service.get_all().filter(
+                Q(employee__first_name__icontains=search) |
+                Q(employee__last_name__icontains=search) |
+                Q(employee__employee_id__icontains=search) |
+                Q(leave_type__icontains=search) |
+                Q(status__icontains=search) |
+                Q(reason__icontains=search)
+            )
+        elif status:
             qs = leave_service.repository.get_by_status(status)
         elif employee:
             qs = leave_service.get_by_employee(employee)
         else:
             qs = leave_service.get_all()
 
-        qs = qs.select_related('employee', 'approved_by')
+        # Apply additional filters if both search and status/employee provided
+        if search and status:
+            qs = qs.filter(status=status)
+        if search and employee:
+            qs = qs.filter(employee_id=employee)
+
+        qs = qs.select_related('employee', 'approved_by').order_by(ordering)
 
         total = qs.count()
         start_idx = (page - 1) * page_size
@@ -51,6 +92,8 @@ def leave_list(request):
             'page': page,
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
 
     data = parse_body(request)

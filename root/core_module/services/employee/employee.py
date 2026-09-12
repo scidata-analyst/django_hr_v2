@@ -79,7 +79,9 @@ class EmployeeService(BaseService):
         if not is_valid:
             return None, errors
         try:
-            employee = self.repository.update(pk, **data)
+            # Exclude 'pk' from kwargs to avoid duplicate argument error (pk is passed positionally)
+            update_data = {k: v for k, v in data.items() if k != 'pk'}
+            employee = self.repository.update(pk, **update_data)
             if employee is None:
                 return None, {'error': 'Employee not found'}
             return employee, {}

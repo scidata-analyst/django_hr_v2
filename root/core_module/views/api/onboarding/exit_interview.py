@@ -26,20 +26,48 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def exit_interview_list(request):
     if request.method == "GET":
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='interview_date', default_direction='desc')
+        employee = request.GET.get('employee')
+
         qs = exit_service.get_all()
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
-        
+
+        if employee:
+            try:
+                qs = qs.filter(employee_id=int(employee))
+            except (ValueError, TypeError):
+                qs = qs.filter(employee_id=employee)
+
+        if search:
+            qs = qs.filter(
+                Q(reason_for_leaving__icontains=search) |
+                Q(feedback__icontains=search) |
+                Q(employee__first_name__icontains=search) |
+                Q(employee__last_name__icontains=search) |
+                Q(employee__employee_id__icontains=search)
+            )
+
+        allowed_sort = {
+            'id': 'id',
+            'interview_date': 'interview_date',
+            'rating': 'rating',
+            'created_at': 'created_at',
+            'employee': 'employee_id',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='interview_date')
+        qs = qs.select_related('employee', 'interviewer')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': ExitInterviewSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
 
     data = parse_body(request)

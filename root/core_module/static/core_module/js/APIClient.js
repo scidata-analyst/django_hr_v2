@@ -155,8 +155,19 @@ class APIClient {
      * @returns {Promise<Object>} Paginated records
      */
     async index(endpoint, queryParams = {}) {
-        const { search = '', page = 1, page_size = 15, sort_by = 'id', sort_direction = 'desc' } = queryParams;
-        const query = new URLSearchParams({ search, page, page_size, sort_by, sort_direction }).toString();
+        const { search = '', page = 1, page_size = 15, sort_by = 'id', sort_direction = 'desc', ...extra } = queryParams;
+        const params = { search, page, page_size, sort_by, sort_direction, ...extra };
+        // Remove empty/null/undefined extra params to keep URL clean
+        Object.keys(params).forEach(k => {
+            if (params[k] === '' || params[k] == null) delete params[k];
+        });
+        // Ensure required defaults remain
+        if (!('search' in params)) params.search = '';
+        if (!('page' in params)) params.page = 1;
+        if (!('page_size' in params)) params.page_size = 15;
+        if (!('sort_by' in params)) params.sort_by = 'id';
+        if (!('sort_direction' in params)) params.sort_direction = 'desc';
+        const query = new URLSearchParams(params).toString();
         const urlPath = this._getEndpoint(endpoint);
         return this._request('GET', `${urlPath}?${query}`);
     }

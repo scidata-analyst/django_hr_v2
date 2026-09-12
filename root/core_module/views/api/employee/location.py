@@ -26,7 +26,41 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def location_list(request):
     if request.method == "GET":
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        search = request.GET.get('search', '').strip()
+        sort_by = request.GET.get('sort_by', 'name')
+        sort_direction = request.GET.get('sort_direction', 'asc')
+        has_pagination = 'page' in request.GET or 'page_size' in request.GET
+
         qs = location_service.get_all()
+        if search:
+            from django.db.models import Q
+            qs = qs.filter(
+                Q(name__icontains=search) |
+                Q(city__icontains=search) |
+                Q(country__icontains=search) |
+                Q(location_type__icontains=search)
+            )
+        allowed_sort = {
+            'id': 'id',
+            'name': 'name',
+            'city': 'city',
+            'country': 'country',
+            'created_at': 'created_at',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='name')
+        if has_pagination:
+            _, _, _, page, page_size = parse_pagination_params(request, default_sort='name', default_direction='asc')
+            page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
+            return JsonResponse({
+                'data': LocationSerializer.serialize_list(page_qs),
+                'count': total,
+                'page': page,
+                'page_size': page_size,
+                'total_pages': total_pages,
+                'sort_by': sort_by,
+                'sort_direction': sort_direction,
+            })
         return JsonResponse({'data': LocationSerializer.serialize_list(qs), 'count': qs.count()})
     data = parse_body(request)
     instance, errors = location_service.create(**data)

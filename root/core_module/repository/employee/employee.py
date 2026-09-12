@@ -44,8 +44,18 @@ class EmployeeRepository(BaseRepository):
         last = self.model.objects.order_by('-id').first()
         if last and last.employee_id:
             try:
-                last_num = int(last.employee_id.replace('EMP-', ''))
-                return f"EMP-{last_num + 1:04d}"
+                # Support both EMP0001 and EMP-0001 formats
+                cleaned = last.employee_id.replace('EMP-', '').replace('EMP', '')
+                last_num = int(cleaned)
+                return f"EMP{last_num + 1:04d}"
             except ValueError:
                 pass
-        return "EMP-0001"
+        # Fallback: find max numeric suffix across all IDs
+        max_num = 0
+        for eid in self.model.objects.values_list('employee_id', flat=True):
+            try:
+                cleaned = eid.replace('EMP-', '').replace('EMP', '')
+                max_num = max(max_num, int(cleaned))
+            except Exception:
+                continue
+        return f"EMP{max_num + 1:04d}" if max_num else "EMP0001"

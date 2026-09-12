@@ -26,11 +26,55 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def document_list(request):
     if request.method == "GET":
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search = request.GET.get('search', '').strip()
+        sort_by = request.GET.get('sort_by', 'uploaded_at')
+        sort_direction = request.GET.get('sort_direction', 'desc')
+        has_pagination = 'page' in request.GET or 'page_size' in request.GET
+
         employee_id = request.GET.get('employee')
         if employee_id:
             qs = document_service.get_by_employee(employee_id)
         else:
             qs = document_service.get_all()
+
+        if search:
+            qs = qs.filter(
+                Q(title__icontains=search) |
+                Q(document_type__icontains=search) |
+                Q(notes__icontains=search) |
+                Q(status__icontains=search) |
+                Q(employee__first_name__icontains=search) |
+                Q(employee__last_name__icontains=search) |
+                Q(employee__employee_id__icontains=search)
+            )
+
+        allowed_sort = {
+            'id': 'id',
+            'title': 'title',
+            'document_type': 'document_type',
+            'status': 'status',
+            'expiry_date': 'expiry_date',
+            'uploaded_at': 'uploaded_at',
+            'created_at': 'uploaded_at',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='uploaded_at')
+        qs = qs.select_related('employee')
+
+        if has_pagination:
+            _, _, _, page, page_size = parse_pagination_params(request, default_sort='uploaded_at', default_direction='desc')
+            page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
+            return JsonResponse({
+                'data': DocumentSerializer.serialize_list(page_qs),
+                'count': total,
+                'page': page,
+                'page_size': page_size,
+                'total_pages': total_pages,
+                'sort_by': sort_by,
+                'sort_direction': sort_direction,
+            })
         return JsonResponse({'data': DocumentSerializer.serialize_list(qs), 'count': qs.count()})
     if request.FILES or (request.content_type and 'multipart/form-data' in request.content_type):
         data = request.POST.dict()

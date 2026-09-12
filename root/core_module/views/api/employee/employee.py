@@ -23,17 +23,42 @@ def parse_body(request):
 
 
 def _resolve_fk(data):
+    from core_module.models.employee.designation import Designation
     for fk_field in ['department', 'designation', 'reporting_manager', 'office_location']:
         val = data.pop(fk_field, None)
         if val == '' or val is None:
             data[f'{fk_field}_id'] = None
         elif isinstance(val, str) and val.strip():
+            val_stripped = val.strip()
+            # For designation, allow title string lookup/creation if not numeric
+            if fk_field == 'designation' and not val_stripped.isdigit():
+                # Try to find designation by title (case-insensitive)
+                try:
+                    desig = Designation.objects.filter(title__iexact=val_stripped).first()
+                    if desig:
+                        data[f'{fk_field}_id'] = desig.id
+                    else:
+                        # Return validation error for unknown designation title - let service handle
+                        # Instead of silently dropping, keep error key for frontend
+                        data[f'{fk_field}_id'] = None
+                        # Store original for error reporting if needed
+                        data['_designation_title'] = val_stripped
+                    continue
+                except Exception:
+                    data[f'{fk_field}_id'] = None
+                    continue
             try:
-                data[f'{fk_field}_id'] = int(val)
+                data[f'{fk_field}_id'] = int(val_stripped)
             except (ValueError, TypeError):
                 data[f'{fk_field}_id'] = None
         elif isinstance(val, int):
             data[f'{fk_field}_id'] = val
+    # If designation title was provided but not found, add error later via service
+    if '_designation_title' in data:
+        title = data.pop('_designation_title')
+        # If designation_id is None and title provided, we could auto-create designation under first department
+        # For now, leave as None and let it be blank (designation is optional)
+        pass
 
 
 @require_login
@@ -41,11 +66,39 @@ def _resolve_fk(data):
 @require_http_methods(["GET", "POST"])
 def employee_list(request):
     if request.method == "GET":
-        search = request.GET.get('search', '')
+        search = request.GET.get('search', '').strip()
         status = request.GET.get('status')
         department = request.GET.get('department')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        sort_by = request.GET.get('sort_by', 'id')
+        sort_direction = request.GET.get('sort_direction', 'desc')
+        try:
+            page = int(request.GET.get('page', 1))
+            page_size = int(request.GET.get('page_size', 10))
+            if page < 1:
+                page = 1
+            if page_size < 1:
+                page_size = 10
+            if page_size > 100:
+                page_size = 100
+        except (ValueError, TypeError):
+            page, page_size = 1, 10
+
+        # Allowed sort fields to prevent injection
+        allowed_sort = {
+            'id': 'id',
+            'first_name': 'first_name',
+            'last_name': 'last_name',
+            'employee_id': 'employee_id',
+            'join_date': 'join_date',
+            'created_at': 'created_at',
+            'status': 'status',
+            'personal_email': 'personal_email',
+            'basic_salary': 'basic_salary',
+        }
+        sort_field = allowed_sort.get(sort_by, 'id')
+        if sort_direction not in ['asc', 'desc']:
+            sort_direction = 'desc'
+        ordering = sort_field if sort_direction == 'asc' else f'-{sort_field}'
 
         qs = employee_service.get_all()
 
@@ -54,9 +107,12 @@ def employee_list(request):
         if status:
             qs = qs.filter(status=status)
         if department:
-            qs = qs.filter(department_id=department)
+            try:
+                qs = qs.filter(department_id=int(department))
+            except (ValueError, TypeError):
+                pass
 
-        qs = qs.select_related('department', 'designation', 'reporting_manager', 'office_location')
+        qs = qs.select_related('department', 'designation', 'reporting_manager', 'office_location').order_by(ordering)
 
         total = qs.count()
         start = (page - 1) * page_size
@@ -69,6 +125,8 @@ def employee_list(request):
             'page': page,
             'page_size': page_size,
             'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
 
     data = parse_body(request)

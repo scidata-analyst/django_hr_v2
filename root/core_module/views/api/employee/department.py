@@ -26,11 +26,33 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def department_list(request):
     if request.method == "GET":
-        search = request.GET.get('search', '')
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        search = request.GET.get('search', '').strip()
+        sort_by = request.GET.get('sort_by', 'name')
+        sort_direction = request.GET.get('sort_direction', 'asc')
+        has_pagination = 'page' in request.GET or 'page_size' in request.GET
         if search:
             qs = department_service.repository.search_departments(search)
         else:
             qs = department_service.get_all()
+        allowed_sort = {
+            'id': 'id',
+            'name': 'name',
+            'created_at': 'created_at',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='name')
+        if has_pagination:
+            _, _, _, page, page_size = parse_pagination_params(request, default_sort='name', default_direction='asc')
+            page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
+            return JsonResponse({
+                'data': DepartmentSerializer.serialize_list(page_qs),
+                'count': total,
+                'page': page,
+                'page_size': page_size,
+                'total_pages': total_pages,
+                'sort_by': sort_by,
+                'sort_direction': sort_direction,
+            })
         return JsonResponse({'data': DepartmentSerializer.serialize_list(qs), 'count': qs.count()})
 
     data = parse_body(request)

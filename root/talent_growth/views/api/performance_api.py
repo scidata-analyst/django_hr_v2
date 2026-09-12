@@ -24,34 +24,55 @@ def parse_body(request):
 @require_http_methods(["GET", "POST"])
 def performance_review_list(request):
     if request.method == "GET":
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='created_at', default_direction='desc')
         employee = request.GET.get('employee')
         period = request.GET.get('period')
         status = request.GET.get('status')
-        search = request.GET.get('search', '')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+
+        qs = review_service.get_all()
 
         if search:
-            qs = review_service.repository.search_reviews(search)
-        elif employee:
-            qs = review_service.get_by_employee(employee)
-        elif period:
-            qs = review_service.repository.get_by_period(period)
-        elif status:
-            qs = review_service.get_by_status(status)
-        else:
-            qs = review_service.get_all()
+            qs = qs.filter(
+                Q(employee__first_name__icontains=search) |
+                Q(employee__last_name__icontains=search) |
+                Q(employee__employee_id__icontains=search) |
+                Q(review_period__icontains=search) |
+                Q(department__name__icontains=search) |
+                Q(status__icontains=search) |
+                Q(reviewer_comments__icontains=search)
+            )
 
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+        if employee:
+            qs = qs.filter(employee_id=employee)
+        if period:
+            qs = qs.filter(review_period=period)
+        if status:
+            qs = qs.filter(status=status)
+
+        allowed_sort = {
+            'id': 'id',
+            'review_period': 'review_period',
+            'start_date': 'start_date',
+            'end_date': 'end_date',
+            'overall_rating': 'overall_rating',
+            'status': 'status',
+            'created_at': 'created_at',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='created_at')
+        qs = qs.select_related('employee', 'department', 'reviewer')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': PerformanceReviewSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = review_service.create_review(data)
@@ -76,25 +97,51 @@ def performance_review_complete(request, pk):
 @require_http_methods(["GET", "POST"])
 def goal_list(request):
     if request.method == "GET":
+        from core_module.utils.pagination import parse_pagination_params, apply_sorting, paginate_queryset
+        from django.db.models import Q
+
+        search, sort_by, sort_direction, page, page_size = parse_pagination_params(request, default_sort='created_at', default_direction='desc')
         employee = request.GET.get('employee')
-        page = int(request.GET.get('page', 1))
-        page_size = int(request.GET.get('page_size', 10))
+        status = request.GET.get('status')
 
         if employee:
             qs = goal_service.get_by_employee(employee)
         else:
             qs = goal_service.get_all()
 
-        total = qs.count()
-        start = (page - 1) * page_size
-        end = start + page_size
-        page_qs = qs[start:end]
+        if search:
+            qs = qs.filter(
+                Q(title__icontains=search) |
+                Q(description__icontains=search) |
+                Q(status__icontains=search) |
+                Q(employee__first_name__icontains=search) |
+                Q(employee__last_name__icontains=search)
+            )
+
+        if status:
+            qs = qs.filter(status=status)
+
+        allowed_sort = {
+            'id': 'id',
+            'title': 'title',
+            'status': 'status',
+            'due_date': 'due_date',
+            'progress': 'progress',
+            'created_at': 'created_at',
+            'start_date': 'start_date',
+        }
+        qs = apply_sorting(qs, allowed_sort, sort_by, sort_direction, default='created_at')
+        qs = qs.select_related('employee')
+
+        page_qs, total, total_pages = paginate_queryset(qs, page, page_size)
         return JsonResponse({
             'data': GoalSerializer.serialize_list(page_qs),
             'count': total,
             'page': page,
             'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size if page_size > 0 else 1,
+            'total_pages': total_pages,
+            'sort_by': sort_by,
+            'sort_direction': sort_direction,
         })
     data = parse_body(request)
     instance, errors = goal_service.create_goal(data)
