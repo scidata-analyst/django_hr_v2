@@ -1,8 +1,11 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.utils import timezone
-from datetime import timedelta, date, datetime
+from django.db import transaction
+from django.core.files.base import ContentFile
+from datetime import timedelta, date, datetime, time
 import random
+import json
 from faker import Faker
 
 fake = Faker('en_US')
@@ -44,76 +47,114 @@ from operation.models.report.report import Report
 from main.models.main import UserProfile, DashboardWidget, Notification
 
 
+def _parse_time(t_str):
+    """Parse 'HH:MM' to datetime.time object."""
+    try:
+        h, m = map(int, t_str.split(':'))
+        return time(hour=h, minute=m)
+    except Exception:
+        return time(hour=9, minute=0)
+
+
 class Command(BaseCommand):
     help = 'Seed database with fake data'
 
     def add_arguments(self, parser):
         parser.add_argument('--employees', type=int, default=50, help='Number of employees to create')
         parser.add_argument('--full', action='store_true', help='Seed all data including performance, training, etc.')
+        parser.add_argument('--no-clear', action='store_true', help='Skip clearing existing data')
+        parser.add_argument('--if-empty', action='store_true', help='Only seed if database is empty (no employees)')
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Starting database seeding...'))
 
-        self.clear_existing_data()
+        if options['if_empty'] and Employee.objects.exists():
+            self.stdout.write(self.style.WARNING('Database already seeded (--if-empty), skipping.'))
+            return
 
-        self.create_users()
-        self.create_departments()
-        self.create_locations()
-        self.create_designations()
-        self.create_employees(options['employees'])
+        if not options['no_clear']:
+            try:
+                self.clear_existing_data()
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f'Failed to clear existing data: {e}'))
+                raise
+
+        try:
+            with transaction.atomic():
+                self.create_users()
+                self.create_departments()
+                self.create_locations()
+                self.create_designations()
+                self.create_employees(options['employees'])
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f'Failed to seed basic data: {e}'))
+            raise
 
         self.stdout.write(self.style.SUCCESS('Basic data seeded!'))
 
         if options['full']:
-            self.seed_full()
+            try:
+                self.seed_full()
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f'Failed to seed full data: {e}'))
+                import traceback
+                traceback.print_exc()
+                raise
 
         self.stdout.write(self.style.SUCCESS('Seeding complete!'))
 
     def clear_existing_data(self):
         self.stdout.write('Clearing existing data...')
-        Notification.objects.all().delete()
-        DashboardWidget.objects.all().delete()
-        UserProfile.objects.all().delete()
-        SurveyResponse.objects.all().delete()
-        CourseEnrollment.objects.all().delete()
-        BenefitEnrollment.objects.all().delete()
-        PolicyAcknowledgement.objects.all().delete()
-        PerformanceKPI.objects.all().delete()
-        Interview.objects.all().delete()
-        Candidate.objects.all().delete()
-        Document.objects.all().delete()
-        Payslip.objects.all().delete()
-        Loan.objects.all().delete()
-        Bonus.objects.all().delete()
-        LeaveRequest.objects.all().delete()
-        Attendance.objects.all().delete()
-        ExitInterview.objects.all().delete()
-        OffboardingTask.objects.all().delete()
-        OnboardingTask.objects.all().delete()
-        ExpenseClaim.objects.all().delete()
-        Announcement.objects.all().delete()
-        Goal.objects.all().delete()
-        PerformanceReview.objects.all().delete()
-        TrainingCourse.objects.all().delete()
-        TalentProfile.objects.all().delete()
-        SuccessionPlan.objects.all().delete()
-        EngagementSurvey.objects.all().delete()
-        Recognition.objects.all().delete()
-        BenefitPlan.objects.all().delete()
-        SafetyIncident.objects.all().delete()
-        PolicyDocument.objects.all().delete()
-        ComplianceChecklist.objects.all().delete()
-        Office.objects.all().delete()
-        Integration.objects.all().delete()
-        Report.objects.all().delete()
-        SalaryStructure.objects.all().delete()
-        JobPosting.objects.all().delete()
-        Shift.objects.all().delete()
-        Designation.objects.all().delete()
-        Employee.objects.all().delete()
-        Department.objects.all().delete()
-        Location.objects.all().delete()
-        User.objects.exclude(username='admin').delete()
+        # Use atomic transaction and delete in dependency order to avoid FK constraint errors.
+        # MySQL STRICT_TRANS_TABLES requires correct order; we delete leaf tables first.
+        with transaction.atomic():
+            Notification.objects.all().delete()
+            DashboardWidget.objects.all().delete()
+            UserProfile.objects.all().delete()
+            SurveyResponse.objects.all().delete()
+            SurveyQuestion.objects.all().delete()
+            CourseEnrollment.objects.all().delete()
+            BenefitEnrollment.objects.all().delete()
+            PolicyAcknowledgement.objects.all().delete()
+            PerformanceKPI.objects.all().delete()
+            Interview.objects.all().delete()
+            Candidate.objects.all().delete()
+            Document.objects.all().delete()
+            Payslip.objects.all().delete()
+            Loan.objects.all().delete()
+            Bonus.objects.all().delete()
+            LeaveRequest.objects.all().delete()
+            Attendance.objects.all().delete()
+            ExitInterview.objects.all().delete()
+            OffboardingTask.objects.all().delete()
+            OnboardingTask.objects.all().delete()
+            ExpenseClaim.objects.all().delete()
+            Announcement.objects.all().delete()
+            Goal.objects.all().delete()
+            PerformanceReview.objects.all().delete()
+            TrainingCourse.objects.all().delete()
+            TalentProfile.objects.all().delete()
+            # Clear M2M before deleting SuccessionPlan
+            for sp in SuccessionPlan.objects.all():
+                sp.secondary_successors.clear()
+            SuccessionPlan.objects.all().delete()
+            EngagementSurvey.objects.all().delete()
+            Recognition.objects.all().delete()
+            BenefitPlan.objects.all().delete()
+            SafetyIncident.objects.all().delete()
+            PolicyDocument.objects.all().delete()
+            ComplianceChecklist.objects.all().delete()
+            Office.objects.all().delete()
+            Integration.objects.all().delete()
+            Report.objects.all().delete()
+            SalaryStructure.objects.all().delete()
+            JobPosting.objects.all().delete()
+            Shift.objects.all().delete()
+            Designation.objects.all().delete()
+            Employee.objects.all().delete()
+            Department.objects.all().delete()
+            Location.objects.all().delete()
+            User.objects.exclude(username='admin').delete()
         self.stdout.write(self.style.SUCCESS('Existing data cleared!'))
 
     def create_users(self):
@@ -176,18 +217,30 @@ class Command(BaseCommand):
         locs = list(Location.objects.all())
         desigs = list(Designation.objects.all()[:10])
 
+        # Determine starting ID to avoid collisions when --no-clear is used
+        existing_ids = Employee.objects.values_list('employee_id', flat=True)
+        max_num = 0
+        for eid in existing_ids:
+            try:
+                if eid.startswith('EMP'):
+                    max_num = max(max_num, int(eid[3:]))
+            except Exception:
+                continue
+        start = max_num + 1
+
         employees = []
         for i in range(count):
+            idx = start + i
             first = fake.first_name_male() if random.choice([True, False]) else fake.first_name_female()
             last = fake.last_name()
-            email = f'{first.lower()}.{last.lower()}{i}@company.com'
+            email = f'{first.lower()}.{last.lower()}{idx}@company.com'
 
             emp = Employee(
                 first_name=first,
                 last_name=last,
                 personal_email=email,
-                work_email=f'employee{i}@company.com',
-                employee_id=f'EMP{i+1:04d}',
+                work_email=f'employee{idx}@company.com',
+                employee_id=f'EMP{idx:04d}',
                 join_date=fake.date_between(start_date='-4y', end_date='-30d'),
                 department=random.choice(depts) if depts else None,
                 designation=random.choice(desigs) if desigs else None,
@@ -206,7 +259,7 @@ class Command(BaseCommand):
             employees.append(emp)
 
         Employee.objects.bulk_create(employees)
-        self.stdout.write(self.style.SUCCESS(f'Created {count} employees'))
+        self.stdout.write(self.style.SUCCESS(f'Created {count} employees starting from EMP{start:04d}'))
 
     def seed_full(self):
         self.stdout.write(self.style.WARNING('Seeding full data...'))
@@ -278,7 +331,7 @@ class Command(BaseCommand):
         for name, code, start, end, days in shifts:
             Shift.objects.get_or_create(shift_code=code, defaults={
                 'shift_name': name,
-                'start_time': start, 'end_time': end,
+                'start_time': _parse_time(start), 'end_time': _parse_time(end),
                 'working_days': days,
                 'break_duration': random.choice([30, 45, 60]),
                 'grace_period': random.choice([10, 15, 20]),
@@ -293,11 +346,14 @@ class Command(BaseCommand):
         for emp in employees:
             for i in range(10):
                 d = timezone.now().date() - timedelta(days=i)
+                # Use proper time objects instead of strings
+                check_in = time(hour=random.randint(8, 10), minute=random.randint(0, 59))
+                check_out = time(hour=random.randint(17, 20), minute=random.randint(0, 59))
                 Attendance.objects.get_or_create(
                     employee=emp, date=d,
                     defaults={
-                        'check_in_time': f'{random.randint(8, 10)}:{random.randint(0, 59):02d}',
-                        'check_out_time': f'{random.randint(17, 20)}:{random.randint(0, 59):02d}',
+                        'check_in_time': check_in,
+                        'check_out_time': check_out,
                         'status': random.choice(['present', 'present', 'present', 'late', 'absent']),
                         'work_location': random.choice(['office', 'remote', 'field']),
                         'shift': random.choice(shifts) if shifts else None,
@@ -569,7 +625,7 @@ class Command(BaseCommand):
         doc_types = ['offer_letter', 'nid', 'academic_certificate', 'tax_document', 'contract']
         for emp in employees:
             for dtype in random.sample(doc_types, k=2):
-                Document.objects.get_or_create(
+                obj, created = Document.objects.get_or_create(
                     employee=emp,
                     document_type=dtype,
                     defaults={
@@ -578,6 +634,10 @@ class Command(BaseCommand):
                         'notes': fake.sentence(),
                     }
                 )
+                if created and not obj.file:
+                    # Provide a dummy file to satisfy FileField requirement
+                    dummy_content = f"Dummy {dtype} for {emp.full_name}".encode()
+                    obj.file.save(f"{dtype}_{emp.employee_id}.txt", ContentFile(dummy_content), save=True)
 
     def seed_training_courses(self):
         self.stdout.write('Seeding training courses...')
@@ -747,6 +807,9 @@ class Command(BaseCommand):
     def seed_recognitions(self):
         self.stdout.write('Seeding recognitions...')
         employees = list(Employee.objects.all()[:20])
+        # Use get_or_create style to avoid duplicates on re-seed without clear; but Recognition has no unique constraint,
+        # so we clear recognitions first (done in clear_existing_data) and then create fresh each run.
+        # To make re-seed with --no-clear idempotent, delete existing recognitions for these employees first if needed.
         for _ in range(15):
             emp = random.choice(employees)
             giver = random.choice([e for e in employees if e != emp])
@@ -829,7 +892,7 @@ class Command(BaseCommand):
         ]
         employees = list(Employee.objects.all()[:5])
         for name, cat, desc in policies:
-            PolicyDocument.objects.get_or_create(
+            obj, created = PolicyDocument.objects.get_or_create(
                 policy_name=name,
                 defaults={
                     'category': cat,
@@ -841,6 +904,9 @@ class Command(BaseCommand):
                     'created_by': random.choice(employees) if employees else None,
                 }
             )
+            if created and not obj.document_file:
+                dummy_content = f"Policy: {name}\n{desc}".encode()
+                obj.document_file.save(f"policy_{name.replace(' ', '_')}.txt", ContentFile(dummy_content), save=True)
 
     def seed_compliance_checklists(self):
         self.stdout.write('Seeding compliance checklists...')
@@ -943,7 +1009,7 @@ class Command(BaseCommand):
                     position=i,
                     defaults={
                         'is_visible': True,
-                        'config': {'show_legend': True, 'refresh_interval': 300},
+                        'config': json.dumps({'show_legend': True, 'refresh_interval': 300}),
                     }
                 )
 
