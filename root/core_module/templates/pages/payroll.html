@@ -1256,9 +1256,11 @@
             const bonusSub = document.getElementById('stat-payroll-bonuses-sub');
             try {
                 // Try backend aggregated stats endpoint first (efficient, handles large datasets)
+                // Handle both old and new constants structure for backward compatibility
+                const statsEndpoint = (API_ENDPOINTS.PAYROLL && API_ENDPOINTS.PAYROLL.STATS && API_ENDPOINTS.PAYROLL.STATS.INDEX) || '/core-module/payroll/api/stats/';
                 let stats = null;
                 try {
-                    stats = await api.all(API_ENDPOINTS.PAYROLL.STATS.INDEX);
+                    stats = await api.all(statsEndpoint);
                 } catch (e) {
                     console.warn('payroll stats endpoint failed, fallback to computed', e);
                 }
@@ -1328,21 +1330,32 @@
         async function loadPayrollBreakdown(page) {
             breakdownPage = page || breakdownPage || 1;
             const tbody = document.getElementById('payroll-breakdown-tbody');
-            if (!tbody) return;
+            if (!tbody) {
+                console.warn('payroll-breakdown-tbody not found');
+                return;
+            }
             const pageSize = getPageSize('payroll-breakdown-page-size', 5);
             const search = document.getElementById('payroll-breakdown-search')?.value?.trim() || '';
             const period = document.getElementById('payroll-breakdown-period')?.value || '';
+            console.log('loadPayrollBreakdown called', {breakdownPage, pageSize, search, period, sortBy: breakdownSortBy, sortDir: breakdownSortDir});
             try {
                 const params = { page: breakdownPage, page_size: pageSize, sort_by: breakdownSortBy, sort_direction: breakdownSortDir };
                 if (search) params.search = search;
                 if (period) params.pay_period = period;
-                // Use paginated breakdown endpoint
+                console.log('breakdown params', params);
+                // Use paginated breakdown endpoint (handle old constants where STATS may be undefined)
+                const breakdownEndpoint = (API_ENDPOINTS.PAYROLL && API_ENDPOINTS.PAYROLL.STATS && API_ENDPOINTS.PAYROLL.STATS.BREAKDOWN) || '/core-module/payroll/api/stats/breakdown/';
                 let result = null;
                 try {
-                    result = await api.index(API_ENDPOINTS.PAYROLL.STATS.BREAKDOWN, params);
+                    console.log('trying api.index BREAKDOWN', breakdownEndpoint, params);
+                    result = await api.index(breakdownEndpoint, params);
+                    console.log('breakdown api.index result', result);
                 } catch (e) {
+                    console.error('breakdown api.index failed', e);
+                    console.log('fallback to api.all');
                     // Fallback to all if pagination not supported
-                    const res = await api.all(API_ENDPOINTS.PAYROLL.STATS.BREAKDOWN);
+                    const res = await api.all(breakdownEndpoint);
+                    console.log('breakdown api.all result', res);
                     if (res && Array.isArray(res.data)) {
                         // Simulate pagination client-side if backend doesn't paginate
                         let data = res.data;
