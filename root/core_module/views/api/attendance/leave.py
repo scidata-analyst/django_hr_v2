@@ -21,6 +21,34 @@ def parse_body(request):
         return {}
 
 
+def _normalize_fk(data):
+    """Normalize FK string IDs to int and map `field` -> `field_id` for Leave (employee, approved_by)."""
+    for fk in ['employee', 'approved_by']:
+        id_key = f"{fk}_id"
+        for key in (fk, id_key):
+            if key in data and isinstance(data[key], str):
+                val = data[key].strip()
+                if val == '':
+                    data[key] = None
+                else:
+                    try:
+                        data[key] = int(val)
+                    except (ValueError, TypeError):
+                        pass
+        if fk in data:
+            val = data.pop(fk)
+            if id_key not in data or data[id_key] is None or data[id_key] == '':
+                data[id_key] = val
+        if id_key in data and isinstance(data[id_key], str):
+            try:
+                data[id_key] = int(data[id_key].strip()) if data[id_key].strip() != '' else None
+            except (ValueError, TypeError):
+                data[id_key] = None
+        if data.get(id_key) == '':
+            data[id_key] = None
+    return data
+
+
 @require_login
 @safe_json_handler
 @require_http_methods(["GET", "POST"])
@@ -97,6 +125,7 @@ def leave_list(request):
         })
 
     data = parse_body(request)
+    data = _normalize_fk(data)
     try:
         instance, errors = leave_service.apply_leave(data)
         if instance:
@@ -117,6 +146,7 @@ def leave_detail(request, pk):
         return JsonResponse(LeaveRequestSerializer.serialize(instance))
     elif request.method == "PUT":
         data = parse_body(request)
+        data = _normalize_fk(data)
         instance, errors = leave_service.update(pk, **data)
         if instance:
             return JsonResponse(LeaveRequestSerializer.serialize(instance))
@@ -133,7 +163,16 @@ def leave_detail(request, pk):
 @require_http_methods(["POST"])
 def leave_approve(request, pk):
     data = parse_body(request)
+    data = _normalize_fk(data)
     approved_by_id = data.get('approved_by_id')
+    # also handle approved_by string variant already normalized, but ensure int conversion for fallback
+    if approved_by_id is None and 'approved_by' in data:
+        approved_by_id = data.get('approved_by_id')
+    if isinstance(approved_by_id, str):
+        try:
+            approved_by_id = int(approved_by_id.strip()) if approved_by_id.strip() != '' else None
+        except (ValueError, TypeError):
+            approved_by_id = None
     instance, errors = leave_service.approve_leave(pk, approved_by_id)
     if instance:
         return JsonResponse(LeaveRequestSerializer.serialize(instance))
@@ -145,9 +184,23 @@ def leave_approve(request, pk):
 @require_http_methods(["POST"])
 def leave_deny(request, pk):
     data = parse_body(request)
+    data = _normalize_fk(data)
     approved_by_id = data.get('approved_by_id')
+    if isinstance(approved_by_id, str):
+        try:
+            approved_by_id = int(approved_by_id.strip()) if approved_by_id.strip() != '' else None
+        except (ValueError, TypeError):
+            approved_by_id = None
     denial_reason = data.get('denial_reason', '')
     instance, errors = leave_service.deny_leave(pk, approved_by_id, denial_reason)
     if instance:
         return JsonResponse(LeaveRequestSerializer.serialize(instance))
     return JsonResponse({'errors': errors}, status=400)
+
+
+@require_login
+@safe_json_handler
+@require_http_methods(["GET"])
+def leave_balance_stats(request):
+    stats = leave_service.get_balance_stats()
+    return JsonResponse(stats)

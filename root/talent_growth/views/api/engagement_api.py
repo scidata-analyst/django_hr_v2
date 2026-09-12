@@ -20,6 +20,35 @@ def parse_body(request):
         return {}
 
 
+def _normalize_fk(data, fields=None):
+    if fields is None:
+        fields = ['employee', 'recognized_by']
+    for fk in fields:
+        id_key = f"{fk}_id"
+        for key in (fk, id_key):
+            if key in data and isinstance(data[key], str):
+                val = data[key].strip()
+                if val == '':
+                    data[key] = None
+                else:
+                    try:
+                        data[key] = int(val)
+                    except (ValueError, TypeError):
+                        pass
+        if fk in data:
+            val = data.pop(fk)
+            if id_key not in data or data[id_key] is None or data[id_key] == '':
+                data[id_key] = val
+        if id_key in data and isinstance(data[id_key], str):
+            try:
+                data[id_key] = int(data[id_key].strip()) if data[id_key].strip() != '' else None
+            except (ValueError, TypeError):
+                data[id_key] = None
+        if data.get(id_key) == '':
+            data[id_key] = None
+    return data
+
+
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def survey_list(request):
@@ -119,6 +148,7 @@ def recognition_list(request):
             'sort_direction': sort_direction,
         })
     data = parse_body(request)
+    data = _normalize_fk(data, ['employee', 'recognized_by'])
     instance, errors = recognition_service.recognize_employee(data)
     if instance:
         return JsonResponse(RecognitionSerializer.serialize(instance), status=201)

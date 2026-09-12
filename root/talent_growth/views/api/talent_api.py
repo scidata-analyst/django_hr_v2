@@ -20,6 +20,52 @@ def parse_body(request):
         return {}
 
 
+def _normalize_fk(data, fields=None):
+    if fields is None:
+        fields = ['employee', 'department', 'primary_successor']
+    for fk in fields:
+        id_key = f"{fk}_id"
+        for key in (fk, id_key):
+            if key in data and isinstance(data[key], str):
+                val = data[key].strip()
+                if val == '':
+                    data[key] = None
+                else:
+                    try:
+                        data[key] = int(val)
+                    except (ValueError, TypeError):
+                        pass
+        if fk in data:
+            val = data.pop(fk)
+            if id_key not in data or data[id_key] is None or data[id_key] == '':
+                data[id_key] = val
+        if id_key in data and isinstance(data[id_key], str):
+            try:
+                data[id_key] = int(data[id_key].strip()) if data[id_key].strip() != '' else None
+            except (ValueError, TypeError):
+                data[id_key] = None
+        if data.get(id_key) == '':
+            data[id_key] = None
+    # Handle M2M secondary_successors list of string IDs
+    if 'secondary_successors' in data and isinstance(data['secondary_successors'], list):
+        normed = []
+        for v in data['secondary_successors']:
+            if isinstance(v, str):
+                vs = v.strip()
+                if vs == '':
+                    continue
+                try:
+                    normed.append(int(vs))
+                except:
+                    normed.append(v)
+            else:
+                normed.append(v)
+        data['secondary_successors'] = normed
+    if 'secondary_successors_id' in data and isinstance(data['secondary_successors_id'], list):
+        data['secondary_successors'] = data.pop('secondary_successors_id')
+    return data
+
+
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def talent_profile_list(request):
@@ -73,6 +119,7 @@ def talent_profile_list(request):
             'sort_direction': sort_direction,
         })
     data = parse_body(request)
+    data = _normalize_fk(data, ['employee'])
     instance, errors = talent_service.create(**data)
     if instance:
         return JsonResponse(TalentProfileSerializer.serialize(instance), status=201)
@@ -140,6 +187,7 @@ def succession_plan_list(request):
             'sort_direction': sort_direction,
         })
     data = parse_body(request)
+    data = _normalize_fk(data, ['department', 'primary_successor'])
     instance, errors = succession_service.create_plan(data)
     if instance:
         return JsonResponse(SuccessionPlanSerializer.serialize(instance), status=201)

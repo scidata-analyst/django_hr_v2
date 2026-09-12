@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/payslip/', include('core_module.routes.payroll.payslip')),
     path('api/loan/', include('core_module.routes.payroll.loan')),
     path('api/bonus/', include('core_module.routes.payroll.bonus')),
+    path('api/stats/', include('core_module.routes.payroll.stats')),
 ]

@@ -20,6 +20,50 @@ def parse_body(request):
         return {}
 
 
+def _normalize_fk(data, fields=None):
+    if fields is None:
+        fields = ['employee', 'course']
+    for fk in fields:
+        id_key = f"{fk}_id"
+        for key in (fk, id_key):
+            if key in data and isinstance(data[key], str):
+                val = data[key].strip()
+                if val == '':
+                    data[key] = None
+                else:
+                    try:
+                        data[key] = int(val)
+                    except (ValueError, TypeError):
+                        pass
+        if fk in data:
+            val = data.pop(fk)
+            if id_key not in data or data[id_key] is None or data[id_key] == '':
+                data[id_key] = val
+        if id_key in data and isinstance(data[id_key], str):
+            try:
+                data[id_key] = int(data[id_key].strip()) if data[id_key].strip() != '' else None
+            except (ValueError, TypeError):
+                data[id_key] = None
+        if data.get(id_key) == '':
+            data[id_key] = None
+    # Handle bulk employee_ids list
+    if 'employee_ids' in data and isinstance(data['employee_ids'], list):
+        normed = []
+        for v in data['employee_ids']:
+            if isinstance(v, str):
+                vs = v.strip()
+                if vs == '':
+                    continue
+                try:
+                    normed.append(int(vs))
+                except:
+                    normed.append(v)
+            else:
+                normed.append(v)
+        data['employee_ids'] = normed
+    return data
+
+
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def course_list(request):
@@ -176,6 +220,7 @@ def enrollment_list(request):
             'sort_direction': sort_direction,
         })
     data = parse_body(request)
+    data = _normalize_fk(data, ['employee', 'course'])
     instance, errors = enrollment_service.enroll_employee(data)
     if instance:
         return JsonResponse(CourseEnrollmentSerializer.serialize(instance), status=201)
@@ -198,5 +243,12 @@ def enrollment_complete(request, pk):
 @require_http_methods(["POST"])
 def enrollment_bulk(request):
     data = parse_body(request)
+    data = _normalize_fk(data, ['course'])
+    # normalize course_id separately if string
+    if 'course_id' in data and isinstance(data['course_id'], str):
+        try:
+            data['course_id'] = int(data['course_id'].strip()) if data['course_id'].strip() != '' else None
+        except (ValueError, TypeError):
+            pass
     results = enrollment_service.bulk_enroll(data.get('course_id'), data.get('employee_ids', []))
     return JsonResponse(results)

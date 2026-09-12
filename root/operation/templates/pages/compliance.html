@@ -446,7 +446,7 @@
       catch (e) { console.error('Error indexing compliance:', e); throw e; }
     }
     async function completeComplianceAPI(id) {
-      try { return await api.update(API_ENDPOINTS.COMPLIANCE.COMPLETE(id), {}); }
+      try { return await api._request('POST', API_ENDPOINTS.COMPLIANCE.COMPLETE(id), {}); }
       catch (e) { console.error('Error completing compliance:', e); throw e; }
     }
   </script>

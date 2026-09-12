@@ -576,7 +576,7 @@
       catch (e) { console.error('Error deleting integration:', e); throw e; }
     }
     async function toggleIntegrationAPI(id) {
-      try { return await api.update(API_ENDPOINTS.INTEGRATIONS.TOGGLE(id), {}); }
+      try { return await api._request('POST', API_ENDPOINTS.INTEGRATIONS.TOGGLE(id), {}); }
       catch (e) { console.error('Error toggling integration:', e); throw e; }
     }
   </script>

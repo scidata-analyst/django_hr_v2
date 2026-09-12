@@ -13,6 +13,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        .field-error { font-size: 0.68rem; color: #ef4444; margin-top: 4px; min-height: 14px; line-height: 1.3; }
+        .fi.is-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.08) !important; }
+        .form-global-error { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.78rem; margin-bottom:12px; display:none; }
+        .form-global-error.show { display:block; }
+        .fg.has-error .fl { color:#ef4444; }
+    </style>
 </head>
 
 <body>
@@ -395,97 +403,103 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error-job" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg full">
-                            <div class="fl">Job Title *</div><input class="fi"
-                                placeholder="e.g. Senior Backend Developer" />
+                        <div class="fg full" data-field-group="job_title">
+                            <div class="fl">Job Title *</div><input class="fi" data-field="job_title" placeholder="e.g. Senior Backend Developer" />
+                            <div class="field-error" data-error-for="job_title"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Department *</div><select class="fi">
-                                <option>Engineering</option>
-                                <option>Sales</option>
-                                <option>Finance</option>
-                                <option>HR</option>
-                                <option>Operations</option>
+                        <div class="fg" data-field-group="department">
+                            <div class="fl">Department *</div><select class="fi" data-field="department" id="job-dept-select">
+                                <option value="">Select Department</option>
                             </select>
+                            <div class="field-error" data-error-for="department"></div>
+                            <div class="field-error" data-error-for="department_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Job Type</div><select class="fi">
-                                <option>Full-time</option>
-                                <option>Part-time</option>
-                                <option>Contract</option>
-                                <option>Internship</option>
+                        <div class="fg" data-field-group="job_type">
+                            <div class="fl">Job Type</div><select class="fi" data-field="job_type">
+                                <option value="full_time">Full-time</option>
+                                <option value="part_time">Part-time</option>
+                                <option value="contract">Contract</option>
+                                <option value="internship">Internship</option>
                             </select>
+                            <div class="field-error" data-error-for="job_type"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Location</div><select class="fi">
-                                <option>Dhaka</option>
-                                <option>Remote</option>
-                                <option>Hybrid</option>
-                                <option>Chittagong</option>
+                        <div class="fg" data-field-group="location">
+                            <div class="fl">Location</div><select class="fi" data-field="location" id="job-location-select">
+                                <option value="">Select Location</option>
                             </select>
+                            <div class="field-error" data-error-for="location"></div>
+                            <div class="field-error" data-error-for="location_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Salary Range (Min)</div><input class="fi" type="number"
-                                placeholder="Min salary" />
+                        <div class="fg" data-field-group="salary_range_min">
+                            <div class="fl">Salary Range (Min)</div><input class="fi" data-field="salary_range_min" type="number" placeholder="Min salary" step="0.01" />
+                            <div class="field-error" data-error-for="salary_range_min"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Salary Range (Max)</div><input class="fi" type="number"
-                                placeholder="Max salary" />
+                        <div class="fg" data-field-group="salary_range_max">
+                            <div class="fl">Salary Range (Max)</div><input class="fi" data-field="salary_range_max" type="number" placeholder="Max salary" step="0.01" />
+                            <div class="field-error" data-error-for="salary_range_max"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Vacancies</div><input class="fi" type="number" value="1" />
+                        <div class="fg" data-field-group="vacancies">
+                            <div class="fl">Vacancies</div><input class="fi" data-field="vacancies" type="number" value="1" />
+                            <div class="field-error" data-error-for="vacancies"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Application Deadline</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="application_deadline">
+                            <div class="fl">Application Deadline</div><input class="fi" data-field="application_deadline" type="date" />
+                            <div class="field-error" data-error-for="application_deadline"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Experience Required</div><select class="fi">
-                                <option>Fresher</option>
-                                <option>1-2 years</option>
-                                <option>3-5 years</option>
-                                <option>5+ years</option>
-                                <option>10+ years</option>
+                        <div class="fg" data-field-group="experience_required">
+                            <div class="fl">Experience Required</div><select class="fi" data-field="experience_required">
+                                <option value="">Select</option>
+                                <option value="fresher">Fresher</option>
+                                <option value="1_2_years">1-2 years</option>
+                                <option value="3_5_years">3-5 years</option>
+                                <option value="5_10_years">5-10 years</option>
+                                <option value="10_plus">10+ years</option>
                             </select>
+                            <div class="field-error" data-error-for="experience_required"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Education Level</div><select class="fi">
-                                <option>Any</option>
-                                <option>HSC</option>
-                                <option>Bachelor's</option>
-                                <option>Master's</option>
-                                <option>PhD</option>
+                        <div class="fg" data-field-group="education_level">
+                            <div class="fl">Education Level</div><select class="fi" data-field="education_level">
+                                <option value="any">Any</option>
+                                <option value="hsc">HSC</option>
+                                <option value="bachelor">Bachelor's</option>
+                                <option value="master">Master's</option>
+                                <option value="phd">PhD</option>
                             </select>
+                            <div class="field-error" data-error-for="education_level"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Job Description *</div><textarea class="fi" rows="4"
-                                placeholder="Describe responsibilities and requirements..."></textarea>
+                        <div class="fg full" data-field-group="job_description">
+                            <div class="fl">Job Description *</div><textarea class="fi" data-field="job_description" rows="4" placeholder="Describe responsibilities and requirements..."></textarea>
+                            <div class="field-error" data-error-for="job_description"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Skills Required</div><input class="fi"
-                                placeholder="e.g. React, Node.js, PostgreSQL (comma separated)" />
+                        <div class="fg full" data-field-group="skills_required">
+                            <div class="fl">Skills Required</div><input class="fi" data-field="skills_required" placeholder="e.g. React, Node.js, PostgreSQL (comma separated)" />
+                            <div class="field-error" data-error-for="skills_required"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Publish on Job Boards</div><select class="fi">
-                                <option>LinkedIn + BDJobs</option>
-                                <option>LinkedIn only</option>
-                                <option>Internal only</option>
+                        <div class="fg" data-field-group="publish_on">
+                            <div class="fl">Publish on Job Boards</div><select class="fi" data-field="publish_on">
+                                <option value="linkedin_bdjobs">LinkedIn + BDJobs</option>
+                                <option value="linkedin">LinkedIn only</option>
+                                <option value="internal">Internal only</option>
                             </select>
+                            <div class="field-error" data-error-for="publish_on"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Status</div><select class="fi">
-                                <option>Active</option>
-                                <option>Draft</option>
-                                <option>On Hold</option>
-                                <option>Closed</option>
+                        <div class="fg" data-field-group="status">
+                            <div class="fl">Status</div><select class="fi" data-field="status">
+                                <option value="active">Active</option>
+                                <option value="draft">Draft</option>
+                                <option value="on_hold">On Hold</option>
+                                <option value="closed">Closed</option>
                             </select>
+                            <div class="field-error" data-error-for="status"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
                     <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
                         data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Post
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveJob()">💾 Post
                         Job</button>
                 </div>
             </div>
@@ -508,75 +522,87 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error-candidate" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg">
-                            <div class="fl">Full Name *</div><input class="fi" placeholder="Candidate name" />
+                        <div class="fg" data-field-group="full_name">
+                            <div class="fl">Full Name *</div><input class="fi" data-field="full_name" placeholder="Candidate name" />
+                            <div class="field-error" data-error-for="full_name"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Email *</div><input class="fi" type="email"
-                                placeholder="candidate@email.com" />
+                        <div class="fg" data-field-group="email">
+                            <div class="fl">Email *</div><input class="fi" data-field="email" type="email" placeholder="candidate@email.com" />
+                            <div class="field-error" data-error-for="email"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Phone</div><input class="fi" placeholder="+880..." />
+                        <div class="fg" data-field-group="phone">
+                            <div class="fl">Phone</div><input class="fi" data-field="phone" placeholder="+880..." />
+                            <div class="field-error" data-error-for="phone"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Applied For *</div><select class="fi">
-                                <option>Senior Backend Developer</option>
-                                <option>UX Designer</option>
-                                <option>Sales Manager</option>
+                        <div class="fg" data-field-group="applied_for">
+                            <div class="fl">Applied For *</div><select class="fi" data-field="applied_for" id="candidate-job-select">
+                                <option value="">Select Job</option>
                             </select>
+                            <div class="field-error" data-error-for="applied_for"></div>
+                            <div class="field-error" data-error-for="applied_for_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Source</div><select class="fi">
-                                <option>LinkedIn</option>
-                                <option>BDJobs</option>
-                                <option>Referral</option>
-                                <option>Direct</option>
-                                <option>Glassdoor</option>
+                        <div class="fg" data-field-group="source">
+                            <div class="fl">Source</div><select class="fi" data-field="source">
+                                <option value="">Select Source</option>
+                                <option value="linkedin">LinkedIn</option>
+                                <option value="bdjobs">BDJobs</option>
+                                <option value="referral">Referral</option>
+                                <option value="direct">Direct</option>
+                                <option value="glassdoor">Glassdoor</option>
+                                <option value="other">Other</option>
                             </select>
+                            <div class="field-error" data-error-for="source"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Current Stage</div><select class="fi">
-                                <option>Applied</option>
-                                <option>Screening</option>
-                                <option>Interview</option>
-                                <option>Offer</option>
-                                <option>Hired</option>
-                                <option>Rejected</option>
+                        <div class="fg" data-field-group="current_stage">
+                            <div class="fl">Current Stage</div><select class="fi" data-field="current_stage">
+                                <option value="applied">Applied</option>
+                                <option value="screening">Screening</option>
+                                <option value="interview">Interview</option>
+                                <option value="offer">Offer</option>
+                                <option value="hired">Hired</option>
+                                <option value="rejected">Rejected</option>
                             </select>
+                            <div class="field-error" data-error-for="current_stage"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Experience (yrs)</div><input class="fi" type="number"
-                                placeholder="Years of experience" />
+                        <div class="fg" data-field-group="experience_yrs">
+                            <div class="fl">Experience (yrs)</div><input class="fi" data-field="experience_yrs" type="number" placeholder="Years of experience" step="0.1" />
+                            <div class="field-error" data-error-for="experience_yrs"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Current Salary ($)</div><input class="fi" type="number" placeholder="0" />
+                        <div class="fg" data-field-group="current_salary">
+                            <div class="fl">Current Salary ($)</div><input class="fi" data-field="current_salary" type="number" placeholder="0" step="0.01" />
+                            <div class="field-error" data-error-for="current_salary"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Expected Salary ($)</div><input class="fi" type="number" placeholder="0" />
+                        <div class="fg" data-field-group="expected_salary">
+                            <div class="fl">Expected Salary ($)</div><input class="fi" data-field="expected_salary" type="number" placeholder="0" step="0.01" />
+                            <div class="field-error" data-error-for="expected_salary"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Notice Period</div><select class="fi">
-                                <option>Immediate</option>
-                                <option>1 week</option>
-                                <option>2 weeks</option>
-                                <option>1 month</option>
-                                <option>2 months</option>
+                        <div class="fg" data-field-group="notice_period">
+                            <div class="fl">Notice Period</div><select class="fi" data-field="notice_period">
+                                <option value="">Select</option>
+                                <option value="Immediate">Immediate</option>
+                                <option value="1 week">1 week</option>
+                                <option value="2 weeks">2 weeks</option>
+                                <option value="1 month">1 month</option>
+                                <option value="2 months">2 months</option>
                             </select>
+                            <div class="field-error" data-error-for="notice_period"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Resume / CV</div><input class="fi" type="file" style="padding:7px 10px;" />
+                        <div class="fg full" data-field-group="resume">
+                            <div class="fl">Resume / CV</div><input class="fi" data-field="resume" type="file" style="padding:7px 10px;" />
+                            <div class="field-error" data-error-for="resume"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Notes</div><textarea class="fi" rows="3"
-                                placeholder="Recruiter notes..."></textarea>
+                        <div class="fg full" data-field-group="cover_letter">
+                            <div class="fl">Notes</div><textarea class="fi" data-field="cover_letter" rows="3" placeholder="Recruiter notes..."></textarea>
+                            <div class="field-error" data-error-for="cover_letter"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
                     <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
                         data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveCandidate()">💾 Save
                         Candidate</button>
                 </div>
             </div>
@@ -733,7 +759,7 @@
 
         async function advanceCandidateAPI(id) {
             try {
-                return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.ADVANCE(id));
+                return await api._request('POST', API_ENDPOINTS.RECRUITMENT.CANDIDATES.ADVANCE(id), {});
             } catch (error) {
                 console.error('Error advancing candidate:', error);
                 throw error;
@@ -742,7 +768,7 @@
 
         async function rejectCandidateAPI(id) {
             try {
-                return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.REJECT(id));
+                return await api._request('POST', API_ENDPOINTS.RECRUITMENT.CANDIDATES.REJECT(id), {});
             } catch (error) {
                 console.error('Error rejecting candidate:', error);
                 throw error;
@@ -786,7 +812,7 @@
         }
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
     </script>
@@ -796,13 +822,6 @@
             var name = $(e.relatedTarget).data('integration-name');
             if (name) $('#integration-name').text(name);
         });
-
-        /**
-         * Displays a toast notification with an icon and message.
-         * @param {string} icon - Emoji or icon character.
-         * @param {string} msg - Message to display.
-         * @param {number} [duration=3000] - Auto-hide duration in ms.
-         */
         function showToast(icon, msg, duration) {
             duration = duration || 3000;
             $('#toast-icon').text(icon);
@@ -810,20 +829,10 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-
-        /**
-         * Handles delete confirmation modal close and feedback.
-         */
         function confirmDelete() {
             $('#modalDelete').modal('hide');
             showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
         }
-
-        /**
-         * Switches the active tab within a tab group.
-         * @param {string} tabGroup - Matches data-tabgroup attribute.
-         * @param {string} tabId - Matches data-tabid attribute to activate.
-         */
         function showSubTab(tabGroup, tabId) {
             document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
                 t.classList.toggle('active', t.dataset.tabid === tabId);
@@ -832,8 +841,6 @@
                 p.classList.toggle('active', p.dataset.panelid === tabId);
             });
         }
-
-        /** Page title lookup for topbar updates. */
         const pageTitles = {
             dashboard: 'Dashboard Overview',
             employee: 'Employee Management',
@@ -853,436 +860,437 @@
             global: 'Global HR',
             integrations: 'Integrations & Automation'
         };
-
-        /**
-         * Navigates to a page section and updates navigation state.
-         * @param {string} id - Page identifier matching `page-{id}` element.
-         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
-         */
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + id);
             if (target) target.classList.add('active');
             document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            document.getElementById('topbar-title').textContent = pageTitles[id] || id;
+            const tt=document.getElementById('topbar-title'); if(tt) tt.textContent = pageTitles[id] || id;
             document.getElementById('sidebar').classList.remove('open');
             window.scrollTo(0, 0);
         }
-
         const d = new Date();
         const dateEl = document.getElementById('topbar-date');
         if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
         document.querySelectorAll('.toggle').forEach(t => {
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
 
-        let recruitmentPage = 1;
-        const recruitmentPageSize = 10;
-
-        /**
-         * Renders paginated table data with page info and navigation.
-         * @param {Array} data - Array of items to paginate.
-         * @param {string} tbodyId - ID of the tbody element to render rows into.
-         * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
-         * @param {string} containerId - ID of the pagination buttons container.
-         * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
-         */
-        function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
-            const totalPages = Math.max(1, Math.ceil(data.length / recruitmentPageSize));
-            if (recruitmentPage > totalPages) recruitmentPage = totalPages;
-            const start = (recruitmentPage - 1) * recruitmentPageSize;
-            const end = Math.min(start + recruitmentPageSize, data.length);
-            const pageData = data.slice(start, end);
-
-            const tbody = document.getElementById(tbodyId);
-            if (tbody) {
-                tbody.innerHTML = '';
-                if (pageData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">No data found</td></tr>';
-                } else {
-                    pageData.forEach((item, i) => {
-                        tbody.innerHTML += renderRowFn(item, i);
-                    });
+        function clearFieldErrors() {
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.fi.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.fg.has-error').forEach(el => el.classList.remove('has-error'));
+            document.querySelectorAll('.form-global-error').forEach(el => { el.textContent=''; el.classList.remove('show'); });
+        }
+        function showFieldErrors(errors) {
+            clearFieldErrors();
+            if (!errors || typeof errors !== 'object') return;
+            const fieldMap = {
+                'job_title': 'job_title', 'department': 'department', 'department_id': 'department',
+                'job_type': 'job_type', 'location': 'location', 'location_id': 'location',
+                'salary_range_min': 'salary_range_min', 'salary_range_max': 'salary_range_max', 'vacancies': 'vacancies',
+                'application_deadline': 'application_deadline', 'experience_required': 'experience_required',
+                'education_level': 'education_level', 'job_description': 'job_description', 'skills_required': 'skills_required',
+                'publish_on': 'publish_on', 'status': 'status',
+                'full_name': 'full_name', 'email': 'email', 'phone': 'phone', 'applied_for': 'applied_for', 'applied_for_id': 'applied_for',
+                'source': 'source', 'current_stage': 'current_stage', 'experience_yrs': 'experience_yrs',
+                'current_salary': 'current_salary', 'expected_salary': 'expected_salary', 'notice_period': 'notice_period',
+                'resume': 'resume', 'cover_letter': 'cover_letter',
+            };
+            let hasFieldError = false;
+            for (const [key, val] of Object.entries(errors)) {
+                const msg = Array.isArray(val) ? val.join(', ') : String(val);
+                if (key === '__all__' || key === 'error') {
+                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = msg; el.classList.add('show'); }});
+                    hasFieldError = true; continue;
                 }
-            }
-
-            const info = document.getElementById(infoId);
-            if (info) {
-                info.textContent = data.length > 0 ? `Showing ${start + 1}–${end} of ${data.length}` : 'No data found';
-            }
-
-            const container = document.getElementById(containerId);
-            if (container) {
-                let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${recruitmentPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${recruitmentPage - 1})">‹ Prev</button>`;
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= recruitmentPage - 1 && i <= recruitmentPage + 1)) {
-                        html += `<button class="${i === recruitmentPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${i})">${i}</button>`;
-                    } else if (i === recruitmentPage - 2 || i === recruitmentPage + 2) {
-                        html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-                    }
+                const field = fieldMap[key] || key;
+                const errorEl = document.querySelector(`[data-error-for="${key}"]`) || document.querySelector(`[data-error-for="${field}"]`);
+                const input = document.querySelector(`[data-field="${field}"]`) || document.querySelector(`[data-field="${key}"]`);
+                if (errorEl) { errorEl.textContent = msg; hasFieldError = true; }
+                if (input) { input.classList.add('is-invalid'); const fg = input.closest('.fg'); if (fg) fg.classList.add('has-error'); hasFieldError = true; }
+                if (!errorEl && !input) {
+                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = `${key}: ${msg}`; el.classList.add('show'); }});
                 }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${recruitmentPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${recruitmentPage + 1})">Next ›</button>`;
-                container.innerHTML = html;
             }
         }
-
-        /**
-         * Updates current page and triggers render for the active paginated table.
-         * @param {string} tbodyId - ID of the tbody being paginated.
-         * @param {string} infoId - ID of the pagination info element.
-         * @param {string} containerId - ID of the pagination container.
-         * @param {number} page - Target page number.
-         */
-        function goPage(tbodyId, infoId, containerId, page) {
-            recruitmentPage = page;
-            if (tbodyId === 'jobs-tbody') loadJobs(recruitmentPage);
-            if (tbodyId === 'candidates-tbody') loadCandidates(recruitmentPage);
+        function getFieldValue(field){
+            const el=document.querySelector(`[data-field="${field}"]`);
+            return el?el.value.trim():'';
         }
+        function setFieldValue(field, val){
+            const el=document.querySelector(`[data-field="${field}"]`);
+            if(el) el.value=val==null?'':val;
+        }
+        function getModalFieldValue(modalId, field) {
+            const modal=document.getElementById(modalId);
+            if(!modal) return '';
+            const el=modal.querySelector(`[data-field="${field}"]`);
+            return el ? el.value.trim() : '';
+        }
+        function setModalFieldValue(modalId, field, value){
+            const modal=document.getElementById(modalId);
+            if(!modal) return;
+            const el=modal.querySelector(`[data-field="${field}"]`);
+            if(el) el.value = value==null?'':value;
+        }
+        function renderPaginationServer(total, page, pageSize, containerId, infoId, loadFnName){
+            const totalPages=Math.ceil(total/pageSize)||1;
+            const container=document.getElementById(containerId);
+            const info=document.getElementById(infoId);
+            if(!container||!info) return;
+            const start= total>0 ? (page-1)*pageSize+1 :0;
+            const end=Math.min(page*pageSize, total);
+            info.textContent= total>0 ? `Showing ${start}\u2013${end} of ${total}` : 'No records found';
+            if(totalPages<=1){ container.innerHTML=''; return; }
+            let html='';
+            html+=`<button class="btn-outline-custom" style="padding:5px 10px;${page===1?'opacity:0.5;pointer-events:none;':''}" onclick="${loadFnName}(${page-1})">\u2039 Prev</button>`;
+            for(let i=1;i<=totalPages;i++){
+                if(i===1||i===totalPages||(i>=page-1&&i<=page+1)){
+                    html+=`<button class="${i===page?'btn-primary-custom':'btn-outline-custom'}" style="padding:5px 10px;" onclick="${loadFnName}(${i})">${i}</button>`;
+                }else if(i===page-2||i===page+2){ html+=`<span style="padding:5px;color:var(--text-muted);">\u2026</span>`; }
+            }
+            html+=`<button class="btn-outline-custom" style="padding:5px 10px;${page===totalPages?'opacity:0.5;pointer-events:none;':''}" onclick="${loadFnName}(${page+1})">Next \u203A</button>`;
+            container.innerHTML=html;
+        }
+        function getPageSize(id, fallback){ const sel=document.getElementById(id); return sel? parseInt(sel.value)||fallback : fallback; }
 
-        /**
-         * Loads job postings from the API and renders them.
-         * @param {number} [page] - Page number to load. Defaults to 1.
-         * @async
-         */
-        async function loadJobs(page) {
-            recruitmentPage = page || 1;
-            const status = document.getElementById('jobs-filter-status')?.value || '';
-            const search = document.getElementById('jobs-filter-search')?.value || '';
-
-            const params = { page: recruitmentPage, page_size: recruitmentPageSize };
-            if (status) params.status = status;
-            if (search) params.search = search;
-
-            try {
-                const result = await indexJobs(params);
-                const tbody = document.getElementById('jobs-tbody');
-                if (!tbody || !result?.data) return;
-                tbody.innerHTML = '';
-                if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No job postings found</td></tr>';
-                } else {
-                    result.data.forEach(j => {
-                        const statusBadge = j.status === 'active' ? 'badge-success' : j.status === 'draft' ? 'badge-warning' : 'badge-gray';
-                        const tr = document.createElement('tr');
-                        tr.setAttribute('data-id', j.id);
-                        tr.innerHTML = `
-                            <td style="font-weight:600;">${j.job_title}</td>
-                            <td>${j.department_name || '—'}</td>
-                            <td>${j.location_name || '—'}</td>
-                            <td>${j.application_deadline ? new Date(j.application_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}</td>
-                            <td><span class="badge-custom badge-info">${j.candidate_count || 0}</span></td>
-                            <td><span class="badge-custom ${statusBadge}">${j.status}</span></td>
-                            <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editJob(${j.id})">✏ Edit</button><button class="btn-del" onclick="deleteJob(${j.id})">🗑</button></div></td>`;
-                        tbody.appendChild(tr);
-                    });
+        let jobsPage=1, candidatesPage=1;
+        async function loadJobs(page){
+            jobsPage=page||1;
+            const pageSize=getPageSize('jobs-page-size',10);
+            const status=document.getElementById('jobs-filter-status')?.value||'';
+            const search=document.getElementById('jobs-filter-search')?.value||'';
+            const params={ page: jobsPage, page_size: pageSize };
+            if(status) params.status=status;
+            if(search) params.search=search;
+            try{
+                const result=await indexJobs(params);
+                const tbody=document.getElementById('jobs-tbody');
+                if(!tbody) return;
+                if(!result||!result.data||result.data.length===0){
+                    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No job postings found</td></tr>';
+                    renderPaginationServer(0, jobsPage, pageSize, 'jobs-pagination','jobs-pagination-info','loadJobs');
+                    return;
                 }
-                renderPagination(result.data, 'jobs-tbody', 'jobs-pagination-info', 'jobs-pagination', (item) => {
-                    const sBadge = item.status === 'active' ? 'badge-success' : item.status === 'draft' ? 'badge-warning' : 'badge-gray';
-                    return `<tr data-id="${item.id}">
-                        <td style="font-weight:600;">${item.job_title}</td>
-                        <td>${item.department_name || '—'}</td>
-                        <td>${item.location_name || '—'}</td>
-                        <td>${item.application_deadline ? new Date(item.application_deadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}</td>
-                        <td><span class="badge-custom badge-info">${item.candidate_count || 0}</span></td>
-                        <td><span class="badge-custom ${sBadge}">${item.status}</span></td>
-                        <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editJob(${item.id})">✏ Edit</button><button class="btn-del" onclick="deleteJob(${item.id})">🗑</button></div></td>
-                    </tr>`;
+                tbody.innerHTML='';
+                result.data.forEach(j=>{
+                    const statusBadge=j.status==='active'?'badge-success':j.status==='draft'?'badge-warning':'badge-gray';
+                    const tr=document.createElement('tr');
+                    tr.setAttribute('data-id', j.id);
+                    tr.innerHTML=`<td style="font-weight:600;">${j.job_title}</td><td>${j.department_name||'—'}</td><td>${j.location_name||'—'}</td><td>${j.application_deadline? new Date(j.application_deadline).toLocaleDateString('en-US', {month:'short', day:'numeric'}):'—'}</td><td><span class="badge-custom badge-info">${j.candidate_count||0}</span></td><td><span class="badge-custom ${statusBadge}">${j.status}</span></td><td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editJob(${j.id})">✏ Edit</button><button class="btn-del" onclick="deleteJob(${j.id})">🗑</button></div></td>`;
+                    tbody.appendChild(tr);
                 });
-            } catch (e) {
-                console.error('Failed to load jobs:', e);
-            }
+                renderPaginationServer(result.count||result.data.length, jobsPage, pageSize, 'jobs-pagination','jobs-pagination-info','loadJobs');
+            }catch(e){ console.error(e); }
         }
-
-        /**
-         * Loads candidates from the API and renders them.
-         * @param {number} [page] - Page number to load. Defaults to 1.
-         * @async
-         */
-        async function loadCandidates(page) {
-            recruitmentPage = page || 1;
-            const stage = document.getElementById('candidate-filter-stage')?.value || '';
-            const search = document.getElementById('candidate-filter-search')?.value || '';
-
-            const params = { page: recruitmentPage, page_size: recruitmentPageSize };
-            if (stage) params.stage = stage;
-            if (search) params.search = search;
-
-            try {
-                const result = await indexCandidates(params);
-                const tbody = document.getElementById('candidates-tbody');
-                if (!tbody || !result?.data) return;
-                tbody.innerHTML = '';
-                if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No candidates found</td></tr>';
-                } else {
-                    result.data.forEach(c => {
-                        const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
-                        const tr = document.createElement('tr');
-                        tr.setAttribute('data-id', c.id);
-                        tr.innerHTML = `
-                            <td style="font-weight:600;">${c.full_name}</td>
-                            <td>${c.applied_for_title || '—'}</td>
-                            <td>${c.source || '—'}</td>
-                            <td>${c.experience_yrs || 0} yrs</td>
-                            <td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td>
-                            <td><div style="display:flex;gap:3px;">
-                                <button class="btn-view" onclick="viewCandidate(${c.id})">👁 View</button>
-                                ${c.current_stage !== 'rejected' && c.current_stage !== 'hired' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="advanceCandidate(${c.id})">▶ Advance</button>` : ''}
-                            </div></td>`;
-                        tbody.appendChild(tr);
-                    });
+        async function loadCandidates(page){
+            candidatesPage=page||1;
+            const pageSize=getPageSize('candidates-page-size',10);
+            const stage=document.getElementById('candidate-filter-stage')?.value||'';
+            const search=document.getElementById('candidate-filter-search')?.value||'';
+            const params={ page: candidatesPage, page_size: pageSize };
+            if(stage) params.stage=stage;
+            if(search) params.search=search;
+            try{
+                const result=await indexCandidates(params);
+                const tbody=document.getElementById('candidates-tbody');
+                if(!tbody) return;
+                if(!result||!result.data||result.data.length===0){
+                    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No candidates found</td></tr>';
+                    renderPaginationServer(0, candidatesPage, pageSize, 'candidates-pagination','candidates-pagination-info','loadCandidates');
+                    return;
                 }
-                renderPagination(result.data, 'candidates-tbody', 'candidates-pagination-info', 'candidates-pagination', (item) => {
-                    const sBadge = item.current_stage === 'hired' ? 'badge-success' : item.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
-                    return `<tr data-id="${item.id}">
-                        <td style="font-weight:600;">${item.full_name}</td>
-                        <td>${item.applied_for_title || '—'}</td>
-                        <td>${item.source || '—'}</td>
-                        <td>${item.experience_yrs || 0} yrs</td>
-                        <td><span class="badge-custom ${sBadge}">${item.current_stage}</span></td>
-                        <td><div style="display:flex;gap:3px;">
-                            <button class="btn-view" onclick="viewCandidate(${item.id})">👁 View</button>
-                            ${item.current_stage !== 'rejected' && item.current_stage !== 'hired' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="advanceCandidate(${item.id})">▶ Advance</button>` : ''}
-                        </div></td>
-                    </tr>`;
+                tbody.innerHTML='';
+                result.data.forEach(c=>{
+                    const stageBadge=c.current_stage==='hired'?'badge-success':c.current_stage==='rejected'?'badge-danger':'badge-warning';
+                    const tr=document.createElement('tr');
+                    tr.setAttribute('data-id', c.id);
+                    tr.innerHTML=`<td style="font-weight:600;">${c.full_name}</td><td>${c.applied_for_title||'—'}</td><td>${c.source||'—'}</td><td>${c.experience_yrs||0} yrs</td><td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td><td><div style="display:flex;gap:3px;"><button class="btn-view" onclick="viewCandidate(${c.id})">👁 View</button>${c.current_stage!=='rejected'&&c.current_stage!=='hired'?`<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="advanceCandidate(${c.id})">▶ Advance</button>`:''}<button class="btn-edit" onclick="editCandidate(${c.id})">✏</button><button class="btn-del" onclick="deleteCandidate(${c.id})">🗑</button></div></td>`;
+                    tbody.appendChild(tr);
                 });
-            } catch (e) {
-                console.error('Failed to load candidates:', e);
-            }
+                renderPaginationServer(result.count||result.data.length, candidatesPage, pageSize, 'candidates-pagination','candidates-pagination-info','loadCandidates');
+            }catch(e){ console.error(e); }
         }
-
-        /**
-         * Loads recruitment pipeline data from the API and updates kanban counts.
-         * @async
-         */
-        async function loadPipeline() {
-            try {
-                const result = await getPipeline();
-                const counts = document.querySelectorAll('#page-recruitment .kanban-count');
-                if (!counts.length || !result) return;
-                if (counts[0]) counts[0].textContent = result.applied || 0;
-                if (counts[1]) counts[1].textContent = result.screening || 0;
-                if (counts[2]) counts[2].textContent = result.interview || 0;
-                if (counts[3]) counts[3].textContent = result.offer || 0;
-            } catch (e) {
-                console.error('Failed to load pipeline:', e);
-            }
+        async function loadPipeline(){
+            try{
+                const result=await getPipeline();
+                // result is {data: [...]} or direct?
+                const data = result.data || result;
+                // if array of {current_stage, count}, map to kanban
+                // else if object with keys
+                const counts=document.querySelectorAll('#page-recruitment .kanban-count');
+                if(!counts.length) return;
+                if(Array.isArray(data)){
+                    const map={};
+                    data.forEach(item=>{ map[item.current_stage]=item.count; });
+                    if(counts[0]) counts[0].textContent=map['applied']||0;
+                    if(counts[1]) counts[1].textContent=map['screening']||0;
+                    if(counts[2]) counts[2].textContent=map['interview']||0;
+                    if(counts[3]) counts[3].textContent=map['offer']||0;
+                } else if(typeof data==='object'){
+                    if(counts[0]) counts[0].textContent=data.applied||data.data?.applied||0;
+                    if(counts[1]) counts[1].textContent=data.screening||0;
+                    if(counts[2]) counts[2].textContent=data.interview||0;
+                    if(counts[3]) counts[3].textContent=data.offer||0;
+                }
+            }catch(e){ console.error(e); }
         }
-
-        /**
-         * Opens a job modal for editing, pre-filling form fields from API data.
-         * @param {number} id - Job posting ID.
-         * @async
-         */
-        async function editJob(id) {
-            try {
-                const result = await getJob(id);
-                if (!result) return;
-                const modal = document.getElementById('modalJob');
-                if (!modal) return;
-                const inputs = modal.querySelectorAll('.fi');
-                const selects = modal.querySelectorAll('select.fi');
-                if (inputs[0]) inputs[0].value = result.job_title || '';
-                if (selects[0]) selects[0].value = result.job_type || 'full_time';
-                if (inputs[3]) inputs[3].value = result.vacancies || 1;
-                if (inputs[4]) inputs[4].value = result.salary_range_min || '';
-                if (inputs[5]) inputs[5].value = result.salary_range_max || '';
-                if (inputs[6]) inputs[6].value = result.application_deadline || '';
-                if (selects[1]) selects[1].value = result.experience_required || '';
-                if (selects[2]) selects[2].value = result.education_level || '';
-                if (inputs[7]) inputs[7].value = result.job_description || '';
-                if (inputs[8]) inputs[8].value = result.skills_required || '';
-                if (selects[3]) selects[3].value = result.status || 'draft';
+        async function editJob(id){
+            try{
+                const j=await getJob(id);
+                const modal=document.getElementById('modalJob');
+                if(!modal||!j) return;
+                clearFieldErrors();
+                setModalFieldValue('modalJob','job_title', j.job_title);
+                setModalFieldValue('modalJob','department', j.department_id||'');
+                setModalFieldValue('modalJob','job_type', j.job_type||'full_time');
+                setModalFieldValue('modalJob','location', j.location_id||'');
+                setModalFieldValue('modalJob','salary_range_min', j.salary_range_min||'');
+                setModalFieldValue('modalJob','salary_range_max', j.salary_range_max||'');
+                setModalFieldValue('modalJob','vacancies', j.vacancies||1);
+                setModalFieldValue('modalJob','application_deadline', j.application_deadline||'');
+                setModalFieldValue('modalJob','experience_required', j.experience_required||'');
+                setModalFieldValue('modalJob','education_level', j.education_level||'any');
+                setModalFieldValue('modalJob','job_description', j.job_description||'');
+                setModalFieldValue('modalJob','skills_required', j.skills_required||'');
+                setModalFieldValue('modalJob','publish_on', j.publish_on||'internal');
+                setModalFieldValue('modalJob','status', j.status||'draft');
                 modal.setAttribute('data-edit-id', id);
                 new bootstrap.Modal(modal).show();
-            } catch (e) {
-                console.error('Failed to load job for edit:', e);
-            }
+            }catch(e){ console.error(e); showToast('❌','Failed to load job');}
         }
-
-        /**
-         * Deletes a job posting after confirmation.
-         * @param {number} id - Job posting ID.
-         * @async
-         */
-        async function deleteJob(id) {
-            if (!confirm('Delete this job posting?')) return;
-            try {
-                await deleteJobAPI(id);
-                showToast('🗑️', 'Job deleted');
-                loadJobs(1);
-            } catch (e) {
-                showToast('❌', 'Failed to delete job');
-            }
+        async function deleteJob(id){
+            if(!confirm('Delete this job posting?')) return;
+            try{ await deleteJobAPI(id); showToast('🗑️','Job deleted'); loadJobs(1); loadCandidates(1); }catch(e){ showToast('❌','Failed');}
         }
-
-        /**
-         * Opens a candidate modal for viewing, pre-filling form fields from API data.
-         * @param {number} id - Candidate ID.
-         * @async
-         */
-        async function viewCandidate(id) {
-            try {
-                const result = await getCandidate(id);
-                if (!result) return;
-                const modal = document.getElementById('modalCandidate');
-                if (!modal) return;
-                const inputs = modal.querySelectorAll('.fi');
-                const selects = modal.querySelectorAll('select.fi');
-                if (inputs[0]) inputs[0].value = result.full_name || '';
-                if (inputs[1]) inputs[1].value = result.email || '';
-                if (inputs[2]) inputs[2].value = result.phone || '';
-                if (selects[0]) selects[0].value = result.source || '';
-                if (selects[1]) selects[1].value = result.current_stage || 'applied';
-                if (inputs[3]) inputs[3].value = result.experience_yrs || '';
-                if (inputs[4]) inputs[4].value = result.current_salary || '';
-                if (inputs[5]) inputs[5].value = result.expected_salary || '';
-                if (selects[2]) selects[2].value = result.notice_period || '';
+        async function viewCandidate(id){
+            try{
+                const c=await getCandidate(id);
+                const modal=document.getElementById('modalCandidate');
+                if(!modal||!c) return;
+                clearFieldErrors();
+                setModalFieldValue('modalCandidate','full_name', c.full_name);
+                setModalFieldValue('modalCandidate','email', c.email);
+                setModalFieldValue('modalCandidate','phone', c.phone);
+                setModalFieldValue('modalCandidate','applied_for', c.applied_for_id||'');
+                setModalFieldValue('modalCandidate','source', c.source||'');
+                setModalFieldValue('modalCandidate','current_stage', c.current_stage||'applied');
+                setModalFieldValue('modalCandidate','experience_yrs', c.experience_yrs||'');
+                setModalFieldValue('modalCandidate','current_salary', c.current_salary||'');
+                setModalFieldValue('modalCandidate','expected_salary', c.expected_salary||'');
+                setModalFieldValue('modalCandidate','notice_period', c.notice_period||'');
+                setModalFieldValue('modalCandidate','cover_letter', c.cover_letter||'');
                 modal.setAttribute('data-edit-id', id);
+                // change title to view mode?
                 new bootstrap.Modal(modal).show();
-            } catch (e) {
-                console.error('Failed to load candidate for view:', e);
-            }
+            }catch(e){ console.error(e); }
         }
-
-        /**
-         * Advances a candidate to the next stage via API.
-         * @param {number} id - Candidate ID.
-         * @async
-         */
-        async function advanceCandidate(id) {
-            try {
-                await advanceCandidateAPI(id);
-                showToast('✅', 'Candidate advanced');
-                loadCandidates(1);
-            } catch (e) {
-                showToast('❌', 'Failed to advance candidate');
-            }
+        async function editCandidate(id){
+            // same as view but we will reuse view logic
+            await viewCandidate(id);
         }
-
-        /**
-         * Rejects a candidate via API.
-         * @param {number} id - Candidate ID.
-         * @async
-         */
-        async function rejectCandidate(id) {
-            try {
-                await rejectCandidateAPI(id);
-                showToast('✅', 'Candidate rejected');
-                loadCandidates(1);
-            } catch (e) {
-                showToast('❌', 'Failed to reject candidate');
-            }
+        async function deleteCandidate(id){
+            if(!confirm('Delete this candidate?')) return;
+            try{ await deleteCandidateAPI(id); showToast('🗑️','Candidate deleted'); loadCandidates(candidatesPage); }catch(e){ showToast('❌','Failed');}
         }
-
-        /**
-         * Reads job modal inputs, creates or updates a job via API, and refreshes the list.
-         * @async
-         */
-        async function saveJob() {
-            const modal = document.getElementById('modalJob');
-            const editId = modal.getAttribute('data-edit-id');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                job_title: inputs[0]?.value || '',
-                job_type: selects[0]?.value || 'full_time',
-                vacancies: inputs[3]?.value || 1,
-                salary_range_min: inputs[4]?.value || null,
-                salary_range_max: inputs[5]?.value || null,
-                application_deadline: inputs[6]?.value || null,
-                experience_required: selects[1]?.value || '',
-                education_level: selects[2]?.value || '',
-                job_description: inputs[7]?.value || '',
-                skills_required: inputs[8]?.value || '',
-                status: selects[3]?.value || 'draft',
+        async function advanceCandidate(id){
+            try{ await advanceCandidateAPI(id); showToast('✅','Candidate advanced'); loadCandidates(candidatesPage); loadPipeline(); }catch(e){ showToast('❌','Failed to advance'); }
+        }
+        async function rejectCandidate(id){
+            try{ await rejectCandidateAPI(id); showToast('✅','Candidate rejected'); loadCandidates(candidatesPage); }catch(e){ showToast('❌','Failed');}
+        }
+        function resetJobForm(){
+            const modal=document.getElementById('modalJob');
+            if(!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalJob','job_type','full_time');
+            setModalFieldValue('modalJob','vacancies','1');
+            setModalFieldValue('modalJob','education_level','any');
+            setModalFieldValue('modalJob','publish_on','internal');
+            setModalFieldValue('modalJob','status','draft');
+        }
+        function resetCandidateForm(){
+            const modal=document.getElementById('modalCandidate');
+            if(!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalCandidate','current_stage','applied');
+        }
+        async function saveJob(){
+            const modal=document.getElementById('modalJob');
+            const editId=modal.getAttribute('data-edit-id');
+            clearFieldErrors();
+            const data={
+                job_title: getModalFieldValue('modalJob','job_title'),
+                department: getModalFieldValue('modalJob','department') || null,
+                job_type: getModalFieldValue('modalJob','job_type') || 'full_time',
+                location: getModalFieldValue('modalJob','location') || null,
+                salary_range_min: getModalFieldValue('modalJob','salary_range_min') || null,
+                salary_range_max: getModalFieldValue('modalJob','salary_range_max') || null,
+                vacancies: parseInt(getModalFieldValue('modalJob','vacancies')) || 1,
+                application_deadline: getModalFieldValue('modalJob','application_deadline') || null,
+                experience_required: getModalFieldValue('modalJob','experience_required') || '',
+                education_level: getModalFieldValue('modalJob','education_level') || 'any',
+                job_description: getModalFieldValue('modalJob','job_description'),
+                skills_required: getModalFieldValue('modalJob','skills_required'),
+                publish_on: getModalFieldValue('modalJob','publish_on') || 'internal',
+                status: getModalFieldValue('modalJob','status') || 'draft',
             };
-            try {
-                if (editId) {
-                    await updateJobAPI(editId, data);
-                    modal.removeAttribute('data-edit-id');
-                } else {
-                    await createJob(data);
+            if(data.department) data.department_id = data.department;
+            if(data.location) data.location_id = data.location;
+            // remove empty to let backend handle optional
+            if(!data.department) { delete data.department; delete data.department_id; }
+            if(!data.location) { delete data.location; delete data.location_id; }
+            if(!data.salary_range_min) delete data.salary_range_min;
+            if(!data.salary_range_max) delete data.salary_range_max;
+            if(!data.application_deadline) delete data.application_deadline;
+            if(!data.job_title){ showFieldErrors({job_title:['Job title required']}); return; }
+            if(!data.job_description){ showFieldErrors({job_description:['Description required']}); return; }
+            const btn=modal.querySelector('[onclick="saveJob()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
+            try{
+                if(editId){ await updateJobAPI(editId, data); showToast('✅','Job updated'); modal.removeAttribute('data-edit-id'); }
+                else { await createJob(data); showToast('✅','Job created'); }
+                bootstrap.Modal.getInstance(modal).hide();
+                resetJobForm();
+                loadJobs(1); loadPipeline();
+            }catch(e){
+                console.error(e);
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors&&Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-job'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Post Job';}}
+        }
+        async function saveCandidate(){
+            const modal=document.getElementById('modalCandidate');
+            const editId=modal.getAttribute('data-edit-id');
+            clearFieldErrors();
+            const data={
+                full_name: getModalFieldValue('modalCandidate','full_name'),
+                email: getModalFieldValue('modalCandidate','email'),
+                phone: getModalFieldValue('modalCandidate','phone'),
+                applied_for: getModalFieldValue('modalCandidate','applied_for') || null,
+                source: getModalFieldValue('modalCandidate','source') || '',
+                current_stage: getModalFieldValue('modalCandidate','current_stage') || 'applied',
+                experience_yrs: getModalFieldValue('modalCandidate','experience_yrs') || null,
+                current_salary: getModalFieldValue('modalCandidate','current_salary') || null,
+                expected_salary: getModalFieldValue('modalCandidate','expected_salary') || null,
+                notice_period: getModalFieldValue('modalCandidate','notice_period') || '',
+                cover_letter: getModalFieldValue('modalCandidate','cover_letter') || '',
+            };
+            if(data.applied_for) data.applied_for_id = data.applied_for;
+            if(!data.full_name){ showFieldErrors({full_name:['Full name required']}); return; }
+            if(!data.email){ showFieldErrors({email:['Email required']}); return; }
+            if(!data.applied_for && !data.applied_for_id){ showFieldErrors({applied_for:['Applied For required']}); return; }
+            const btn=modal.querySelector('[onclick="saveCandidate()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
+            try{
+                // handle file not via JSON; ignore resume for now
+                if(editId){ await updateCandidateAPI(editId, data); showToast('✅','Candidate updated'); modal.removeAttribute('data-edit-id'); }
+                else { await createCandidate(data); showToast('✅','Candidate created'); }
+                bootstrap.Modal.getInstance(modal).hide();
+                resetCandidateForm();
+                loadCandidates(candidatesPage);
+                loadPipeline();
+            }catch(e){
+                console.error(e);
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors&&Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-candidate'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Save Candidate';}}
+        }
+        async function saveInterview(){
+            const modal=document.getElementById('modalInterview');
+            if(!modal) return;
+            // Interview modal not defined in this template? keep dummy
+            showToast('✅','Interview scheduled');
+            if(modal) bootstrap.Modal.getInstance(modal)?.hide();
+        }
+        async function loadDropdowns(){
+            try{
+                const [depts, locs, jobs] = await Promise.all([
+                    api.index(API_ENDPOINTS.EMPLOYEE.DEPARTMENTS.INDEX, {page:1, page_size:100}).catch(()=>({data:[]})),
+                    api.index(API_ENDPOINTS.EMPLOYEE.LOCATIONS.INDEX, {page:1, page_size:100}).catch(()=>({data:[]})),
+                    api.index(API_ENDPOINTS.RECRUITMENT.JOBS.INDEX, {page:1, page_size:100}).catch(()=>({data:[]})),
+                ]);
+                const deptData = depts?.data || [];
+                const locData = locs?.data || [];
+                const jobData = jobs?.data || [];
+                const jobDeptSel=document.getElementById('job-dept-select');
+                if(jobDeptSel){
+                    const cur=jobDeptSel.value;
+                    jobDeptSel.innerHTML='<option value="">Select Department</option>'+deptData.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+                    if(cur) jobDeptSel.value=cur;
                 }
-                showToast('✅', editId ? 'Job updated!' : 'Job created!');
-                bootstrap.Modal.getInstance(modal).hide();
-                loadJobs(1);
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
-        }
-
-        /**
-         * Reads candidate modal inputs, creates or updates a candidate via API, and refreshes the list.
-         * @async
-         */
-        async function saveCandidate() {
-            const modal = document.getElementById('modalCandidate');
-            const editId = modal.getAttribute('data-edit-id');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                full_name: inputs[0]?.value || '',
-                email: inputs[1]?.value || '',
-                phone: inputs[2]?.value || '',
-                source: selects[0]?.value || '',
-                current_stage: selects[1]?.value || 'applied',
-                experience_yrs: inputs[3]?.value || null,
-                current_salary: inputs[4]?.value || null,
-                expected_salary: inputs[5]?.value || null,
-                notice_period: selects[2]?.value || '',
-            };
-            try {
-                if (editId) {
-                    await updateCandidateAPI(editId, data);
-                    modal.removeAttribute('data-edit-id');
-                } else {
-                    await createCandidate(data);
+                const jobLocSel=document.getElementById('job-location-select');
+                if(jobLocSel){
+                    const cur=jobLocSel.value;
+                    jobLocSel.innerHTML='<option value="">Select Location</option>'+locData.map(l=>`<option value="${l.id}">${l.name}</option>`).join('');
+                    if(cur) jobLocSel.value=cur;
                 }
-                showToast('✅', editId ? 'Candidate updated!' : 'Candidate created!');
-                bootstrap.Modal.getInstance(modal).hide();
-                loadCandidates(1);
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
+                const candJobSel=document.getElementById('candidate-job-select');
+                if(candJobSel){
+                    const cur=candJobSel.value;
+                    candJobSel.innerHTML='<option value="">Select Job</option>'+jobData.map(j=>`<option value="${j.id}">${j.job_title}</option>`).join('');
+                    if(cur) candJobSel.value=cur;
+                }
+            }catch(e){ console.error('dropdown',e); }
         }
-
-        /**
-         * Reads interview modal inputs, creates an interview via API, and closes the modal.
-         * @async
-         */
-        async function saveInterview() {
-            const modal = document.getElementById('modalInterview');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                interview_type: selects[0]?.value || 'phone',
-                scheduled_at: inputs[0]?.value || '',
-                duration_mins: inputs[1]?.value || 60,
-                feedback: inputs[2]?.value || '',
-            };
-            try {
-                await createInterview(data);
-                showToast('✅', 'Interview scheduled!');
-                bootstrap.Modal.getInstance(modal).hide();
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
-        }
-
         $(function () {
             loadJobs(1);
             loadCandidates(1);
             loadPipeline();
+            loadDropdowns();
+            // search debounce
+            let jobSearchTimeout, candSearchTimeout;
+            const jobSearch=document.getElementById('jobs-filter-search');
+            if(jobSearch) jobSearch.addEventListener('input', ()=>{ clearTimeout(jobSearchTimeout); jobSearchTimeout=setTimeout(()=>{jobsPage=1; loadJobs(1);},400); });
+            const jobStatus=document.getElementById('jobs-filter-status');
+            if(jobStatus) jobStatus.addEventListener('change', ()=>{ jobsPage=1; loadJobs(1); });
+            const candSearch=document.getElementById('candidate-filter-search');
+            if(candSearch) candSearch.addEventListener('input', ()=>{ clearTimeout(candSearchTimeout); candSearchTimeout=setTimeout(()=>{candidatesPage=1; loadCandidates(1);},400); });
+            const candStage=document.getElementById('candidate-filter-stage');
+            if(candStage) candStage.addEventListener('change', ()=>{ candidatesPage=1; loadCandidates(1); });
+            // modal handlers
+            ['modalJob','modalCandidate'].forEach(mid=>{
+                const el=document.getElementById(mid);
+                if(!el) return;
+                el.addEventListener('hidden.bs.modal', ()=>{ clearFieldErrors(); });
+                el.addEventListener('show.bs.modal', ()=>{ clearFieldErrors(); });
+            });
+            const addJobBtn=document.querySelector('[data-bs-target="#modalJob"]');
+            if(addJobBtn) addJobBtn.addEventListener('click', ()=>{ resetJobForm(); });
+            const addCandBtn=document.querySelector('[data-bs-target="#modalCandidate"]');
+            if(addCandBtn) addCandBtn.addEventListener('click', ()=>{ resetCandidateForm(); });
+            document.querySelectorAll('#modalJob .fi, #modalCandidate .fi').forEach(input=>{
+                input.addEventListener('input', ()=>{
+                    input.classList.remove('is-invalid');
+                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
+                    const field=input.getAttribute('data-field');
+                    if(field){
+                        const errEl=document.querySelector(`[data-error-for="${field}"]`);
+                        if(errEl) errEl.textContent='';
+                    }
+                });
+                input.addEventListener('change', ()=>{
+                    input.classList.remove('is-invalid');
+                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
+                });
+            });
         });
-
         $(function () {
             var d = new Date();
             $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
             $('.toggle').on('click', function () { $(this).toggleClass('on'); });
         });
-
     </script>
+</body>
+
+</html>

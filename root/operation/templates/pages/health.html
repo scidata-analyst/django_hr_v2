@@ -434,7 +434,7 @@
       catch (e) { console.error('Error creating safety incident:', e); throw e; }
     }
     async function resolveSafetyIncidentAPI(id) {
-      try { return await api.update(API_ENDPOINTS.SAFETY.INCIDENTS.RESOLVE, id, {}); }
+      try { return await api._request('POST', API_ENDPOINTS.SAFETY.INCIDENTS.RESOLVE(id), {}); }
       catch (e) { console.error('Error resolving safety incident:', e); throw e; }
     }
   </script>

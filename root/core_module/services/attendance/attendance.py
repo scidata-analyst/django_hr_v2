@@ -1,5 +1,5 @@
 from datetime import date
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Sum
 from core_module.abstract.base_service import BaseService
 from core_module.repository.attendance.attendance import AttendanceRepository
 from core_module.models.attendance.attendance import Attendance
@@ -53,7 +53,9 @@ class AttendanceService(BaseService):
             half_day=Count('id', filter=Q(status='half_day')),
             on_leave=Count('id', filter=Q(status='on_leave')),
             work_from_home=Count('id', filter=Q(status='work_from_home')),
+            total_overtime=Sum('overtime_hours'),
         )
+        agg['total_overtime'] = float(agg['total_overtime'] or 0)
         return agg
 
     def get_employee_stats(self, employee_id, start_date=None, end_date=None):

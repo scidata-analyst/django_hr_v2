@@ -61,3 +61,20 @@ class LeaveRequestService(BaseService):
 
     def get_by_employee(self, employee_id):
         return self.repository.get_by_employee(employee_id)
+
+    def get_balance_stats(self):
+        from django.db.models import Count
+        from django.db.models import Q
+        # Count per leave_type, also total
+        qs = self.get_all()
+        agg = qs.aggregate(
+            total=Count('id'),
+            annual=Count('id', filter=Q(leave_type='annual')),
+            sick=Count('id', filter=Q(leave_type='sick')),
+            casual=Count('id', filter=Q(leave_type='casual')),
+            maternity=Count('id', filter=Q(leave_type='maternity')),
+            paternity=Count('id', filter=Q(leave_type='paternity')),
+            emergency=Count('id', filter=Q(leave_type='emergency')),
+            unpaid=Count('id', filter=Q(leave_type='unpaid')),
+        )
+        return agg

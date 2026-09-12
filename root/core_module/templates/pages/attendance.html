@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>HRMSPro — Attendance & Leave</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +14,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <style>
+        .field-error { font-size: 0.68rem; color: #ef4444; margin-top: 4px; min-height: 14px; line-height: 1.3; }
+        .fi.is-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.08) !important; }
+        .form-global-error { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.78rem; margin-bottom:12px; display:none; }
+        .form-global-error.show { display:block; }
+        .fg.has-error .fl { color:#ef4444; }
+    </style>
 </head>
 
 <body>
@@ -160,6 +168,7 @@
                         <div class="card-header-custom">
                             <div class="card-header-title">Attendance Records</div>
                             <div class="d-flex gap-2 align-items-center flex-wrap">
+                                <input id="att-search" type="text" placeholder="Search..." class="form-control-custom" style="width:140px;padding:6px 10px;font-size:0.75rem;" />
                                 <input id="att-start-date" type="date" class="form-control-custom"
                                     style="width:140px;padding:6px 10px;font-size:0.75rem;" />
                                 <input id="att-end-date" type="date" class="form-control-custom"
@@ -208,7 +217,14 @@
                             style="padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
                             <div id="attendance-pagination-info" style="font-size:0.72rem;color:var(--text-muted);">
                             </div>
-                            <div id="attendance-pagination" style="display:flex;gap:4px;align-items:center;"></div>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <select id="attendance-page-size" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="loadAttendanceRecords(1)">
+                                    <option value="5">5 per page</option>
+                                    <option value="10" selected>10 per page</option>
+                                    <option value="25">25 per page</option>
+                                </select>
+                                <div id="attendance-pagination" style="display:flex;gap:4px;align-items:center;"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -218,9 +234,15 @@
                             <div class="card-custom">
                                 <div class="card-header-custom">
                                     <div class="card-header-title">Leave Requests</div>
-                                    <div style="display:flex;gap:6px;">
-                                        <span class="badge-custom badge-warning">12 Pending</span>
-                                        <button class="btn-outline-custom" style="padding:4px 10px;">Filter</button>
+                                    <div style="display:flex;gap:6px;align-items:center;">
+                                        <input id="leaves-search" type="text" placeholder="Search leaves..." style="padding:5px 10px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;width:130px;" />
+                                        <select id="leaves-filter-status" style="padding:5px 10px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;">
+                                            <option value="">All Status</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="approved">Approved</option>
+                                            <option value="denied">Denied</option>
+                                        </select>
+                                        <button class="btn-primary-custom" style="padding:4px 10px;font-size:0.72rem;" onclick="loadLeaves(1)"><i class="bi bi-funnel"></i> Filter</button>
                                     </div>
                                 </div>
                                 <div style="overflow-x:auto;">
@@ -246,6 +268,17 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <div style="padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                                    <div id="leaves-pagination-info" style="font-size:0.68rem;color:var(--text-muted);"></div>
+                                    <div style="display:flex;gap:8px;align-items:center;">
+                                        <select id="leaves-page-size" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="loadLeaves(1)">
+                                            <option value="5">5 per page</option>
+                                            <option value="10" selected>10 per page</option>
+                                            <option value="25">25 per page</option>
+                                        </select>
+                                        <div id="leaves-pagination" style="display:flex;gap:4px;align-items:center;"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -256,8 +289,10 @@
                                     <div class="card-custom">
                                         <div class="card-header-custom">
                                             <div class="card-header-title">Shift Roster — Today</div>
-                                            <button class="btn-outline-custom" style="padding:4px 10px;">Edit
-                                                Roster</button>
+                                            <div style="display:flex;gap:6px;align-items:center;">
+                                                <input id="shifts-search" type="text" placeholder="Search shifts..." style="padding:5px 10px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;width:120px;" />
+                                                <button class="btn-primary-custom" style="padding:4px 10px;font-size:0.72rem;" onclick="loadShifts(1)"><i class="bi bi-funnel"></i> Filter</button>
+                                            </div>
                                         </div>
                                         <div style="overflow-x:auto;">
                                             <table class="table-custom">
@@ -285,8 +320,15 @@
                                             style="padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
                                             <div id="shifts-pagination-info"
                                                 style="font-size:0.68rem;color:var(--text-muted);"></div>
-                                            <div id="shifts-pagination"
-                                                style="display:flex;gap:4px;align-items:center;"></div>
+                                            <div style="display:flex;gap:8px;align-items:center;">
+                                                <select id="shifts-page-size" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="loadShifts(1)">
+                                                    <option value="5">5 per page</option>
+                                                    <option value="10" selected>10 per page</option>
+                                                    <option value="25">25 per page</option>
+                                                </select>
+                                                <div id="shifts-pagination"
+                                                    style="display:flex;gap:4px;align-items:center;"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -299,31 +341,27 @@
                                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                                                 <div
                                                     style="padding:10px;background:#f0f9ff;border-radius:8px;text-align:center;">
-                                                    <div style="font-size:1.3rem;font-weight:800;color:var(--info);">18
-                                                    </div>
-                                                    <div style="font-size:0.68rem;color:var(--text-muted);">Annual Leave
-                                                    </div>
+                                                    <div id="leave-balance-annual" style="font-size:1.3rem;font-weight:800;color:var(--info);">—</div>
+                                                    <div style="font-size:0.68rem;color:var(--text-muted);">Annual Leave</div>
+                                                    <div id="leave-balance-annual-sub" style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;">Loading...</div>
                                                 </div>
                                                 <div
                                                     style="padding:10px;background:#fef2f2;border-radius:8px;text-align:center;">
-                                                    <div style="font-size:1.3rem;font-weight:800;color:var(--danger);">6
-                                                    </div>
-                                                    <div style="font-size:0.68rem;color:var(--text-muted);">Sick Leave
-                                                    </div>
+                                                    <div id="leave-balance-sick" style="font-size:1.3rem;font-weight:800;color:var(--danger);">—</div>
+                                                    <div style="font-size:0.68rem;color:var(--text-muted);">Sick Leave</div>
+                                                    <div id="leave-balance-sick-sub" style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;">Loading...</div>
                                                 </div>
                                                 <div
                                                     style="padding:10px;background:#fdf4ff;border-radius:8px;text-align:center;">
-                                                    <div style="font-size:1.3rem;font-weight:800;color:var(--purple);">4
-                                                    </div>
-                                                    <div style="font-size:0.68rem;color:var(--text-muted);">Casual Leave
-                                                    </div>
+                                                    <div id="leave-balance-casual" style="font-size:1.3rem;font-weight:800;color:var(--purple);">—</div>
+                                                    <div style="font-size:0.68rem;color:var(--text-muted);">Casual Leave</div>
+                                                    <div id="leave-balance-casual-sub" style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;">Loading...</div>
                                                 </div>
                                                 <div
                                                     style="padding:10px;background:#f0fdf4;border-radius:8px;text-align:center;">
-                                                    <div style="font-size:1.3rem;font-weight:800;color:var(--success);">
-                                                        90</div>
-                                                    <div style="font-size:0.68rem;color:var(--text-muted);">
-                                                        Maternity/Paternity</div>
+                                                    <div id="leave-balance-maternity" style="font-size:1.3rem;font-weight:800;color:var(--success);">—</div>
+                                                    <div style="font-size:0.68rem;color:var(--text-muted);">Maternity/Paternity</div>
+                                                    <div id="leave-balance-maternity-sub" style="font-size:0.6rem;color:var(--text-muted);margin-top:2px;">Loading...</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -358,50 +396,61 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error-attendance" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg">
-                            <div class="fl">Employee *</div><select class="fi">
-                                <option value="" disabled selected>Select Employee</option>
+                        <div class="fg" data-field-group="employee">
+                            <div class="fl">Employee *</div><select class="fi" data-field="employee" id="att-employee-select">
+                                <option value="">Select Employee</option>
                             </select>
+                            <div class="field-error" data-error-for="employee"></div>
+                            <div class="field-error" data-error-for="employee_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Date *</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="date">
+                            <div class="fl">Date *</div><input class="fi" data-field="date" type="date" />
+                            <div class="field-error" data-error-for="date"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Check-in Time</div><input class="fi" type="time" value="09:00" />
+                        <div class="fg" data-field-group="check_in_time">
+                            <div class="fl">Check-in Time</div><input class="fi" data-field="check_in_time" type="time" value="09:00" />
+                            <div class="field-error" data-error-for="check_in_time"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Check-out Time</div><input class="fi" type="time" value="18:00" />
+                        <div class="fg" data-field-group="check_out_time">
+                            <div class="fl">Check-out Time</div><input class="fi" data-field="check_out_time" type="time" value="18:00" />
+                            <div class="field-error" data-error-for="check_out_time"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Status</div><select class="fi">
+                        <div class="fg" data-field-group="status">
+                            <div class="fl">Status</div><select class="fi" data-field="status">
                                 <option value="">Select Status</option>
-                                <option>Present</option>
-                                <option>Absent</option>
-                                <option>Half Day</option>
-                                <option>Late</option>
-                                <option>On Leave</option>
-                                <option>Work From Home</option>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                                <option value="half_day">Half Day</option>
+                                <option value="late">Late</option>
+                                <option value="on_leave">On Leave</option>
+                                <option value="work_from_home">Work From Home</option>
                             </select>
+                            <div class="field-error" data-error-for="status"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Shift</div><select class="fi">
+                        <div class="fg" data-field-group="shift">
+                            <div class="fl">Shift</div><select class="fi" data-field="shift" id="att-shift-select">
                                 <option value="">Select Shift</option>
                             </select>
+                            <div class="field-error" data-error-for="shift"></div>
+                            <div class="field-error" data-error-for="shift_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Overtime Hours</div><input class="fi" type="number" placeholder="0.0"
-                                min="0" step="0.5" />
+                        <div class="fg" data-field-group="overtime_hours">
+                            <div class="fl">Overtime Hours</div><input class="fi" data-field="overtime_hours" type="number" placeholder="0.0" min="0" step="0.5" />
+                            <div class="field-error" data-error-for="overtime_hours"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Work Location</div><select class="fi">
-                                <option>Office</option>
-                                <option>Remote</option>
-                                <option>Field</option>
+                        <div class="fg" data-field-group="work_location">
+                            <div class="fl">Work Location</div><select class="fi" data-field="work_location">
+                                <option value="office">Office</option>
+                                <option value="remote">Remote</option>
+                                <option value="field">Field</option>
                             </select>
+                            <div class="field-error" data-error-for="work_location"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Remarks</div><input class="fi" placeholder="Optional notes..." />
+                        <div class="fg full" data-field-group="remarks">
+                            <div class="fl">Remarks</div><input class="fi" data-field="remarks" placeholder="Optional notes..." />
+                            <div class="field-error" data-error-for="remarks"></div>
                         </div>
                     </div>
                 </div>
@@ -431,35 +480,42 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error-leave" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg">
-                            <div class="fl">Leave Type *</div><select class="fi">
-                                <option>Annual Leave</option>
-                                <option>Sick Leave</option>
-                                <option>Casual Leave</option>
-                                <option>Maternity Leave</option>
-                                <option>Paternity Leave</option>
-                                <option>Emergency Leave</option>
-                                <option>Unpaid Leave</option>
+                        <div class="fg" data-field-group="employee">
+                            <div class="fl">Employee *</div><select class="fi" data-field="employee" id="leave-employee-select">
+                                <option value="">Select Employee</option>
                             </select>
+                            <div class="field-error" data-error-for="employee"></div>
+                            <div class="field-error" data-error-for="employee_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">From Date *</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="leave_type">
+                            <div class="fl">Leave Type *</div><select class="fi" data-field="leave_type">
+                                <option value="annual">Annual Leave</option>
+                                <option value="sick">Sick Leave</option>
+                                <option value="casual">Casual Leave</option>
+                                <option value="maternity">Maternity Leave</option>
+                                <option value="paternity">Paternity Leave</option>
+                                <option value="emergency">Emergency Leave</option>
+                                <option value="unpaid">Unpaid Leave</option>
+                            </select>
+                            <div class="field-error" data-error-for="leave_type"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">To Date *</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="from_date">
+                            <div class="fl">From Date *</div><input class="fi" data-field="from_date" type="date" />
+                            <div class="field-error" data-error-for="from_date"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Total Days</div><input class="fi" value="3" readonly=""
-                                style="background:#f8fafc;" />
+                        <div class="fg" data-field-group="to_date">
+                            <div class="fl">To Date *</div><input class="fi" data-field="to_date" type="date" />
+                            <div class="field-error" data-error-for="to_date"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Reason *</div><textarea class="fi" rows="3"
-                                placeholder="Describe the reason for leave..."></textarea>
+                        <div class="fg full" data-field-group="reason">
+                            <div class="fl">Reason *</div><textarea class="fi" data-field="reason" rows="3" placeholder="Describe the reason for leave..."></textarea>
+                            <div class="field-error" data-error-for="reason"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Attach Document (if any)</div><input class="fi" type="file"
-                                style="padding:7px 10px;" />
+                        <div class="fg full" data-field-group="document_attachment">
+                            <div class="fl">Attach Document (if any)</div><input class="fi" data-field="document_attachment" type="file" style="padding:7px 10px;" />
+                            <div class="field-error" data-error-for="document_attachment"></div>
                         </div>
                     </div>
                 </div>
@@ -489,51 +545,61 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error-shift" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg">
-                            <div class="fl">Shift Name *</div><input class="fi" placeholder="e.g. Morning Shift" />
+                        <div class="fg" data-field-group="shift_name">
+                            <div class="fl">Shift Name *</div><input class="fi" data-field="shift_name" placeholder="e.g. Morning Shift" />
+                            <div class="field-error" data-error-for="shift_name"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Shift Code</div><input class="fi" placeholder="e.g. MORN" />
+                        <div class="fg" data-field-group="shift_code">
+                            <div class="fl">Shift Code</div><input class="fi" data-field="shift_code" placeholder="e.g. MORN" />
+                            <div class="field-error" data-error-for="shift_code"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Start Time *</div><input class="fi" type="time" value="08:00" />
+                        <div class="fg" data-field-group="start_time">
+                            <div class="fl">Start Time *</div><input class="fi" data-field="start_time" type="time" value="08:00" />
+                            <div class="field-error" data-error-for="start_time"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">End Time *</div><input class="fi" type="time" value="17:00" />
+                        <div class="fg" data-field-group="end_time">
+                            <div class="fl">End Time *</div><input class="fi" data-field="end_time" type="time" value="17:00" />
+                            <div class="field-error" data-error-for="end_time"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Break Duration (min)</div><input class="fi" type="number" value="60" />
+                        <div class="fg" data-field-group="break_duration">
+                            <div class="fl">Break Duration (min)</div><input class="fi" data-field="break_duration" type="number" value="60" />
+                            <div class="field-error" data-error-for="break_duration"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Grace Period (min)</div><input class="fi" type="number" value="15" />
+                        <div class="fg" data-field-group="grace_period">
+                            <div class="fl">Grace Period (min)</div><input class="fi" data-field="grace_period" type="number" value="15" />
+                            <div class="field-error" data-error-for="grace_period"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Department</div><select class="fi">
-                                <option>All Departments</option>
-                                <option>Engineering</option>
-                                <option>Sales</option>
-                                <option>Operations</option>
+                        <div class="fg" data-field-group="department">
+                            <div class="fl">Department</div><select class="fi" data-field="department" id="shift-dept-select">
+                                <option value="">All Departments</option>
                             </select>
+                            <div class="field-error" data-error-for="department"></div>
+                            <div class="field-error" data-error-for="department_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Working Days</div><select class="fi">
-                                <option>Sun–Thu</option>
-                                <option>Mon–Fri</option>
-                                <option>Mon–Sat</option>
+                        <div class="fg" data-field-group="working_days">
+                            <div class="fl">Working Days</div><select class="fi" data-field="working_days">
+                                <option value="sun_thu">Sun–Thu</option>
+                                <option value="mon_fri">Mon–Fri</option>
+                                <option value="mon_sat">Mon–Sat</option>
+                                <option value="rotating">Rotating</option>
                             </select>
+                            <div class="field-error" data-error-for="working_days"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Overtime Eligible</div><select class="fi">
-                                <option>Yes</option>
-                                <option>No</option>
+                        <div class="fg" data-field-group="overtime_eligible">
+                            <div class="fl">Overtime Eligible</div><select class="fi" data-field="overtime_eligible">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
                             </select>
+                            <div class="field-error" data-error-for="overtime_eligible"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Status</div><select class="fi">
-                                <option>Active</option>
-                                <option>Inactive</option>
+                        <div class="fg" data-field-group="is_active">
+                            <div class="fl">Status</div><select class="fi" data-field="is_active">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
                             </select>
+                            <div class="field-error" data-error-for="is_active"></div>
                         </div>
                     </div>
                 </div>
@@ -765,7 +831,7 @@
 
         async function approveLeaveAPI(id) {
             try {
-                return await api.update(API_ENDPOINTS.ATTENDANCE.LEAVES.APPROVE(id), { status: 'approved' });
+                return await api._request('POST', API_ENDPOINTS.ATTENDANCE.LEAVES.APPROVE(id), {});
             } catch (error) {
                 console.error('Error approving leave:', error);
                 throw error;
@@ -774,7 +840,8 @@
 
         async function denyLeaveAPI(id) {
             try {
-                return await api.update(API_ENDPOINTS.ATTENDANCE.LEAVES.DENY(id), { status: 'denied' });
+                const reason = prompt('Enter denial reason (optional):') || '';
+                return await api._request('POST', API_ENDPOINTS.ATTENDANCE.LEAVES.DENY(id), { denial_reason: reason });
             } catch (error) {
                 console.error('Error denying leave:', error);
                 throw error;
@@ -805,7 +872,7 @@
         }
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
 
@@ -814,12 +881,6 @@
             if (name) $('#integration-name').text(name);
         });
 
-        /**
-         * Displays a toast notification with an icon and message.
-         * @param {string} icon - Emoji or icon character.
-         * @param {string} msg - Message to display.
-         * @param {number} [duration=3000] - Auto-hide duration in ms.
-         */
         function showToast(icon, msg, duration) {
             duration = duration || 3000;
             $('#toast-icon').text(icon);
@@ -827,21 +888,10 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-
-        /**
-         * Handles delete confirmation modal close and feedback.
-         * Triggered by the delete modal's confirm button.
-         */
         function confirmDelete() {
             $('#modalDelete').modal('hide');
             showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
         }
-
-        /**
-         * Switches the active tab within a tab group.
-         * @param {string} tabGroup - Matches data-tabgroup attribute.
-         * @param {string} tabId - Matches data-tabid attribute to activate.
-         */
         function showSubTab(tabGroup, tabId) {
             document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
                 t.classList.toggle('active', t.dataset.tabid === tabId);
@@ -850,8 +900,6 @@
                 p.classList.toggle('active', p.dataset.panelid === tabId);
             });
         }
-
-        /** Page title lookup for topbar updates. */
         const pageTitles = {
             dashboard: 'Dashboard Overview',
             employee: 'Employee Management',
@@ -871,395 +919,676 @@
             global: 'Global HR',
             integrations: 'Integrations & Automation'
         };
-
-        /**
-         * Navigates to a page section and updates navigation state.
-         * @param {string} id - Page identifier matching `page-{id}` element.
-         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
-         */
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + id);
             if (target) target.classList.add('active');
             document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            document.getElementById('topbar-title').textContent = pageTitles[id] || id;
+            const topTitle = document.getElementById('topbar-title');
+            if (topTitle) topTitle.textContent = pageTitles[id] || id;
             document.getElementById('sidebar').classList.remove('open');
             window.scrollTo(0, 0);
         }
-
         const d = new Date();
         const dateEl = document.getElementById('topbar-date');
         if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
         document.querySelectorAll('.toggle').forEach(t => {
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
 
-        let attPage = 1;
-        const attPageSize = 10;
-        let currentPage = 1;
-        const pageSize = 10;
-        let allLeavesData = [];
-        let allShiftsData = [];
-
-        /**
-         * Renders paginated table data with page info and navigation.
-         * @param {Array} data - Array of items to paginate.
-         * @param {string} tbodyId - ID of the tbody element to render rows into.
-         * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
-         * @param {string} containerId - ID of the pagination buttons container.
-         * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
-         */
-        function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
-            const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
-            if (currentPage > totalPages) currentPage = totalPages;
-            const start = (currentPage - 1) * pageSize;
-            const end = Math.min(start + pageSize, data.length);
-            const pageData = data.slice(start, end);
-
-            const tbody = document.getElementById(tbodyId);
-            if (tbody) {
-                tbody.innerHTML = '';
-                if (pageData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">No data found</td></tr>';
-                } else {
-                    pageData.forEach((item, i) => {
-                        tbody.innerHTML += renderRowFn(item, i);
-                    });
+        // ── Form helpers ──
+        function clearFieldErrors() {
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.fi.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.fg.has-error').forEach(el => el.classList.remove('has-error'));
+            document.querySelectorAll('.form-global-error').forEach(el => { el.textContent=''; el.classList.remove('show'); });
+        }
+        function showFieldErrors(errors) {
+            clearFieldErrors();
+            if (!errors || typeof errors !== 'object') return;
+            const fieldMap = {
+                'employee': 'employee', 'employee_id': 'employee',
+                'date': 'date',
+                'check_in_time': 'check_in_time', 'check_out_time': 'check_out_time',
+                'status': 'status', 'shift': 'shift', 'shift_id': 'shift',
+                'overtime_hours': 'overtime_hours', 'work_location': 'work_location', 'remarks': 'remarks',
+                'leave_type': 'leave_type', 'from_date': 'from_date', 'to_date': 'to_date', 'reason': 'reason',
+                'document_attachment': 'document_attachment',
+                'shift_name': 'shift_name', 'shift_code': 'shift_code', 'start_time': 'start_time', 'end_time': 'end_time',
+                'break_duration': 'break_duration', 'grace_period': 'grace_period',
+                'department': 'department', 'department_id': 'department',
+                'working_days': 'working_days', 'overtime_eligible': 'overtime_eligible', 'is_active': 'is_active',
+            };
+            let hasFieldError = false;
+            for (const [key, val] of Object.entries(errors)) {
+                const msg = Array.isArray(val) ? val.join(', ') : String(val);
+                if (key === '__all__' || key === 'error') {
+                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = msg; el.classList.add('show'); }});
+                    hasFieldError = true; continue;
+                }
+                const field = fieldMap[key] || key;
+                const errorEl = document.querySelector(`[data-error-for="${key}"]`) || document.querySelector(`[data-error-for="${field}"]`);
+                const input = document.querySelector(`[data-field="${field}"]`) || document.querySelector(`[data-field="${key}"]`);
+                if (errorEl) { errorEl.textContent = msg; hasFieldError = true; }
+                if (input) { input.classList.add('is-invalid'); const fg = input.closest('.fg'); if (fg) fg.classList.add('has-error'); hasFieldError = true; }
+                if (!errorEl && !input) {
+                    document.querySelectorAll('.form-global-error').forEach(el => { if (!el.textContent) { el.textContent = `${key}: ${msg}`; el.classList.add('show'); }});
                 }
             }
-
-            const info = document.getElementById(infoId);
-            if (info) {
-                info.textContent = data.length > 0 ? `Showing ${start + 1}–${end} of ${data.length}` : 'No data found';
+        }
+        function getFieldValue(field) {
+            const el = document.querySelector(`[data-field="${field}"]`);
+            if (!el) return '';
+            // for modal specific, prefer visible modal's field if multiple exist
+            const visibleModal = document.querySelector('.modal.show');
+            if (visibleModal) {
+                const modalEl = visibleModal.querySelector(`[data-field="${field}"]`);
+                if (modalEl) return modalEl.value.trim();
             }
+            return el.value.trim();
+        }
+        function getModalFieldValue(modalId, field) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return '';
+            const el = modal.querySelector(`[data-field="${field}"]`);
+            return el ? el.value.trim() : '';
+        }
+        function setFieldValue(field, value) {
+            const visibleModal = document.querySelector('.modal.show');
+            let el = null;
+            if (visibleModal) el = visibleModal.querySelector(`[data-field="${field}"]`);
+            if (!el) el = document.querySelector(`[data-field="${field}"]`);
+            if (el) el.value = value || '';
+        }
+        function setModalFieldValue(modalId, field, value) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            const el = modal.querySelector(`[data-field="${field}"]`);
+            if (el) el.value = value == null ? '' : value;
+        }
 
+        // ── Server pagination helper ──
+        function renderPaginationServer(total, page, pageSize, containerId, infoId, loadFnName) {
+            const totalPages = Math.ceil(total / pageSize) || 1;
             const container = document.getElementById(containerId);
-            if (container) {
-                let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${currentPage - 1})">‹ Prev</button>`;
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                        html += `<button class="${i === currentPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${i})">${i}</button>`;
-                    } else if (i === currentPage - 2 || i === currentPage + 2) {
-                        html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-                    }
+            const info = document.getElementById(infoId);
+            if (!container || !info) return;
+            const start = total > 0 ? (page - 1) * pageSize + 1 : 0;
+            const end = Math.min(page * pageSize, total);
+            info.textContent = total > 0 ? `Showing ${start}\u2013${end} of ${total}` : 'No records found';
+            if (totalPages <= 1) { container.innerHTML = ''; return; }
+            let html = '';
+            html += `<button class="btn-outline-custom" style="padding:5px 10px;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${loadFnName}(${page - 1})">\u2039 Prev</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+                    html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="${loadFnName}(${i})">${i}</button>`;
+                } else if (i === page - 2 || i === page + 2) {
+                    html += `<span style="padding:5px;color:var(--text-muted);">\u2026</span>`;
                 }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${currentPage + 1})">Next ›</button>`;
-                container.innerHTML = html;
             }
+            html += `<button class="btn-outline-custom" style="padding:5px 10px;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${loadFnName}(${page + 1})">Next \u203A</button>`;
+            container.innerHTML = html;
         }
 
-        /**
-         * Updates current page and triggers render for the active paginated table.
-         * @param {string} tbodyId - ID of the tbody being paginated.
-         * @param {string} infoId - ID of the pagination info element.
-         * @param {string} containerId - ID of the pagination container.
-         * @param {number} page - Target page number.
-         */
-        function goPage(tbodyId, infoId, containerId, page) {
-            currentPage = page;
-            if (tbodyId === 'leaves-tbody') renderLeavesPage();
-            if (tbodyId === 'shifts-tbody') renderShiftsPage();
+        // ── State ──
+        let attPage = 1, leavesPage = 1, shiftsPage = 1;
+        function getPageSize(id, fallback) {
+            const sel = document.getElementById(id);
+            return sel ? parseInt(sel.value) || fallback : fallback;
         }
 
-        /** Renders the current page of leave records. */
-        function renderLeavesPage() {
-            renderPagination(allLeavesData, 'leaves-tbody', 'leaves-pagination-info', 'leaves-pagination', (l) => {
-                const statusBadge = l.status === 'approved' ? 'badge-success' : l.status === 'denied' ? 'badge-danger' : 'badge-warning';
-                return `<tr data-id="${l.id}">
-                    <td>${l.employee_name || '—'}</td>
-                    <td><span class="badge-custom badge-info">${l.leave_type}</span></td>
-                    <td>${l.from_date}</td>
-                    <td>${l.to_date}</td>
-                    <td>${l.total_days || '—'}</td>
-                    <td>${l.reason || '—'}</td>
-                    <td><span class="badge-custom ${statusBadge}">${l.status}</span></td>
-                    <td><div style="display:flex;gap:3px;">${l.status === 'pending' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="approveLeave(${l.id})">Approve</button><button class="btn-danger-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="denyLeave(${l.id})">Deny</button>` : `<button class="btn-outline-custom" style="padding:3px 8px;font-size:0.65rem;"><i class="bi bi-eye"></i></button>`}</div></td>
-                </tr>`;
-            });
-        }
-
-        /** Renders the current page of shift records. */
-        function renderShiftsPage() {
-            renderPagination(allShiftsData, 'shifts-tbody', 'shifts-pagination-info', 'shifts-pagination', (s) => {
-                return `<tr data-id="${s.id}">
-                    <td style="font-weight:600;">${s.shift_name}</td>
-                    <td>${s.shift_code}</td>
-                    <td>${s.start_time}</td>
-                    <td>${s.end_time}</td>
-                    <td>${s.department_name || 'All'}</td>
-                    <td><span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
-                    <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editShift(${s.id})">✏ Edit</button><button class="btn-del" onclick="deleteShift(${s.id})">🗑</button></div></td>
-                </tr>`;
-            });
-        }
-
-        /**
-         * Fetches all shifts and renders the shift table.
-         * @async
-         */
-        async function loadShifts() {
-            currentPage = 1;
-            try {
-                const result = await indexShifts({ page_size: 500 });
-                allShiftsData = result.data || [];
-                renderShiftsPage();
-            } catch (e) {
-                console.error('Failed to load shifts:', e);
-            }
-        }
-
-        /**
-         * Fetches all leave records and renders the leave table.
-         * @async
-         */
-        async function loadLeaves() {
-            currentPage = 1;
-            try {
-                const result = await indexLeaves({ page_size: 500 });
-                allLeavesData = result.data || [];
-                renderLeavesPage();
-            } catch (e) {
-                console.error('Failed to load leaves:', e);
-            }
-        }
-
-        /**
-         * Approves a leave request and refreshes the leave list.
-         * @param {number} id - Leave record ID.
-         * @async
-         */
-        async function approveLeave(id) {
-            try {
-                await approveLeaveAPI(id);
-                showToast('✅', 'Leave approved');
-                loadLeaves();
-            } catch (e) {
-                showToast('❌', 'Failed to approve leave');
-            }
-        }
-
-        /**
-         * Denies a leave request and refreshes the leave list.
-         * @param {number} id - Leave record ID.
-         * @async
-         */
-        async function denyLeave(id) {
-            try {
-                await denyLeaveAPI(id);
-                showToast('✅', 'Leave denied');
-                loadLeaves();
-            } catch (e) {
-                showToast('❌', 'Failed to deny leave');
-            }
-        }
-
-        /**
-         * Reads shift modal inputs, creates a shift via API, and refreshes the list.
-         * @async
-         */
-        async function saveShift() {
-            const modal = document.getElementById('modalShift');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                shift_name: inputs[0]?.value || '',
-                shift_code: inputs[1]?.value || '',
-                start_time: inputs[2]?.value || '',
-                end_time: inputs[3]?.value || '',
-                break_duration: inputs[4]?.value || 60,
-                grace_period: inputs[5]?.value || 15,
-                working_days: selects[0]?.value || 'sun_thu',
-                overtime_eligible: selects[1]?.value === 'Yes',
-                is_active: selects[2]?.value === 'Active',
-            };
-            try {
-                await createShift(data);
-                showToast('✅', 'Shift created!');
-                bootstrap.Modal.getInstance(modal).hide();
-                loadShifts();
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
-        }
-
-        /**
-         * Reads attendance modal inputs, creates a record via API, and refreshes data.
-         * @async
-         */
-        async function saveAttendance() {
-            const modal = document.getElementById('modalAttendance');
-            const fields = modal.querySelectorAll('.fi');
-            const data = {
-                employee_id: fields[0]?.value || '',
-                date: fields[1]?.value || '',
-                check_in_time: fields[2]?.value || '',
-                check_out_time: fields[3]?.value || '',
-                status: fields[4]?.value || 'present',
-                shift_id: fields[5]?.value || '',
-                overtime_hours: fields[6]?.value || 0,
-                work_location: fields[7]?.value || 'office',
-                remarks: fields[8]?.value || '',
-            };
-            try {
-                await createAttendanceRecord(data);
-                showToast('✅', 'Attendance saved!');
-                bootstrap.Modal.getInstance(modal).hide();
-                loadAttendanceRecords(1);
-                loadAttendanceStats();
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
-        }
-
-        /**
-         * Reads leave modal inputs, submits via API, and refreshes related data.
-         * @async
-         */
-        async function saveLeave() {
-            const modal = document.getElementById('modalLeave');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                leave_type: selects[0]?.value || 'annual',
-                from_date: inputs[0]?.value || '',
-                to_date: inputs[1]?.value || '',
-                total_days: inputs[2]?.value || 1,
-                reason: inputs[3]?.value || '',
-            };
-            try {
-                await createLeave(data);
-                showToast('✅', 'Leave submitted!');
-                bootstrap.Modal.getInstance(modal).hide();
-                loadLeaves();
-                loadAttendanceStats();
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
-        }
-
-        /**
-         * Loads paginated attendance records with optional filters.
-         * @param {number} [page] - Page number to fetch. Defaults to 1.
-         * @async
-         */
+        // ── Load Attendance Records (server) ──
         async function loadAttendanceRecords(page) {
             attPage = page || 1;
+            const pageSize = getPageSize('attendance-page-size', 10);
+            const search = document.getElementById('att-search')?.value || '';
             const startDate = document.getElementById('att-start-date')?.value || '';
             const endDate = document.getElementById('att-end-date')?.value || '';
             const employee = document.getElementById('att-filter-employee')?.value || '';
             const status = document.getElementById('att-filter-status')?.value || '';
-
-            const params = { page: attPage, page_size: attPageSize };
+            const params = { page: attPage, page_size: pageSize };
+            if (search) params.search = search;
             if (startDate) params.start_date = startDate;
             if (endDate) params.end_date = endDate;
             if (employee) params.employee = employee;
             if (status) params.status = status;
-
-            const result = await indexAttendanceRecords(params);
-            if (!result?.data) return;
-
-            const tbody = document.getElementById('attendance-tbody');
-            if (!tbody) return;
-
-            if (result.data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">No attendance records found</td></tr>';
-            } else {
-                const statusMap = {
-                    'present': 'badge-success',
-                    'absent': 'badge-danger',
-                    'late': 'badge-warning',
-                    'half_day': 'badge-info',
-                    'on_leave': 'badge-purple',
-                    'work_from_home': 'badge-primary',
-                };
+            try {
+                const result = await indexAttendanceRecords(params);
+                const tbody = document.getElementById('attendance-tbody');
+                if (!tbody) return;
+                if (!result || !result.data || result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">No attendance records found</td></tr>';
+                    renderPaginationServer(0, attPage, pageSize, 'attendance-pagination', 'attendance-pagination-info', 'loadAttendanceRecords');
+                    return;
+                }
+                const statusMap = { 'present': 'badge-success', 'absent': 'badge-danger', 'late': 'badge-warning', 'half_day': 'badge-info', 'on_leave': 'badge-purple', 'work_from_home': 'badge-primary' };
                 tbody.innerHTML = result.data.map(a => {
                     const badge = statusMap[a.status] || 'badge-gray';
-                    return `<tr>
+                    return `<tr data-id="${a.id}">
                         <td>${a.employee_name || '—'}</td>
                         <td>${a.date || '—'}</td>
                         <td>${a.check_in_time || '—'}</td>
                         <td>${a.check_out_time || '—'}</td>
                         <td><span class="badge-custom ${badge}">${a.status || '—'}</span></td>
-                        <td>${a.overtime_hours ? a.overtime_hours + 'h' : '—'}</td>
+                        <td>${a.overtime_hours && a.overtime_hours !== '0.00' ? a.overtime_hours + 'h' : '—'}</td>
                         <td>${a.work_location || '—'}</td>
                         <td>${a.shift_name || '—'}</td>
                     </tr>`;
                 }).join('');
-            }
-
-            const totalPages = result.total_pages || 1;
-            const start = (attPage - 1) * attPageSize + 1;
-            const end = Math.min(attPage * attPageSize, result.count);
-            const info = document.getElementById('attendance-pagination-info');
-            if (info) {
-                info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
-            }
-
-            const container = document.getElementById('attendance-pagination');
-            if (container) {
-                let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${attPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="loadAttendanceRecords(${attPage - 1})">‹ Prev</button>`;
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= attPage - 1 && i <= attPage + 1)) {
-                        html += `<button class="${i === attPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="loadAttendanceRecords(${i})">${i}</button>`;
-                    } else if (i === attPage - 2 || i === attPage + 2) {
-                        html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-                    }
-                }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${attPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="loadAttendanceRecords(${attPage + 1})">Next ›</button>`;
-                container.innerHTML = html;
+                renderPaginationServer(result.count || result.data.length, attPage, pageSize, 'attendance-pagination', 'attendance-pagination-info', 'loadAttendanceRecords');
+            } catch (e) {
+                console.error('Failed to load attendance:', e);
             }
         }
 
-        /**
-         * Loads attendance statistics and updates the stat cards.
-         * @async
-         */
+        // ── Load Leaves (server) ──
+        async function loadLeaves(page) {
+            leavesPage = page || 1;
+            const pageSize = getPageSize('leaves-page-size', 10);
+            const search = document.getElementById('leaves-search')?.value || '';
+            const status = document.getElementById('leaves-filter-status')?.value || '';
+            const params = { page: leavesPage, page_size: pageSize };
+            if (search) params.search = search;
+            if (status) params.status = status;
+            try {
+                const result = await indexLeaves(params);
+                const tbody = document.getElementById('leaves-tbody');
+                if (!tbody) return;
+                if (!result || !result.data || result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">No leave requests found</td></tr>';
+                    renderPaginationServer(0, leavesPage, pageSize, 'leaves-pagination', 'leaves-pagination-info', 'loadLeaves');
+                    return;
+                }
+                tbody.innerHTML = result.data.map(l => {
+                    const badge = l.status === 'approved' ? 'badge-success' : l.status === 'denied' ? 'badge-danger' : 'badge-warning';
+                    return `<tr data-id="${l.id}">
+                        <td>${l.employee_name || '—'}</td>
+                        <td><span class="badge-custom badge-info">${l.leave_type_display || l.leave_type}</span></td>
+                        <td>${l.from_date || '—'}</td>
+                        <td>${l.to_date || '—'}</td>
+                        <td>${l.total_days || '—'}</td>
+                        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.reason || '—'}</td>
+                        <td><span class="badge-custom ${badge}">${l.status}</span></td>
+                        <td><div style="display:flex;gap:3px;">${l.status === 'pending' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="approveLeave(${l.id})">Approve</button><button class="btn-danger-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="denyLeave(${l.id})">Deny</button>` : `<button class="btn-outline-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="viewLeave(${l.id})"><i class="bi bi-eye"></i></button>`}<button class="btn-del" style="padding:3px 8px;font-size:0.65rem;" onclick="deleteLeave(${l.id})">🗑</button></div></td>
+                    </tr>`;
+                }).join('');
+                renderPaginationServer(result.count || result.data.length, leavesPage, pageSize, 'leaves-pagination', 'leaves-pagination-info', 'loadLeaves');
+            } catch (e) { console.error('Failed to load leaves:', e); }
+        }
+
+        // ── Load Shifts (server) ──
+        async function loadShifts(page) {
+            shiftsPage = page || 1;
+            const pageSize = getPageSize('shifts-page-size', 10);
+            const search = document.getElementById('shifts-search')?.value || '';
+            const params = { page: shiftsPage, page_size: pageSize };
+            if (search) params.search = search;
+            try {
+                const result = await indexShifts(params);
+                const tbody = document.getElementById('shifts-tbody');
+                if (!tbody) return;
+                if (!result || !result.data || result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">No shifts found</td></tr>';
+                    renderPaginationServer(0, shiftsPage, pageSize, 'shifts-pagination', 'shifts-pagination-info', 'loadShifts');
+                    return;
+                }
+                tbody.innerHTML = result.data.map(s => {
+                    return `<tr data-id="${s.id}">
+                        <td style="font-weight:600;">${s.shift_name}</td>
+                        <td>${s.shift_code}</td>
+                        <td>${s.start_time}</td>
+                        <td>${s.end_time}</td>
+                        <td>${s.department_name || 'All'}</td>
+                        <td><span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Inactive'}</span></td>
+                        <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editShift(${s.id})">✏ Edit</button><button class="btn-del" onclick="deleteShift(${s.id})">🗑</button></div></td>
+                    </tr>`;
+                }).join('');
+                renderPaginationServer(result.count || result.data.length, shiftsPage, pageSize, 'shifts-pagination', 'shifts-pagination-info', 'loadShifts');
+            } catch (e) { console.error('Failed to load shifts:', e); }
+        }
+
+        async function approveLeave(id) {
+            try { await approveLeaveAPI(id); showToast('✅', 'Leave approved'); loadLeaves(leavesPage); } catch (e) { showToast('❌', 'Failed to approve'); const err=e?.response?.data||e?.data||{}; showFieldErrors(err.errors||err); }
+        }
+        async function denyLeave(id) {
+            try { await denyLeaveAPI(id); showToast('✅', 'Leave denied'); loadLeaves(leavesPage); } catch (e) { showToast('❌', 'Failed to deny'); }
+        }
+        async function viewLeave(id) {
+            try {
+                const l = await getLeave(id);
+                // populate modalLeave for view? just toast
+                showToast('ℹ️', `${l.employee_name}: ${l.leave_type} ${l.from_date} to ${l.to_date}`);
+            } catch(e) {}
+        }
+        async function deleteLeave(id) {
+            if (!confirm('Delete this leave request?')) return;
+            try { await deleteLeaveAPI(id); showToast('🗑️', 'Leave deleted'); loadLeaves(leavesPage); } catch(e){ showToast('❌','Failed'); }
+        }
+
+        // ── Attendance Stats ──
         async function loadAttendanceStats() {
             try {
                 const result = await allAttendanceStats();
                 if (!result) return;
                 const stats = result.data || result;
-                const cards = document.querySelectorAll('#page-attendance .stat-card .stat-value');
-                if (cards[0]) cards[0].textContent = stats.present ?? stats.total_present ?? '0';
-                if (cards[1]) cards[1].textContent = stats.on_leave ?? stats.total_on_leave ?? '0';
-                if (cards[2]) cards[2].textContent = stats.late ?? stats.total_late ?? '0';
-                if (cards[3]) cards[3].textContent = stats.overtime_hours ?? stats.total_overtime ?? '0';
-            } catch (e) {
-                console.error('Failed to load attendance stats:', e);
-            }
-        }
-
-        /**
-         * Populates the employee filter dropdown via the API.
-         * @async
-         */
-        async function loadEmployeeFilter() {
-            try {
-                const result = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { page_size: 500 });
-                const sel = document.getElementById('att-filter-employee');
-                if (sel && result?.data) {
-                    result.data.forEach(e => {
-                        const opt = document.createElement('option');
-                        opt.value = e.id;
-                        opt.textContent = `${e.first_name} ${e.last_name}`;
-                        sel.appendChild(opt);
-                    });
+                const presentEl = document.getElementById('stat-present');
+                const onLeaveEl = document.getElementById('stat-on-leave');
+                const lateEl = document.getElementById('stat-late');
+                const overtimeEl = document.getElementById('stat-overtime');
+                const presentChange = document.getElementById('stat-present-change');
+                const onLeaveChange = document.getElementById('stat-on-leave-change');
+                const lateChange = document.getElementById('stat-late-change');
+                const overtimeChange = document.getElementById('stat-overtime-change');
+                if (presentEl) presentEl.textContent = stats.present ?? '0';
+                if (onLeaveEl) onLeaveEl.textContent = stats.on_leave ?? '0';
+                if (lateEl) lateEl.textContent = stats.late ?? '0';
+                if (overtimeEl) {
+                    const ot = stats.total_overtime ?? stats.overtime_hours ?? 0;
+                    overtimeEl.textContent = typeof ot === 'number' ? ot.toFixed(1) : ot;
                 }
+                const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                if (presentChange) presentChange.textContent = `${stats.total_records ?? 0} records today • ${todayStr}`;
+                if (onLeaveChange) onLeaveChange.textContent = stats.on_leave > 0 ? `${stats.on_leave} on leave` : `No leave today`;
+                if (lateChange) lateChange.textContent = stats.late > 0 ? `${stats.late} late arrivals` : `On time`;
+                if (overtimeChange) overtimeChange.textContent = `${stats.total_overtime ?? 0}h total`;
+                // Update card styles based on values
+                if (presentChange) presentChange.className = 'stat-change up';
+                if (onLeaveChange) onLeaveChange.className = stats.on_leave > 0 ? 'stat-change down' : 'stat-change up';
+                if (lateChange) lateChange.className = stats.late > 0 ? 'stat-change down' : 'stat-change up';
+            } catch (e) { console.error('stats failed', e); }
+        }
+
+        // ── Leave Balance Overview (dynamic) ──
+        async function loadLeaveBalances() {
+            try {
+                let counts = null;
+                let total = 0;
+                // Try dedicated stats endpoint first (more efficient, handles large datasets)
+                try {
+                    const stats = await api.all(API_ENDPOINTS.ATTENDANCE.LEAVES.STATS);
+                    // stats is {total, annual, sick, casual, maternity, paternity, emergency, unpaid}
+                    if (stats && typeof stats.total !== 'undefined') {
+                        counts = stats;
+                        total = stats.total || 0;
+                    }
+                } catch (e) {
+                    console.warn('leave stats endpoint failed, fallback to list', e);
+                }
+                // Fallback: fetch list and count manually if stats not available
+                if (!counts) {
+                    const result = await api.index(API_ENDPOINTS.ATTENDANCE.LEAVES.INDEX, { page: 1, page_size: 100, sort_by: 'id', sort_direction: 'desc' });
+                    const leaves = result?.data || [];
+                    counts = { annual: 0, sick: 0, casual: 0, maternity: 0, paternity: 0, emergency: 0, unpaid: 0, total: leaves.length };
+                    leaves.forEach(l => {
+                        const t = (l.leave_type || '').toLowerCase();
+                        if (counts.hasOwnProperty(t)) counts[t] += 1;
+                        else if (t.includes('maternity') || t.includes('paternity')) counts.maternity += 1;
+                    });
+                    total = leaves.length;
+                }
+                const annualEl = document.getElementById('leave-balance-annual');
+                const sickEl = document.getElementById('leave-balance-sick');
+                const casualEl = document.getElementById('leave-balance-casual');
+                const maternityEl = document.getElementById('leave-balance-maternity');
+                const annualSub = document.getElementById('leave-balance-annual-sub');
+                const sickSub = document.getElementById('leave-balance-sick-sub');
+                const casualSub = document.getElementById('leave-balance-casual-sub');
+                const maternitySub = document.getElementById('leave-balance-maternity-sub');
+                if (annualEl) annualEl.textContent = counts.annual ?? 0;
+                if (sickEl) sickEl.textContent = counts.sick ?? 0;
+                if (casualEl) casualEl.textContent = counts.casual ?? 0;
+                if (maternityEl) maternityEl.textContent = (counts.maternity ?? 0) + (counts.paternity ?? 0);
+                if (annualSub) annualSub.textContent = total ? `${counts.annual ?? 0} of ${total}` : 'No leaves';
+                if (sickSub) sickSub.textContent = total ? `${counts.sick ?? 0} sick` : 'No sick leave';
+                if (casualSub) casualSub.textContent = total ? `${counts.casual ?? 0} casual` : 'No casual';
+                if (maternitySub) maternitySub.textContent = ((counts.maternity ?? 0) + (counts.paternity ?? 0)) > 0 ? `${(counts.maternity ?? 0) + (counts.paternity ?? 0)} maternity/paternity` : 'No maternity/paternity';
             } catch (e) {
-                console.error('Failed to load employees:', e);
+                console.error('leave balances failed', e);
+                const subs = ['leave-balance-annual-sub','leave-balance-sick-sub','leave-balance-casual-sub','leave-balance-maternity-sub'];
+                subs.forEach(id => { const el = document.getElementById(id); if (el) el.textContent = '—'; });
             }
         }
 
+        // ── Dropdowns ──
+        async function loadDropdowns() {
+            try {
+                const [emps, shifts, depts] = await Promise.all([
+                    api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { page:1, page_size:100 }).catch(()=>({data:[]})),
+                    api.index(API_ENDPOINTS.ATTENDANCE.SHIFTS.INDEX, { page:1, page_size:100 }).catch(()=>({data:[]})),
+                    api.all(API_ENDPOINTS.EMPLOYEE.DEPARTMENTS.INDEX).catch(()=>({data:[]})),
+                ]);
+                const empData = emps?.data || [];
+                const shiftData = shifts?.data || [];
+                // attendance employee select
+                const attSel = document.getElementById('att-employee-select');
+                if (attSel) {
+                    attSel.innerHTML = '<option value="">Select Employee</option>' + empData.map(e=>`<option value="${e.id}">${e.first_name} ${e.last_name} (${e.employee_id||e.id})</option>`).join('');
+                }
+                const leaveSel = document.getElementById('leave-employee-select');
+                if (leaveSel) {
+                    leaveSel.innerHTML = '<option value="">Select Employee</option>' + empData.map(e=>`<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('');
+                }
+                const attShiftSel = document.getElementById('att-shift-select');
+                if (attShiftSel) {
+                    attShiftSel.innerHTML = '<option value="">Select Shift</option>' + shiftData.map(s=>`<option value="${s.id}">${s.shift_name} (${s.shift_code})</option>`).join('');
+                }
+                const shiftDeptSel = document.getElementById('shift-dept-select');
+                const deptData = depts?.data || depts || [];
+                const deptList = Array.isArray(deptData) ? deptData : (deptData.data||[]);
+                if (shiftDeptSel) {
+                    shiftDeptSel.innerHTML = '<option value="">All Departments</option>' + deptList.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+                }
+                // also populate attendance filter dropdown
+                const filtSel = document.getElementById('att-filter-employee');
+                if (filtSel) {
+                    const currentVal = filtSel.value;
+                    filtSel.innerHTML = '<option value="">All Employees</option>' + empData.map(e=>`<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('');
+                    filtSel.value = currentVal;
+                }
+            } catch(e){ console.error('dropdown failed',e); }
+        }
+        async function loadEmployeeFilter() { /* deprecated, uses loadDropdowns */ }
+
+        // ── Reset helpers ──
+        function resetAttendanceForm() {
+            const modal = document.getElementById('modalAttendance');
+            if (!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el => { if (el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalAttendance','work_location','office');
+            setModalFieldValue('modalAttendance','status','present');
+            setModalFieldValue('modalAttendance','check_in_time','09:00');
+            setModalFieldValue('modalAttendance','check_out_time','18:00');
+        }
+        function resetLeaveForm() {
+            const modal = document.getElementById('modalLeave');
+            if (!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el => { if (el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalLeave','leave_type','annual');
+        }
+        function resetShiftForm() {
+            const modal = document.getElementById('modalShift');
+            if (!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el => { if (el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalShift','break_duration','60');
+            setModalFieldValue('modalShift','grace_period','15');
+            setModalFieldValue('modalShift','working_days','sun_thu');
+            setModalFieldValue('modalShift','overtime_eligible','false');
+            setModalFieldValue('modalShift','is_active','true');
+        }
+
+        // ── Edit ──
+        async function editShift(id) {
+            try {
+                const s = await getShift(id);
+                const modal = document.getElementById('modalShift');
+                if (!modal || !s) return;
+                clearFieldErrors();
+                setModalFieldValue('modalShift','shift_name', s.shift_name);
+                setModalFieldValue('modalShift','shift_code', s.shift_code);
+                setModalFieldValue('modalShift','start_time', s.start_time);
+                setModalFieldValue('modalShift','end_time', s.end_time);
+                setModalFieldValue('modalShift','break_duration', s.break_duration);
+                setModalFieldValue('modalShift','grace_period', s.grace_period);
+                setModalFieldValue('modalShift','department', s.department_id || '');
+                setModalFieldValue('modalShift','working_days', s.working_days);
+                setModalFieldValue('modalShift','overtime_eligible', s.overtime_eligible ? 'true' : 'false');
+                setModalFieldValue('modalShift','is_active', s.is_active ? 'true' : 'false');
+                modal.setAttribute('data-edit-id', id);
+                new bootstrap.Modal(modal).show();
+            } catch(e){ console.error(e); showToast('❌','Failed to load shift');}
+        }
+        async function editAttendance(id) {
+            try {
+                const a = await getAttendanceRecord(id);
+                const modal = document.getElementById('modalAttendance');
+                if (!modal || !a) return;
+                clearFieldErrors();
+                setModalFieldValue('modalAttendance','employee', a.employee_id);
+                setModalFieldValue('modalAttendance','date', a.date);
+                setModalFieldValue('modalAttendance','check_in_time', a.check_in_time);
+                setModalFieldValue('modalAttendance','check_out_time', a.check_out_time);
+                setModalFieldValue('modalAttendance','status', a.status);
+                setModalFieldValue('modalAttendance','shift', a.shift_id);
+                setModalFieldValue('modalAttendance','overtime_hours', a.overtime_hours);
+                setModalFieldValue('modalAttendance','work_location', a.work_location);
+                setModalFieldValue('modalAttendance','remarks', a.remarks);
+                modal.setAttribute('data-edit-id', id);
+                new bootstrap.Modal(modal).show();
+            } catch(e){ console.error(e); }
+        }
+        async function editLeave(id) {
+            try {
+                const l = await getLeave(id);
+                const modal = document.getElementById('modalLeave');
+                if (!modal || !l) return;
+                clearFieldErrors();
+                setModalFieldValue('modalLeave','employee', l.employee_id);
+                setModalFieldValue('modalLeave','leave_type', l.leave_type);
+                setModalFieldValue('modalLeave','from_date', l.from_date);
+                setModalFieldValue('modalLeave','to_date', l.to_date);
+                setModalFieldValue('modalLeave','reason', l.reason);
+                modal.setAttribute('data-edit-id', id);
+                new bootstrap.Modal(modal).show();
+            } catch(e){ console.error(e); }
+        }
+        async function deleteShift(id) {
+            if (!confirm('Delete this shift?')) return;
+            try { await deleteShiftAPI(id); showToast('🗑️','Shift deleted'); loadShifts(shiftsPage); } catch(e){ showToast('❌','Failed');}
+        }
+
+        // ── Save ──
+        async function saveAttendance() {
+            const modal = document.getElementById('modalAttendance');
+            if (!modal) return;
+            const editId = modal.getAttribute('data-edit-id');
+            clearFieldErrors();
+            const data = {
+                employee_id: getModalFieldValue('modalAttendance','employee') || null,
+                date: getModalFieldValue('modalAttendance','date') || null,
+                check_in_time: getModalFieldValue('modalAttendance','check_in_time') || null,
+                check_out_time: getModalFieldValue('modalAttendance','check_out_time') || null,
+                status: getModalFieldValue('modalAttendance','status') || 'present',
+                shift_id: getModalFieldValue('modalAttendance','shift') || null,
+                overtime_hours: getModalFieldValue('modalAttendance','overtime_hours') || 0,
+                work_location: getModalFieldValue('modalAttendance','work_location') || 'office',
+                remarks: getModalFieldValue('modalAttendance','remarks') || '',
+            };
+            if (!data.employee_id) { showFieldErrors({employee: ['Employee is required.']}); return; }
+            if (!data.date) { showFieldErrors({date: ['Date is required.']}); return; }
+            // also accept employee as alias for backend validation that may check employee
+            data.employee = data.employee_id;
+            data.shift = data.shift_id;
+            if (!data.shift_id) { delete data.shift_id; delete data.shift; }
+            const btn = modal.querySelector('[onclick="saveAttendance()"]');
+            const orig = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '\u23F3 Saving...'; }
+            try {
+                if (editId) {
+                    await updateAttendanceRecordAPI(editId, data);
+                    showToast('✅','Attendance updated!'); modal.removeAttribute('data-edit-id');
+                } else {
+                    await createAttendanceRecord(data);
+                    showToast('✅','Attendance saved!');
+                }
+                bootstrap.Modal.getInstance(modal).hide();
+                resetAttendanceForm();
+                loadAttendanceRecords(attPage);
+                loadAttendanceStats();
+            } catch (e) {
+                console.error('save attend failed', e);
+                const errData = e?.response?.data || e?.data || {};
+                const errors = errData.errors || errData || {};
+                if (errors && typeof errors === 'object' && Object.keys(errors).length) {
+                    showFieldErrors(errors);
+                    const firstKey = Object.keys(errors)[0];
+                    const firstMsg = Array.isArray(errors[firstKey]) ? errors[firstKey][0] : errors[firstKey];
+                    showToast('❌', `${firstKey}: ${firstMsg}`);
+                } else {
+                    const msg = e?.message || 'Failed to save attendance';
+                    const ge = document.getElementById('form-global-error-attendance');
+                    if (ge) { ge.textContent = msg; ge.classList.add('show'); }
+                    showToast('❌', msg);
+                }
+            } finally { if (btn) { btn.disabled = false; btn.innerHTML = orig || '💾 Save Attendance'; } }
+        }
+
+        async function saveLeave() {
+            const modal = document.getElementById('modalLeave');
+            if (!modal) return;
+            const editId = modal.getAttribute('data-edit-id');
+            clearFieldErrors();
+            const data = {
+                employee_id: getModalFieldValue('modalLeave','employee') || null,
+                leave_type: getModalFieldValue('modalLeave','leave_type') || 'annual',
+                from_date: getModalFieldValue('modalLeave','from_date') || null,
+                to_date: getModalFieldValue('modalLeave','to_date') || null,
+                reason: getModalFieldValue('modalLeave','reason') || '',
+            };
+            data.employee = data.employee_id;
+            if (!data.employee_id) { showFieldErrors({employee:['Employee is required.']}); return; }
+            if (!data.from_date) { showFieldErrors({from_date:['From date required']}); return; }
+            if (!data.to_date) { showFieldErrors({to_date:['To date required']}); return; }
+            const btn = modal.querySelector('[onclick="saveLeave()"]');
+            const orig = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled=true; btn.innerHTML='\u23F3 Saving...'; }
+            try {
+                if (editId) {
+                    await updateLeaveAPI(editId, data);
+                    showToast('✅','Leave updated!'); modal.removeAttribute('data-edit-id');
+                } else {
+                    await createLeave(data);
+                    showToast('✅','Leave submitted!');
+                }
+                bootstrap.Modal.getInstance(modal).hide();
+                resetLeaveForm();
+                loadLeaves(leavesPage);
+                loadAttendanceStats();
+            } catch (e) {
+                console.error(e);
+                const errData = e?.response?.data || e?.data || {};
+                const errors = errData.errors || errData || {};
+                if (errors && Object.keys(errors).length) { showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-leave'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            } finally { if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Submit Leave';}}
+        }
+
+        async function saveShift() {
+            const modal = document.getElementById('modalShift');
+            if (!modal) return;
+            const editId = modal.getAttribute('data-edit-id');
+            clearFieldErrors();
+            const otEligRaw = getModalFieldValue('modalShift','overtime_eligible');
+            const isActiveRaw = getModalFieldValue('modalShift','is_active');
+            const data = {
+                shift_name: getModalFieldValue('modalShift','shift_name') || '',
+                shift_code: getModalFieldValue('modalShift','shift_code') || '',
+                start_time: getModalFieldValue('modalShift','start_time') || null,
+                end_time: getModalFieldValue('modalShift','end_time') || null,
+                break_duration: parseInt(getModalFieldValue('modalShift','break_duration')) || 60,
+                grace_period: parseInt(getModalFieldValue('modalShift','grace_period')) || 15,
+                department: getModalFieldValue('modalShift','department') || null,
+                working_days: getModalFieldValue('modalShift','working_days') || 'sun_thu',
+                overtime_eligible: otEligRaw === 'true' || otEligRaw === 'True' || otEligRaw === 'Yes',
+                is_active: isActiveRaw === 'true' || isActiveRaw === 'True' || isActiveRaw === 'Active',
+            };
+            if (data.department) data.department_id = data.department;
+            // backend may expect department_id
+            if (!data.shift_name) { showFieldErrors({shift_name:['Shift name required']}); return; }
+            if (!data.shift_code) { showFieldErrors({shift_code:['Shift code required']}); return; }
+            const btn = modal.querySelector('[onclick="saveShift()"]');
+            const orig = btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
+            try {
+                if (editId) {
+                    await updateShiftAPI(editId, data);
+                    showToast('✅','Shift updated!'); modal.removeAttribute('data-edit-id');
+                } else {
+                    await createShift(data);
+                    showToast('✅','Shift created!');
+                }
+                bootstrap.Modal.getInstance(modal).hide();
+                resetShiftForm();
+                loadShifts(shiftsPage);
+                loadDropdowns();
+            } catch(e){
+                console.error(e);
+                const errData = e?.response?.data || e?.data || {};
+                const errors = errData.errors || errData || {};
+                if (errors && Object.keys(errors).length) { showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-shift'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            } finally { if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Save Shift';}}
+        }
+
+        // ── Init filters & modals ──
         $(function () {
-            loadShifts();
-            loadLeaves();
             loadAttendanceRecords(1);
+            loadLeaves(1);
+            loadShifts(1);
             loadAttendanceStats();
-            loadEmployeeFilter();
+            loadLeaveBalances();
+            loadDropdowns();
+
+            // search debounce
+            let attSearchTimeout, leavesSearchTimeout, shiftsSearchTimeout;
+            const attSearch = document.getElementById('att-search');
+            if (attSearch) attSearch.addEventListener('input', () => { clearTimeout(attSearchTimeout); attSearchTimeout=setTimeout(()=>{attPage=1; loadAttendanceRecords(1);},400); });
+            const leavesSearch = document.getElementById('leaves-search');
+            if (leavesSearch) leavesSearch.addEventListener('input', () => { clearTimeout(leavesSearchTimeout); leavesSearchTimeout=setTimeout(()=>{leavesPage=1; loadLeaves(1);},400); });
+            const shiftsSearch = document.getElementById('shifts-search');
+            if (shiftsSearch) shiftsSearch.addEventListener('input', () => { clearTimeout(shiftsSearchTimeout); shiftsSearchTimeout=setTimeout(()=>{shiftsPage=1; loadShifts(1);},400); });
+            const leavesStatus = document.getElementById('leaves-filter-status');
+            if (leavesStatus) leavesStatus.addEventListener('change', ()=>{ leavesPage=1; loadLeaves(1); });
+            const attEmpF = document.getElementById('att-filter-employee');
+            if (attEmpF) attEmpF.addEventListener('change', ()=>{ attPage=1; loadAttendanceRecords(1); });
+            const attStatusF = document.getElementById('att-filter-status');
+            if (attStatusF) attStatusF.addEventListener('change', ()=>{ attPage=1; loadAttendanceRecords(1); });
+            const attStart = document.getElementById('att-start-date');
+            const attEnd = document.getElementById('att-end-date');
+            if (attStart) attStart.addEventListener('change', ()=>{ attPage=1; loadAttendanceRecords(1); });
+            if (attEnd) attEnd.addEventListener('change', ()=>{ attPage=1; loadAttendanceRecords(1); });
+
+            // modal handlers
+            ['modalAttendance','modalLeave','modalShift'].forEach(modalId=>{
+                const modalEl = document.getElementById(modalId);
+                if (!modalEl) return;
+                modalEl.addEventListener('hidden.bs.modal', ()=>{ clearFieldErrors(); });
+                modalEl.addEventListener('show.bs.modal', ()=>{ clearFieldErrors(); });
+            });
+            const addAttBtn = document.querySelector('[data-bs-target="#modalAttendance"]');
+            if (addAttBtn) addAttBtn.addEventListener('click', ()=>{ resetAttendanceForm(); });
+            const addLeaveBtn = document.querySelector('[data-bs-target="#modalLeave"]');
+            if (addLeaveBtn) addLeaveBtn.addEventListener('click', ()=>{ resetLeaveForm(); });
+            const addShiftBtn = document.querySelector('[data-bs-target="#modalShift"]');
+            if (addShiftBtn) addShiftBtn.addEventListener('click', ()=>{ resetShiftForm(); });
+
+            // live clear
+            document.querySelectorAll('#modalAttendance .fi, #modalLeave .fi, #modalShift .fi').forEach(input=>{
+                input.addEventListener('input', ()=>{
+                    input.classList.remove('is-invalid');
+                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
+                    const field=input.getAttribute('data-field');
+                    if(field){
+                        const errEl=document.querySelector(`[data-error-for="${field}"]`);
+                        if(errEl) errEl.textContent='';
+                        const errEl2=document.querySelector(`[data-error-for="${field}_id"]`);
+                        if(errEl2) errEl2.textContent='';
+                    }
+                });
+                input.addEventListener('change', ()=>{
+                    input.classList.remove('is-invalid');
+                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
+                });
+            });
+        });
+        $(function () {
+            var d = new Date();
+            $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
+            $('.toggle').on('click', function () { $(this).toggleClass('on'); });
         });
     </script>
 </body>

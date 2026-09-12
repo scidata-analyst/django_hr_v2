@@ -481,11 +481,11 @@
       catch (e) { console.error('Error deleting candidate:', e); throw e; }
     }
     async function advanceCandidateAPI(id) {
-      try { return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.ADVANCE(id), {}); }
+      try { return await api._request('POST', API_ENDPOINTS.RECRUITMENT.CANDIDATES.ADVANCE(id), {}); }
       catch (e) { console.error('Error advancing candidate:', e); throw e; }
     }
     async function rejectCandidateAPI(id) {
-      try { return await api.update(API_ENDPOINTS.RECRUITMENT.CANDIDATES.REJECT(id), {}); }
+      try { return await api._request('POST', API_ENDPOINTS.RECRUITMENT.CANDIDATES.REJECT(id), {}); }
       catch (e) { console.error('Error rejecting candidate:', e); throw e; }
     }
 

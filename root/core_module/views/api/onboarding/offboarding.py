@@ -21,6 +21,34 @@ def parse_body(request):
         return {}
 
 
+def _normalize_fk(data):
+    """Normalize FK string IDs to int and map `field` -> `field_id` for Offboarding (employee, assigned_to)."""
+    for fk in ['employee', 'assigned_to']:
+        id_key = f"{fk}_id"
+        for key in (fk, id_key):
+            if key in data and isinstance(data[key], str):
+                val = data[key].strip()
+                if val == '':
+                    data[key] = None
+                else:
+                    try:
+                        data[key] = int(val)
+                    except (ValueError, TypeError):
+                        pass
+        if fk in data:
+            val = data.pop(fk)
+            if id_key not in data or data[id_key] is None or data[id_key] == '':
+                data[id_key] = val
+        if id_key in data and isinstance(data[id_key], str):
+            try:
+                data[id_key] = int(data[id_key].strip()) if data[id_key].strip() != '' else None
+            except (ValueError, TypeError):
+                data[id_key] = None
+        if data.get(id_key) == '':
+            data[id_key] = None
+    return data
+
+
 @require_login
 @safe_json_handler
 @require_http_methods(["GET", "POST"])
@@ -78,6 +106,7 @@ def offboarding_task_list(request):
         })
 
     data = parse_body(request)
+    data = _normalize_fk(data)
 
     if 'employee_id' in data and 'create_checklist' in data:
         tasks = offboarding_service.create_offboarding_checklist(data['employee_id'])

@@ -47,6 +47,7 @@ const API_ENDPOINTS = {
             DESTROY: (id) => `/core-module/attendance/api/leave/${id}/`,
             APPROVE: (id) => `/core-module/attendance/api/leave/${id}/approve/`,
             DENY: (id) => `/core-module/attendance/api/leave/${id}/deny/`,
+            STATS: '/core-module/attendance/api/leave/stats/',
         },
     },
 
@@ -112,6 +113,12 @@ const API_ENDPOINTS = {
             INDEX: '/core-module/payroll/api/bonus/',
             STORE: '/core-module/payroll/api/bonus/',
             SHOW: (id) => `/core-module/payroll/api/bonus/${id}/`,
+            UPDATE: (id) => `/core-module/payroll/api/bonus/${id}/`,
+            DESTROY: (id) => `/core-module/payroll/api/bonus/${id}/`,
+        },
+        STATS: {
+            INDEX: '/core-module/payroll/api/stats/',
+            BREAKDOWN: '/core-module/payroll/api/stats/breakdown/',
         },
     },
 

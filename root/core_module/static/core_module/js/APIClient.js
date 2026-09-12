@@ -93,6 +93,7 @@ class APIClient {
             method,
             headers: requestHeaders,
             signal: controller.signal,
+            credentials: 'same-origin',
         };
 
         if (data !== null && data !== undefined) {

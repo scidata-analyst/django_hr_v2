@@ -13,6 +13,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        .field-error { font-size: 0.68rem; color: #ef4444; margin-top: 4px; min-height: 14px; line-height: 1.3; }
+        .fi.is-invalid { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.08) !important; }
+        .form-global-error { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.78rem; margin-bottom:12px; display:none; }
+        .form-global-error.show { display:block; }
+        .fg.has-error .fl { color:#ef4444; }
+    </style>
 </head>
 
 <body>
@@ -172,13 +180,11 @@
                                         <thead>
                                             <tr>
                                                 <th>Employee</th>
-                                                <th>Joining Date</th>
-                                                <th>Dept</th>
-                                                <th>Offer Letter</th>
-                                                <th>Doc Verify</th>
-                                                <th>Orientation</th>
-                                                <th>IT Setup</th>
+                                                <th>Task Name</th>
+                                                <th>Task Type</th>
+                                                <th>Due Date</th>
                                                 <th>Status</th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody id="onboarding-tbody">
@@ -314,88 +320,66 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error-onboarding" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg">
-                            <div class="fl">Employee *</div><select class="fi">
-                                <option>Kabir Hossain</option>
-                                <option>Tasnim Akter</option>
+                        <div class="fg" data-field-group="employee">
+                            <div class="fl">Employee *</div><select class="fi" data-field="employee" id="onboarding-employee-select">
+                                <option value="">Select Employee</option>
                             </select>
+                            <div class="field-error" data-error-for="employee"></div>
+                            <div class="field-error" data-error-for="employee_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Joining Date</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="task_name">
+                            <div class="fl">Task Name *</div><input class="fi" data-field="task_name" placeholder="e.g. Document Verification" />
+                            <div class="field-error" data-error-for="task_name"></div>
                         </div>
-                        <div class="form-section">Checklist Items</div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;">
-                                <option>✅ Done</option>
-                                <option>⏳ Pending</option>
-                                <option>⬜ To Do</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">Offer Letter Signed</span>
-                        </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;">
-                                <option>✅ Done</option>
-                                <option>⏳ Pending</option>
-                                <option>⬜ To Do</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">Background Check</span>
-                        </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#fffbeb;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#d97706;cursor:pointer;">
-                                <option>⏳ Pending</option>
-                                <option>✅ Done</option>
-                                <option>⬜ To Do</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">IT Equipment Setup</span>
-                        </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#fffbeb;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#d97706;cursor:pointer;">
-                                <option>⏳ Pending</option>
-                                <option>✅ Done</option>
-                                <option>⬜ To Do</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">Email & System Access</span>
-                        </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f8fafc;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#94a3b8;cursor:pointer;">
-                                <option>⬜ To Do</option>
-                                <option>✅ Done</option>
-                                <option>⏳ Pending</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">Office Tour & Introduction</span>
-                        </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f8fafc;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#94a3b8;cursor:pointer;">
-                                <option>⬜ To Do</option>
-                                <option>✅ Done</option>
-                                <option>⏳ Pending</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">Orientation Session</span>
-                        </div>
-                        <div class="fg full">
-                            <div class="fl">Assigned Buddy / Mentor</div><select class="fi">
-                                <option>Sara Ahmed</option>
-                                <option>Ahmed Rahman</option>
-                                <option>Kabir Hossain</option>
+                        <div class="fg" data-field-group="task_type">
+                            <div class="fl">Task Type</div><select class="fi" data-field="task_type">
+                                <option value="offer_letter">Offer Letter</option>
+                                <option value="document_verification">Document Verification</option>
+                                <option value="orientation">Orientation</option>
+                                <option value="it_setup">IT Setup</option>
+                                <option value="equipment">Equipment</option>
+                                <option value="training">Training</option>
+                                <option value="team_introduction">Team Introduction</option>
+                                <option value="probation_review">Probation Review</option>
                             </select>
+                            <div class="field-error" data-error-for="task_type"></div>
                         </div>
-                        <div class="fg full">
-                            <div class="fl">Notes</div><textarea class="fi" rows="3"
-                                placeholder="Onboarding notes..."></textarea>
+                        <div class="fg" data-field-group="assigned_to">
+                            <div class="fl">Assigned To</div><select class="fi" data-field="assigned_to" id="onboarding-assigned-select">
+                                <option value="">Select Assignee</option>
+                            </select>
+                            <div class="field-error" data-error-for="assigned_to"></div>
+                            <div class="field-error" data-error-for="assigned_to_id"></div>
+                        </div>
+                        <div class="fg" data-field-group="due_date">
+                            <div class="fl">Due Date</div><input class="fi" data-field="due_date" type="date" />
+                            <div class="field-error" data-error-for="due_date"></div>
+                        </div>
+                        <div class="fg" data-field-group="status">
+                            <div class="fl">Status</div><select class="fi" data-field="status">
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="not_applicable">N/A</option>
+                            </select>
+                            <div class="field-error" data-error-for="status"></div>
+                        </div>
+                        <div class="fg full" data-field-group="description">
+                            <div class="fl">Description</div><textarea class="fi" data-field="description" rows="3" placeholder="Task description..."></textarea>
+                            <div class="field-error" data-error-for="description"></div>
+                        </div>
+                        <div class="fg full" data-field-group="notes">
+                            <div class="fl">Notes</div><textarea class="fi" data-field="notes" rows="3" placeholder="Onboarding notes..."></textarea>
+                            <div class="field-error" data-error-for="notes"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
                     <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
                         data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Update
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveOnboarding()">💾 Update
                         Onboarding</button>
                 </div>
             </div>
@@ -418,86 +402,66 @@
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
 
+                    <div id="form-global-error-offboarding" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg">
-                            <div class="fl">Employee *</div><select class="fi">
-                                <option>Farhan Rahim</option>
-                                <option>Ritu Sharma</option>
+                        <div class="fg" data-field-group="employee">
+                            <div class="fl">Employee *</div><select class="fi" data-field="employee" id="offboarding-employee-select">
+                                <option value="">Select Employee</option>
                             </select>
+                            <div class="field-error" data-error-for="employee"></div>
+                            <div class="field-error" data-error-for="employee_id"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Last Working Day *</div><input class="fi" type="date" />
+                        <div class="fg" data-field-group="task_name">
+                            <div class="fl">Task Name *</div><input class="fi" data-field="task_name" placeholder="e.g. Exit Interview" />
+                            <div class="field-error" data-error-for="task_name"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Reason for Exit</div><select class="fi">
-                                <option>Resignation</option>
-                                <option>Termination</option>
-                                <option>Retirement</option>
-                                <option>Contract End</option>
-                                <option>Layoff</option>
+                        <div class="fg" data-field-group="task_type">
+                            <div class="fl">Task Type</div><select class="fi" data-field="task_type">
+                                <option value="exit_interview">Exit Interview</option>
+                                <option value="clearance">Clearance</option>
+                                <option value="knowledge_transfer">Knowledge Transfer</option>
+                                <option value="equipment_return">Equipment Return</option>
+                                <option value="access_revocation">Access Revocation</option>
+                                <option value="final_settlement">Final Settlement</option>
+                                <option value="documents">Documents</option>
+                                <option value="feedback">Feedback</option>
                             </select>
+                            <div class="field-error" data-error-for="task_type"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Notice Period</div><select class="fi">
-                                <option>1 month</option>
-                                <option>2 months</option>
-                                <option>Waived</option>
+                        <div class="fg" data-field-group="assigned_to">
+                            <div class="fl">Assigned To</div><select class="fi" data-field="assigned_to" id="offboarding-assigned-select">
+                                <option value="">Select Assignee</option>
                             </select>
+                            <div class="field-error" data-error-for="assigned_to"></div>
+                            <div class="field-error" data-error-for="assigned_to_id"></div>
                         </div>
-                        <div class="form-section">Clearance Checklist</div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;">
-                                <option>✅ Done</option>
-                                <option>⏳ Pending</option>
-                                <option>⬜ To Do</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">IT Equipment Returned</span>
+                        <div class="fg" data-field-group="due_date">
+                            <div class="fl">Due Date</div><input class="fi" data-field="due_date" type="date" />
+                            <div class="field-error" data-error-for="due_date"></div>
                         </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f0fdf4;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#16a34a;cursor:pointer;">
-                                <option>✅ Done</option>
-                                <option>⏳ Pending</option>
-                                <option>⬜ To Do</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">ID Card Returned</span>
-                        </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#fffbeb;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#d97706;cursor:pointer;">
-                                <option>⏳ Pending</option>
-                                <option>✅ Done</option>
-                                <option>⬜ To Do</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">Final Salary Processed</span>
-                        </div>
-                        <div class="fg"
-                            style="flex-direction:row;align-items:center;gap:10px;padding:8px;background:#f8fafc;border-radius:7px;">
-                            <select
-                                style="border:none;background:transparent;font-size:0.75rem;font-weight:600;color:#94a3b8;cursor:pointer;">
-                                <option>⬜ To Do</option>
-                                <option>✅ Done</option>
-                                <option>⏳ Pending</option>
-                            </select><span style="font-size:0.8rem;font-weight:500;">Knowledge Transfer</span>
-                        </div>
-                        <div class="fg full">
-                            <div class="fl">Exit Interview Notes</div><textarea class="fi" rows="3"
-                                placeholder="Key feedback from exit interview..."></textarea>
-                        </div>
-                        <div class="fg full">
-                            <div class="fl">Eligible for Rehire</div><select class="fi">
-                                <option>Yes</option>
-                                <option>No</option>
-                                <option>Under Review</option>
+                        <div class="fg" data-field-group="status">
+                            <div class="fl">Status</div><select class="fi" data-field="status">
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="not_applicable">N/A</option>
                             </select>
+                            <div class="field-error" data-error-for="status"></div>
+                        </div>
+                        <div class="fg full" data-field-group="description">
+                            <div class="fl">Description</div><textarea class="fi" data-field="description" rows="3" placeholder="Task description..."></textarea>
+                            <div class="field-error" data-error-for="description"></div>
+                        </div>
+                        <div class="fg full" data-field-group="notes">
+                            <div class="fl">Notes</div><textarea class="fi" data-field="notes" rows="3" placeholder="Offboarding notes..."></textarea>
+                            <div class="field-error" data-error-for="notes"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
                     <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
                         data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Update Exit
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveOffboarding()">💾 Update Exit
                         Process</button>
                 </div>
             </div>
@@ -680,7 +644,7 @@
         }
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
     </script>
@@ -690,13 +654,6 @@
             var name = $(e.relatedTarget).data('integration-name');
             if (name) $('#integration-name').text(name);
         });
-
-        /**
-         * Displays a toast notification with an icon and message.
-         * @param {string} icon - Emoji or icon character.
-         * @param {string} msg - Message to display.
-         * @param {number} [duration=3000] - Auto-hide duration in ms.
-         */
         function showToast(icon, msg, duration) {
             duration = duration || 3000;
             $('#toast-icon').text(icon);
@@ -704,20 +661,10 @@
             $('#toast').addClass('show');
             setTimeout(function () { $('#toast').removeClass('show'); }, duration);
         }
-
-        /**
-         * Handles delete confirmation modal close and feedback.
-         */
         function confirmDelete() {
             $('#modalDelete').modal('hide');
             showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
         }
-
-        /**
-         * Switches the active tab within a tab group.
-         * @param {string} tabGroup - Matches data-tabgroup attribute.
-         * @param {string} tabId - Matches data-tabid attribute to activate.
-         */
         function showSubTab(tabGroup, tabId) {
             document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
                 t.classList.toggle('active', t.dataset.tabid === tabId);
@@ -726,8 +673,6 @@
                 p.classList.toggle('active', p.dataset.panelid === tabId);
             });
         }
-
-        /** Page title lookup for topbar updates. */
         const pageTitles = {
             dashboard: 'Dashboard Overview',
             employee: 'Employee Management',
@@ -747,267 +692,344 @@
             global: 'Global HR',
             integrations: 'Integrations & Automation'
         };
-
-        /**
-         * Navigates to a page section and updates navigation state.
-         * @param {string} id - Page identifier matching `page-{id}` element.
-         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
-         */
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             const target = document.getElementById('page-' + id);
             if (target) target.classList.add('active');
             document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-            document.getElementById('topbar-title').textContent = pageTitles[id] || id;
+            const tt=document.getElementById('topbar-title'); if(tt) tt.textContent=pageTitles[id]||id;
             document.getElementById('sidebar').classList.remove('open');
             window.scrollTo(0, 0);
         }
-
         const d = new Date();
         const dateEl = document.getElementById('topbar-date');
         if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
         document.querySelectorAll('.toggle').forEach(t => {
             t.addEventListener('click', () => t.classList.toggle('on'));
         });
 
-        let onboardingPage = 1;
-        const onboardingPageSize = 10;
-
-        /**
-         * Renders paginated table data with page info and navigation.
-         * @param {Array} data - Array of items to paginate.
-         * @param {string} tbodyId - ID of the tbody element to render rows into.
-         * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
-         * @param {string} containerId - ID of the pagination buttons container.
-         * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
-         */
-        function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
-            const totalPages = Math.max(1, Math.ceil(data.length / onboardingPageSize));
-            if (onboardingPage > totalPages) onboardingPage = totalPages;
-            const start = (onboardingPage - 1) * onboardingPageSize;
-            const end = Math.min(start + onboardingPageSize, data.length);
-            const pageData = data.slice(start, end);
-
-            const tbody = document.getElementById(tbodyId);
-            if (tbody) {
-                tbody.innerHTML = '';
-                if (pageData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">No data found</td></tr>';
-                } else {
-                    pageData.forEach((item, i) => {
-                        tbody.innerHTML += renderRowFn(item, i);
-                    });
+        function clearFieldErrors() {
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            document.querySelectorAll('.fi.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            document.querySelectorAll('.fg.has-error').forEach(el => el.classList.remove('has-error'));
+            document.querySelectorAll('.form-global-error').forEach(el => { el.textContent=''; el.classList.remove('show'); });
+        }
+        function showFieldErrors(errors){
+            clearFieldErrors();
+            if(!errors||typeof errors!=='object') return;
+            const fieldMap={
+                'employee':'employee','employee_id':'employee','task_name':'task_name','task_type':'task_type','description':'description','assigned_to':'assigned_to','assigned_to_id':'assigned_to','due_date':'due_date','status':'status','notes':'notes'
+            };
+            for(const [key,val] of Object.entries(errors)){
+                const msg=Array.isArray(val)?val.join(', '):String(val);
+                if(key==='__all__'||key==='error'){
+                    document.querySelectorAll('.form-global-error').forEach(el=>{ if(!el.textContent){el.textContent=msg; el.classList.add('show');}});
+                    continue;
+                }
+                const field=fieldMap[key]||key;
+                const errorEl=document.querySelector(`[data-error-for="${key}"]`)||document.querySelector(`[data-error-for="${field}"]`);
+                const input=document.querySelector(`[data-field="${field}"]`)||document.querySelector(`[data-field="${key}"]`);
+                if(errorEl) errorEl.textContent=msg;
+                if(input){ input.classList.add('is-invalid'); const fg=input.closest('.fg'); if(fg) fg.classList.add('has-error'); }
+                if(!errorEl&&!input){
+                    document.querySelectorAll('.form-global-error').forEach(el=>{ if(!el.textContent){el.textContent=`${key}: ${msg}`; el.classList.add('show');}});
                 }
             }
-
-            const info = document.getElementById(infoId);
-            if (info) {
-                info.textContent = data.length > 0 ? `Showing ${start + 1}–${end} of ${data.length}` : 'No data found';
+        }
+        function getFieldValue(field){
+            const el=document.querySelector(`[data-field="${field}"]`);
+            return el?el.value.trim():'';
+        }
+        function setFieldValue(field, val){
+            const el=document.querySelector(`[data-field="${field}"]`);
+            if(el) el.value=val==null?'':val;
+        }
+        function getModalFieldValue(modalId, field){
+            const m=document.getElementById(modalId);
+            if(!m) return '';
+            const el=m.querySelector(`[data-field="${field}"]`);
+            return el?el.value.trim():'';
+        }
+        function setModalFieldValue(modalId, field, val){
+            const m=document.getElementById(modalId);
+            if(!m) return;
+            const el=m.querySelector(`[data-field="${field}"]`);
+            if(el) el.value=val==null?'':val;
+        }
+        function renderPaginationServer(total, page, pageSize, containerId, infoId, loadFnName){
+            const totalPages=Math.ceil(total/pageSize)||1;
+            const container=document.getElementById(containerId);
+            const info=document.getElementById(infoId);
+            if(!container||!info) return;
+            const start= total>0 ? (page-1)*pageSize+1 :0;
+            const end=Math.min(page*pageSize, total);
+            info.textContent= total>0 ? `Showing ${start}\u2013${end} of ${total}` : 'No records found';
+            if(totalPages<=1){ container.innerHTML=''; return; }
+            let html='';
+            html+=`<button class="btn-outline-custom" style="padding:5px 10px;${page===1?'opacity:0.5;pointer-events:none;':''}" onclick="${loadFnName}(${page-1})">\u2039 Prev</button>`;
+            for(let i=1;i<=totalPages;i++){
+                if(i===1||i===totalPages||(i>=page-1&&i<=page+1)){
+                    html+=`<button class="${i===page?'btn-primary-custom':'btn-outline-custom'}" style="padding:5px 10px;" onclick="${loadFnName}(${i})">${i}</button>`;
+                }else if(i===page-2||i===page+2){ html+=`<span style="padding:5px;color:var(--text-muted);">\u2026</span>`; }
             }
+            html+=`<button class="btn-outline-custom" style="padding:5px 10px;${page===totalPages?'opacity:0.5;pointer-events:none;':''}" onclick="${loadFnName}(${page+1})">Next \u203A</button>`;
+            container.innerHTML=html;
+        }
+        function getPageSize(id, fallback){ const sel=document.getElementById(id); return sel? parseInt(sel.value)||fallback : fallback; }
 
-            const container = document.getElementById(containerId);
-            if (container) {
-                let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${onboardingPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${onboardingPage - 1})">‹ Prev</button>`;
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= onboardingPage - 1 && i <= onboardingPage + 1)) {
-                        html += `<button class="${i === onboardingPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${i})">${i}</button>`;
-                    } else if (i === onboardingPage - 2 || i === onboardingPage + 2) {
-                        html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-                    }
+        let onboardingPage=1;
+        async function loadOnboardingTasks(page){
+            onboardingPage=page||1;
+            const pageSize=getPageSize('onboarding-page-size',10);
+            const search=document.getElementById('onboarding-search')?.value||'';
+            const status=document.getElementById('onboarding-filter-status')?.value||'';
+            const params={ page:onboardingPage, page_size:pageSize };
+            if(search) params.search=search;
+            if(status) params.status=status;
+            try{
+                const result=await indexOnboardingTasks(params);
+                const tbody=document.getElementById('onboarding-tbody');
+                if(!tbody) return;
+                if(!result||!result.data||result.data.length===0){
+                    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No onboarding tasks found</td></tr>';
+                    renderPaginationServer(0, onboardingPage, pageSize, 'onboarding-pagination','onboarding-pagination-info','loadOnboardingTasks');
+                    return;
                 }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${onboardingPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${onboardingPage + 1})">Next ›</button>`;
-                container.innerHTML = html;
-            }
-        }
-
-        /**
-         * Updates current page and triggers render for the active paginated table.
-         * @param {string} tbodyId - ID of the tbody being paginated.
-         * @param {string} infoId - ID of the pagination info element.
-         * @param {string} containerId - ID of the pagination container.
-         * @param {number} page - Target page number.
-         */
-        function goPage(tbodyId, infoId, containerId, page) {
-            onboardingPage = page;
-        }
-
-        /**
-         * Loads onboarding tasks from the API and renders them.
-         * @param {number} [page] - Page number to load. Defaults to 1.
-         * @async
-         */
-        async function loadOnboardingTasks(page) {
-            onboardingPage = page || 1;
-            const search = document.getElementById('onboarding-search')?.value || '';
-            const status = document.getElementById('onboarding-filter-status')?.value || '';
-
-            const params = { page: onboardingPage, page_size: onboardingPageSize };
-            if (search) params.search = search;
-            if (status) params.status = status;
-
-            try {
-                const result = await indexOnboardingTasks(params);
-                const tbody = document.getElementById('onboarding-tbody');
-                if (!tbody || !result?.data) return;
-                tbody.innerHTML = '';
-                if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">No onboarding tasks found</td></tr>';
-                } else {
-                    result.data.forEach(t => {
-                        const statusBadge = t.status === 'completed' ? 'badge-success' : t.status === 'in_progress' ? 'badge-warning' : 'badge-gray';
-                        const tr = document.createElement('tr');
-                        tr.setAttribute('data-id', t.id);
-                        tr.innerHTML = `
-                            <td style="font-weight:600;">${t.employee_name || '—'}</td>
-                            <td>${t.joining_date || '—'}</td>
-                            <td>${t.department_name || '—'}</td>
-                            <td>${t.offer_letter ? '✅' : '❌'}</td>
-                            <td>${t.document_verified ? '✅' : '❌'}</td>
-                            <td>${t.orientation_done ? '✅' : '❌'}</td>
-                            <td>${t.it_setup_done ? '✅' : '❌'}</td>
-                            <td><span class="badge-custom ${statusBadge}">${t.status}</span></td>`;
-                        tbody.appendChild(tr);
-                    });
-                }
-                renderPagination(result.data, 'onboarding-tbody', 'onboarding-pagination-info', 'onboarding-pagination', (item) => {
-                    const statusBadge = item.status === 'completed' ? 'badge-success' : item.status === 'in_progress' ? 'badge-warning' : 'badge-gray';
-                    return `<tr data-id="${item.id}">
-                        <td style="font-weight:600;">${item.employee_name || '—'}</td>
-                        <td>${item.joining_date || '—'}</td>
-                        <td>${item.department_name || '—'}</td>
-                        <td>${item.offer_letter ? '✅' : '❌'}</td>
-                        <td>${item.document_verified ? '✅' : '❌'}</td>
-                        <td>${item.orientation_done ? '✅' : '❌'}</td>
-                        <td>${item.it_setup_done ? '✅' : '❌'}</td>
-                        <td><span class="badge-custom ${statusBadge}">${item.status}</span></td>
-                    </tr>`;
-                });
-            } catch (e) {
-                console.error('Failed to load onboarding tasks:', e);
-            }
-        }
-
-        /**
-         * Loads offboarding tasks from the API and renders them.
-         * @async
-         */
-        async function loadOffboardingTasks() {
-            try {
-                const result = await indexOffboardingTasks();
-                const tbody = document.querySelectorAll('#page-onboarding .table-custom tbody')[1];
-                if (!tbody || !result?.data) return;
-                tbody.innerHTML = '';
-                result.data.forEach(t => {
-                    const statusBadge = t.status === 'completed' ? 'badge-success' : t.status === 'in_progress' ? 'badge-warning' : 'badge-gray';
-                    const tr = document.createElement('tr');
+                tbody.innerHTML='';
+                result.data.forEach(t=>{
+                    const badge=t.status==='completed'?'badge-success':t.status==='in_progress'?'badge-warning':'badge-gray';
+                    const tr=document.createElement('tr');
                     tr.setAttribute('data-id', t.id);
-                    tr.innerHTML = `
-                        <td style="font-weight:600;">${t.employee_name || '—'}</td>
-                        <td>${t.task_name}</td>
-                        <td>${t.task_type}</td>
-                        <td>${t.due_date || '—'}</td>
-                        <td><span class="badge-custom ${statusBadge}">${t.status}</span></td>
-                        <td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editOffboarding(${t.id})">✏ Edit</button></div></td>`;
+                    tr.innerHTML=`<td style="font-weight:600;">${t.employee_name||'—'}</td><td>${t.task_name||'—'}</td><td>${t.task_type_display||t.task_type||'—'}</td><td>${t.due_date||'—'}</td><td><span class="badge-custom ${badge}">${t.status}</span></td><td><div style="display:flex;gap:5px;"><button class="btn-edit" onclick="editOnboarding(${t.id})">✏ Edit</button><button class="btn-del" onclick="deleteOnboarding(${t.id})">🗑</button></div></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (e) {
-                console.error('Failed to load offboarding tasks:', e);
-            }
+                renderPaginationServer(result.count||result.data.length, onboardingPage, pageSize, 'onboarding-pagination','onboarding-pagination-info','loadOnboardingTasks');
+            }catch(e){ console.error(e); }
         }
-
-        /**
-         * Loads exit interviews from the API and renders them.
-         * @async
-         */
-        async function loadExitInterviews() {
-            try {
-                const result = await indexExitInterviews();
-                const tbody = document.querySelectorAll('#page-onboarding .table-custom tbody')[2];
-                if (!tbody || !result?.data) return;
-                tbody.innerHTML = '';
-                result.data.forEach(ei => {
-                    const tr = document.createElement('tr');
+        async function loadOffboardingTasks(){
+            try{
+                const result=await indexOffboardingTasks({page:1, page_size:10});
+                const tbody=document.querySelectorAll('#page-onboarding .table-custom tbody')[1];
+                if(!tbody||!result?.data) return;
+                tbody.innerHTML='';
+                if(result.data.length===0){
+                    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text-muted);">No offboarding tasks</td></tr>';
+                    return;
+                }
+                result.data.forEach(t=>{
+                    const badge=t.status==='completed'?'badge-success':t.status==='in_progress'?'badge-warning':'badge-gray';
+                    const tr=document.createElement('tr');
+                    tr.setAttribute('data-id', t.id);
+                    tr.innerHTML=`<td style="font-weight:600;">${t.employee_name||'—'}</td><td>${t.task_name}</td><td>${t.task_type}</td><td>${t.due_date||'—'}</td><td><span class="badge-custom ${badge}">${t.status}</span></td><td><button class="btn-edit" onclick="editOffboarding(${t.id})">✏ Edit</button></td>`;
+                    tbody.appendChild(tr);
+                });
+            }catch(e){ console.error(e); }
+        }
+        async function loadExitInterviews(){
+            try{
+                const result=await indexExitInterviews({page:1, page_size:10});
+                const tbody=document.querySelectorAll('#page-onboarding .table-custom tbody')[2];
+                if(!tbody||!result?.data) return;
+                tbody.innerHTML='';
+                result.data.forEach(ei=>{
+                    const tr=document.createElement('tr');
                     tr.setAttribute('data-id', ei.id);
-                    tr.innerHTML = `
-                        <td style="font-weight:600;">${ei.employee_name || '—'}</td>
-                        <td>${ei.interview_date || '—'}</td>
-                        <td>${ei.reason_for_leaving ? ei.reason_for_leaving.substring(0, 50) + '...' : '—'}</td>
-                        <td>${ei.rating ? '⭐'.repeat(ei.rating) : '—'}</td>
-                        <td><span class="badge-custom badge-info">Completed</span></td>`;
+                    tr.innerHTML=`<td style="font-weight:600;">${ei.employee_name||'—'}</td><td>${ei.interview_date||'—'}</td><td>${ei.reason_for_leaving?ei.reason_for_leaving.substring(0,50)+'...':'—'}</td><td>${ei.rating?'⭐'.repeat(ei.rating):'—'}</td><td><span class="badge-custom badge-info">Completed</span></td>`;
                     tbody.appendChild(tr);
                 });
-            } catch (e) {
-                console.error('Failed to load exit interviews:', e);
-            }
+            }catch(e){ console.error(e); }
         }
-
-        /**
-         * Reads onboarding modal inputs, creates a task via API, and refreshes the list.
-         * @async
-         */
-        async function saveOnboarding() {
-            const modal = document.getElementById('modalOnboarding');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                task_type: selects[0]?.value || 'orientation',
-                task_name: inputs[1]?.value || '',
-                description: inputs[2]?.value || '',
-                due_date: inputs[3]?.value || null,
-                status: selects[1]?.value || 'pending',
-                notes: inputs[4]?.value || '',
+        function resetOnboardingForm(){
+            const modal=document.getElementById('modalOnboarding');
+            if(!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalOnboarding','task_type','offer_letter');
+            setModalFieldValue('modalOnboarding','status','pending');
+        }
+        function resetOffboardingForm(){
+            const modal=document.getElementById('modalExit');
+            if(!modal) return;
+            modal.removeAttribute('data-edit-id');
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalExit','task_type','exit_interview');
+            setModalFieldValue('modalExit','status','pending');
+        }
+        async function editOnboarding(id){
+            try{
+                const task=await getOnboardingTask(id);
+                const modal=document.getElementById('modalOnboarding');
+                if(!modal||!task) return;
+                clearFieldErrors();
+                setModalFieldValue('modalOnboarding','employee', task.employee_id);
+                setModalFieldValue('modalOnboarding','task_name', task.task_name);
+                setModalFieldValue('modalOnboarding','task_type', task.task_type);
+                setModalFieldValue('modalOnboarding','description', task.description);
+                setModalFieldValue('modalOnboarding','assigned_to', task.assigned_to_id);
+                setModalFieldValue('modalOnboarding','due_date', task.due_date);
+                setModalFieldValue('modalOnboarding','status', task.status);
+                setModalFieldValue('modalOnboarding','notes', task.notes);
+                modal.setAttribute('data-edit-id', id);
+                new bootstrap.Modal(modal).show();
+            }catch(e){ console.error(e); showToast('❌','Failed');}
+        }
+        async function editOffboarding(id){
+            try{
+                const task=await getOffboardingTask(id);
+                const modal=document.getElementById('modalExit');
+                if(!modal||!task) return;
+                clearFieldErrors();
+                setModalFieldValue('modalExit','employee', task.employee_id);
+                setModalFieldValue('modalExit','task_name', task.task_name);
+                setModalFieldValue('modalExit','task_type', task.task_type);
+                setModalFieldValue('modalExit','description', task.description);
+                setModalFieldValue('modalExit','assigned_to', task.assigned_to_id);
+                setModalFieldValue('modalExit','due_date', task.due_date);
+                setModalFieldValue('modalExit','status', task.status);
+                setModalFieldValue('modalExit','notes', task.notes);
+                modal.setAttribute('data-edit-id', id);
+                new bootstrap.Modal(modal).show();
+            }catch(e){ console.error(e); showToast('❌','Failed');}
+        }
+        async function deleteOnboarding(id){
+            if(!confirm('Delete this onboarding task?')) return;
+            try{ await deleteOnboardingTask(id); showToast('🗑️','Deleted'); loadOnboardingTasks(onboardingPage); }catch(e){ showToast('❌','Failed');}
+        }
+        async function saveOnboarding(){
+            const modal=document.getElementById('modalOnboarding');
+            if(!modal) return;
+            const editId=modal.getAttribute('data-edit-id');
+            clearFieldErrors();
+            const data={
+                employee_id: getModalFieldValue('modalOnboarding','employee')||null,
+                task_name: getModalFieldValue('modalOnboarding','task_name'),
+                task_type: getModalFieldValue('modalOnboarding','task_type')||'offer_letter',
+                description: getModalFieldValue('modalOnboarding','description'),
+                assigned_to_id: getModalFieldValue('modalOnboarding','assigned_to')||null,
+                due_date: getModalFieldValue('modalOnboarding','due_date')||null,
+                status: getModalFieldValue('modalOnboarding','status')||'pending',
+                notes: getModalFieldValue('modalOnboarding','notes'),
             };
-            try {
-                await createOnboardingTask(data);
-                showToast('✅', 'Onboarding task created!');
+            // aliases for backend expecting employee, assigned_to without _id?
+            if(data.employee_id) data.employee = data.employee_id;
+            if(data.assigned_to_id) data.assigned_to = data.assigned_to_id;
+            if(!data.employee_id) delete data.employee_id;
+            if(!data.assigned_to_id) { delete data.assigned_to_id; delete data.assigned_to; }
+            if(!data.due_date) delete data.due_date;
+            if(!data.task_name){ showFieldErrors({task_name:['Task name required']}); return; }
+            if(!data.employee && !data.employee_id){ showFieldErrors({employee:['Employee required']}); return; }
+            const btn=modal.querySelector('[onclick="saveOnboarding()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
+            try{
+                if(editId){ await updateOnboardingTask(editId, data); showToast('✅','Onboarding updated'); modal.removeAttribute('data-edit-id'); }
+                else { await createOnboardingTask(data); showToast('✅','Onboarding created'); }
                 bootstrap.Modal.getInstance(modal).hide();
+                resetOnboardingForm();
                 loadOnboardingTasks(1);
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
+            }catch(e){
+                console.error(e);
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors&&Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-onboarding'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Update Onboarding';}}
         }
-
-        /**
-         * Reads exit process modal inputs, creates offboarding task via API, and refreshes the list.
-         * @async
-         */
-        async function saveExitProcess() {
-            const modal = document.getElementById('modalExit');
-            const inputs = modal.querySelectorAll('.fi');
-            const selects = modal.querySelectorAll('select.fi');
-            const data = {
-                task_type: selects[0]?.value || 'exit_interview',
-                task_name: inputs[1]?.value || '',
-                description: inputs[2]?.value || '',
-                due_date: inputs[3]?.value || null,
-                status: selects[1]?.value || 'pending',
-                notes: inputs[4]?.value || '',
+        async function saveOffboarding(){
+            const modal=document.getElementById('modalExit');
+            if(!modal) return;
+            const editId=modal.getAttribute('data-edit-id');
+            clearFieldErrors();
+            const data={
+                employee_id: getModalFieldValue('modalExit','employee')||null,
+                task_name: getModalFieldValue('modalExit','task_name'),
+                task_type: getModalFieldValue('modalExit','task_type')||'exit_interview',
+                description: getModalFieldValue('modalExit','description'),
+                assigned_to_id: getModalFieldValue('modalExit','assigned_to')||null,
+                due_date: getModalFieldValue('modalExit','due_date')||null,
+                status: getModalFieldValue('modalExit','status')||'pending',
+                notes: getModalFieldValue('modalExit','notes'),
             };
-            try {
-                await createOffboardingTask(data);
-                showToast('✅', 'Exit process created!');
+            if(data.employee_id) data.employee = data.employee_id;
+            if(data.assigned_to_id) data.assigned_to = data.assigned_to_id;
+            if(!data.assigned_to_id) { delete data.assigned_to_id; delete data.assigned_to; }
+            if(!data.due_date) delete data.due_date;
+            if(!data.task_name){ showFieldErrors({task_name:['Task name required']}); return; }
+            if(!data.employee && !data.employee_id){ showFieldErrors({employee:['Employee required']}); return; }
+            const btn=modal.querySelector('[onclick="saveOffboarding()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='\u23F3 Saving...';}
+            try{
+                if(editId){ await updateOffboardingTaskAPI(editId, data); showToast('✅','Offboarding updated'); modal.removeAttribute('data-edit-id'); }
+                else { await createOffboardingTask(data); showToast('✅','Offboarding created'); }
                 bootstrap.Modal.getInstance(modal).hide();
+                resetOffboardingForm();
                 loadOffboardingTasks();
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
+                loadOnboardingTasks(1);
+            }catch(e){
+                console.error(e);
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors&&Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed'; const ge=document.getElementById('form-global-error-offboarding'); if(ge){ge.textContent=msg;ge.classList.add('show');} showToast('❌',msg); }
+            }finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Update Exit Process';}}
         }
-
+        async function loadDropdownsOnboarding(){
+            try{
+                const emps=await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, {page:1, page_size:100}).catch(()=>({data:[]}));
+                const empData=emps?.data||[];
+                ['onboarding-employee-select','offboarding-employee-select','onboarding-assigned-select','offboarding-assigned-select'].forEach(id=>{
+                    const sel=document.getElementById(id);
+                    if(sel){
+                        const cur=sel.value;
+                        sel.innerHTML='<option value="">Select Employee</option>'+empData.map(e=>`<option value="${e.id}">${e.first_name} ${e.last_name}</option>`).join('');
+                        if(cur) sel.value=cur;
+                    }
+                });
+            }catch(e){ console.error(e); }
+        }
         $(function () {
             loadOnboardingTasks(1);
             loadOffboardingTasks();
             loadExitInterviews();
+            loadDropdownsOnboarding();
+            let searchTimeout;
+            const searchInput=document.getElementById('onboarding-search');
+            if(searchInput) searchInput.addEventListener('input', ()=>{ clearTimeout(searchTimeout); searchTimeout=setTimeout(()=>{onboardingPage=1; loadOnboardingTasks(1);},400); });
+            const statusSel=document.getElementById('onboarding-filter-status');
+            if(statusSel) statusSel.addEventListener('change', ()=>{ onboardingPage=1; loadOnboardingTasks(1); });
+            ['modalOnboarding','modalExit'].forEach(mid=>{
+                const el=document.getElementById(mid);
+                if(!el) return;
+                el.addEventListener('hidden.bs.modal', ()=>{ clearFieldErrors(); });
+                el.addEventListener('show.bs.modal', ()=>{ clearFieldErrors(); });
+            });
+            const addOnbBtn=document.querySelector('[data-bs-target="#modalOnboarding"]');
+            if(addOnbBtn) addOnbBtn.addEventListener('click', ()=>{ resetOnboardingForm(); });
+            const addExitBtn=document.querySelector('[data-bs-target="#modalExit"]');
+            if(addExitBtn) addExitBtn.addEventListener('click', ()=>{ resetOffboardingForm(); });
+            document.querySelectorAll('#modalOnboarding .fi, #modalExit .fi').forEach(input=>{
+                input.addEventListener('input', ()=>{
+                    input.classList.remove('is-invalid');
+                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
+                    const field=input.getAttribute('data-field');
+                    if(field){
+                        const errEl=document.querySelector(`[data-error-for="${field}"]`);
+                        if(errEl) errEl.textContent='';
+                    }
+                });
+                input.addEventListener('change', ()=>{
+                    input.classList.remove('is-invalid');
+                    const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error');
+                });
+            });
         });
-
         $(function () {
             var d = new Date();
             $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
             $('.toggle').on('click', function () { $(this).toggleClass('on'); });
         });
-
     </script>
 </body>
 

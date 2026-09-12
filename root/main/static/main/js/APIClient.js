@@ -62,6 +62,7 @@ class APIClient {
             method,
             headers: this.headers,
             signal: controller.signal,
+            credentials: 'same-origin',
             ...(data && { body: JSON.stringify(data) })
         };
 

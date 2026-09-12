@@ -15,6 +15,35 @@ def parse_body(request):
         return {}
 
 
+def _normalize_fk(data, fields=None):
+    if fields is None:
+        fields = ['hr_contact']
+    for fk in fields:
+        id_key = f"{fk}_id"
+        for key in (fk, id_key):
+            if key in data and isinstance(data[key], str):
+                val = data[key].strip()
+                if val == '':
+                    data[key] = None
+                else:
+                    try:
+                        data[key] = int(val)
+                    except (ValueError, TypeError):
+                        pass
+        if fk in data:
+            val = data.pop(fk)
+            if id_key not in data or data[id_key] is None or data[id_key] == '':
+                data[id_key] = val
+        if id_key in data and isinstance(data[id_key], str):
+            try:
+                data[id_key] = int(data[id_key].strip()) if data[id_key].strip() != '' else None
+            except (ValueError, TypeError):
+                data[id_key] = None
+        if data.get(id_key) == '':
+            data[id_key] = None
+    return data
+
+
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def office_list(request):
@@ -67,6 +96,7 @@ def office_list(request):
             'sort_direction': sort_direction,
         })
     data = parse_body(request)
+    data = _normalize_fk(data, ['hr_contact'])
     instance, errors = office_service.create(**data)
     if instance:
         return JsonResponse(OfficeSerializer.serialize(instance), status=201)
@@ -83,6 +113,7 @@ def office_detail(request, pk):
         return JsonResponse(OfficeSerializer.serialize(instance))
     elif request.method == "PUT":
         data = parse_body(request)
+        data = _normalize_fk(data, ['hr_contact'])
         instance, errors = office_service.update(pk, **data)
         if instance:
             return JsonResponse(OfficeSerializer.serialize(instance))
