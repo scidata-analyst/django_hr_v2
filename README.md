@@ -26,6 +26,24 @@ The project directory is mounted into the `web` container. Saved Python files
 trigger Django's development-server reload; saved templates and static files are
 available immediately after refreshing the browser.
 
+On startup the `web` container runs `entrypoint.sh`, which applies migrations
+(with retries while MySQL starts), seeds demo data on an empty database
+(`seed --if-empty --full`), and only then starts the server. The server will
+not start if migrations fail — the container exits with an error instead.
+
+### Troubleshooting: `Table 'django_db.auth_user' doesn't exist`
+
+This means the web server started against an empty (unmigrated) database.
+With the current `entrypoint.sh` this cannot happen on a fresh `up`, but if
+you see it (e.g. an older container is still running), recover with:
+
+```bash
+docker compose up -d --build        # rebuild to get entrypoint.sh, then it migrates + seeds
+# or, without restarting:
+docker compose exec web python root/manage.py migrate --noinput
+docker compose exec web python root/manage.py seed --if-empty --full
+```
+
 ## Project Structure
 - `root/`: Main Django project folder
   - `core_module/`: Core HR logic and components

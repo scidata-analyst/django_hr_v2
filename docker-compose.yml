@@ -23,7 +23,13 @@ services:
     build: .
     container_name: django_web_app
     restart: always
-    command: sh -c "python root/manage.py migrate --noinput && python root/manage.py seed --if-empty --full || echo 'Seeding skipped/failed' && python root/manage.py runserver 0.0.0.0:8003"
+    # entrypoint.sh runs `migrate` (with retries) + demo `seed` first and only
+    # then execs the command below. The server NEVER starts on an unmigrated
+    # DB — the old `A && B || C && D` shell chain could start runserver even
+    # when migrate failed (=> "Table 'django_db.auth_user' doesn't exist").
+    # `migrate` also auto-seeds an empty DB via the post_migrate signal.
+    entrypoint: ["sh", "/app/entrypoint.sh"]
+    command: ["python", "root/manage.py", "runserver", "0.0.0.0:8003"]
     # Directly mount the working tree so saved host files are immediately
     # available to Django inside the container.
     volumes:

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRMSPro — Create Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <!-- Brand panel -->
+      <div class="auth-brand">
+        <div class="auth-logo">
+          <div class="auth-logo-mark">💼</div>
+          <div>
+            <div class="auth-logo-name">HRMSPro</div>
+            <div class="auth-logo-sub">Enterprise Suite</div>
+          </div>
+        </div>
+        <h1 class="auth-headline">Join <span class="hl-accent">2,800+</span> happy HR teams.</h1>
+        <p class="auth-tagline">Create your workspace in seconds. Free demo data is seeded automatically so you can explore every module instantly.</p>
+        <ul class="auth-features">
+          <li><span class="auth-check"><i class="bi bi-check-lg"></i></span><span><strong>Instant demo data</strong> — employees, payroll &amp; reports ready on first login.</span></li>
+          <li><span class="auth-check"><i class="bi bi-check-lg"></i></span><span><strong>Role-ready access</strong> — HR, manager &amp; employee workflows.</span></li>
+          <li><span class="auth-check"><i class="bi bi-check-lg"></i></span><span><strong>No credit card</strong> — just pick a username and go.</span></li>
+        </ul>
+        <div class="auth-stats">
+          <div><div class="auth-stat-num">17</div><div class="auth-stat-label">HR modules</div></div>
+          <div><div class="auth-stat-num">50+</div><div class="auth-stat-label">Seeded demo staff</div></div>
+          <div><div class="auth-stat-num">24/7</div><div class="auth-stat-label">Self-service</div></div>
+        </div>
+      </div>
+
+      <!-- Form panel -->
+      <div class="auth-form-side">
+        <span class="auth-kicker"><i class="bi bi-person-plus"></i> Get started</span>
+        <div class="auth-title">Create your account 🚀</div>
+        <p class="auth-subtitle">Set up your HRMSPro login in under a minute.</p>
+
+        {% if form.non_field_errors %}
+          <div class="auth-alert auth-alert-error">
+            <span>⛔</span>
+            <span>
+              {% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+            </span>
+          </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'register' %}" novalidate>
+          {% csrf_token %}
+          {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+          <div class="auth-field-row">
+            <div class="auth-field">
+              <label class="fl" for="id_first_name">First name</label>
+              <div class="input-wrap">
+                <span class="input-icon"><i class="bi bi-person"></i></span>
+                {{ form.first_name }}
+              </div>
+              {% if form.first_name.errors %}<div class="field-error">{{ form.first_name.errors|join:", " }}</div>{% endif %}
+            </div>
+            <div class="auth-field">
+              <label class="fl" for="id_last_name">Last name</label>
+              <div class="input-wrap">
+                <span class="input-icon"><i class="bi bi-person"></i></span>
+                {{ form.last_name }}
+              </div>
+              {% if form.last_name.errors %}<div class="field-error">{{ form.last_name.errors|join:", " }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="auth-field">
+            <label class="fl" for="id_username">Username</label>
+            <div class="input-wrap">
+              <span class="input-icon"><i class="bi bi-at"></i></span>
+              {{ form.username }}
+            </div>
+            {% if form.username.errors %}<div class="field-error">{{ form.username.errors|join:", " }}</div>{% endif %}
+          </div>
+
+          <div class="auth-field">
+            <label class="fl" for="id_email">Work email</label>
+            <div class="input-wrap">
+              <span class="input-icon"><i class="bi bi-envelope"></i></span>
+              {{ form.email }}
+            </div>
+            {% if form.email.errors %}<div class="field-error">{{ form.email.errors|join:", " }}</div>{% endif %}
+          </div>
+
+          <div class="auth-field-row">
+            <div class="auth-field">
+              <label class="fl" for="id_password1">Password</label>
+              <div class="input-wrap">
+                <span class="input-icon"><i class="bi bi-key"></i></span>
+                {{ form.password1 }}
+                <button type="button" class="pw-toggle" data-toggle-pw="id_password1" aria-label="Show password"><i class="bi bi-eye"></i></button>
+              </div>
+              <div class="pw-meter" id="pw-meter"><span></span><span></span><span></span><span></span></div>
+              {% if form.password1.errors %}<div class="field-error">{{ form.password1.errors|join:", " }}</div>{% endif %}
+            </div>
+            <div class="auth-field">
+              <label class="fl" for="id_password2">Confirm password</label>
+              <div class="input-wrap">
+                <span class="input-icon"><i class="bi bi-key-fill"></i></span>
+                {{ form.password2 }}
+                <button type="button" class="pw-toggle" data-toggle-pw="id_password2" aria-label="Show password"><i class="bi bi-eye"></i></button>
+              </div>
+              {% if form.password2.errors %}<div class="field-error">{{ form.password2.errors|join:", " }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="auth-row">
+            <label class="remember"><input type="checkbox" id="terms" required> I agree to the <a class="auth-link" href="#" onclick="return false">Terms</a> &amp; <a class="auth-link" href="#" onclick="return false">Privacy Policy</a></label>
+          </div>
+
+          <button type="submit" class="auth-btn"><i class="bi bi-rocket-takeoff"></i> Create account</button>
+        </form>
+
+        <div class="auth-switch">Already have an account? <a class="auth-link" href="{% url 'login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Sign in →</a></div>
+
+        <div class="auth-foot">Protected by enterprise-grade security · © 2026 HRMSPro</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-toggle-pw]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var input = document.getElementById(btn.getAttribute('data-toggle-pw'));
+        var icon = btn.querySelector('i');
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('bi-eye');
+          icon.classList.add('bi-eye-slash');
+        } else {
+          input.type = 'password';
+          icon.classList.remove('bi-eye-slash');
+          icon.classList.add('bi-eye');
+        }
+      });
+    });
+    // simple password strength meter
+    var pw1 = document.getElementById('id_password1');
+    var meter = document.getElementById('pw-meter');
+    if (pw1 && meter) {
+      var bars = meter.querySelectorAll('span');
+      pw1.addEventListener('input', function () {
+        var v = pw1.value, score = 0;
+        if (v.length >= 8) score++;
+        if (/[A-Z]/.test(v) && /[a-z]/.test(v)) score++;
+        if (/\d/.test(v)) score++;
+        if (/[^A-Za-z0-9]/.test(v)) score++;
+        var colors = ['#ef4444', '#f59e0b', '#3b82f6', '#10b981'];
+        bars.forEach(function (bar, i) {
+          bar.style.background = i < score ? colors[score - 1] : '#e2e8f0';
+        });
+      });
+    }
+    {% if form.username.errors %}document.getElementById('id_username')?.classList.add('is-invalid');{% endif %}
+    {% if form.email.errors %}document.getElementById('id_email')?.classList.add('is-invalid');{% endif %}
+    {% if form.password1.errors %}document.getElementById('id_password1')?.classList.add('is-invalid');{% endif %}
+    {% if form.password2.errors %}document.getElementById('id_password2')?.classList.add('is-invalid');{% endif %}
+  </script>
+</body>
+</html>

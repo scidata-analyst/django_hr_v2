@@ -75,12 +75,12 @@
           Integrations</button>
       </div>
       <div class="sidebar-footer">
-        <div class="user-card">
-          <div class="user-avatar">AR</div>
+        <div class="user-card" onclick="location.href='{% url 'logout' %}'" title="Sign out">
+          <div class="user-avatar">{{ request.user.first_name|default:request.user.username|slice:":2"|upper }}</div>
           <div class="user-info">
-            <div class="user-name">Ahmed Rahman</div>
-            <div class="user-role">HR Administrator</div>
-          </div><i class="bi bi-three-dots-vertical" style="color:#94a3b8;font-size:0.9rem;"></i>
+            <div class="user-name">{% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}</div>
+            <div class="user-role">{% if request.user.is_superuser %}HR Administrator{% else %}Team Member{% endif %} · Sign out</div>
+          </div><i class="bi bi-box-arrow-right" style="color:#94a3b8;font-size:0.9rem;"></i>
         </div>
       </div>
     </aside>
@@ -93,14 +93,15 @@
             type="text" placeholder="Search anything..." /></div>
         <div class="topbar-date" id="topbar-date"></div>
         <div class="topbar-action"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
+        <div class="topbar-action" onclick="location.href='{% url 'logout' %}'" title="Sign out"><i class="bi bi-box-arrow-right"></i></div>
         <div class="topbar-action"><i class="bi bi-gear"></i></div>
-        <div class="avatar av-blue" style="width:34px;height:34px;font-size:0.72rem;cursor:pointer;">AR</div>
+        <div class="avatar av-blue" style="width:34px;height:34px;font-size:0.72rem;cursor:pointer;" title="{% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}">{{ request.user.first_name|default:request.user.username|slice:":2"|upper }}</div>
       </div>
       <div class="page-content">
         <div class="page active" id="page-dashboard">
           <div class="page-header">
             <div class="page-header-left">
-              <div class="page-title">Good morning, Ahmed 👋</div>
+              <div class="page-title">Good morning, {% if request.user.first_name %}{{ request.user.first_name }}{% else %}{{ request.user.username }}{% endif %} 👋</div>
               <div class="page-subtitle">Here's what's happening in your organization today</div>
             </div>
             <div class="page-actions">

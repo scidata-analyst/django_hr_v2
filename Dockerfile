@@ -23,3 +23,9 @@ RUN pip install -r requirements.txt
 
 # Copy project
 COPY . /app/
+
+# Startup script: migrates + seeds the DB before serving (see entrypoint.sh).
+# Invoked via `sh` so no exec bit / LF-CRLF issues on Windows checkouts.
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
+CMD ["python", "root/manage.py", "runserver", "0.0.0.0:8003"]
