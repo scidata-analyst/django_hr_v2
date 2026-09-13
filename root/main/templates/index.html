@@ -107,7 +107,7 @@
             </div>
             <div class="page-actions">
               <button class="btn-outline-custom"><i class="bi bi-download"></i> Export</button>
-              <button class="btn-primary-custom"><i class="bi bi-plus-lg"></i> Quick Add</button>
+              <button class="btn-primary-custom" onclick="openQuickAdd()"><i class="bi bi-plus-lg"></i> Quick Add</button>
             </div>
           </div>
 
@@ -149,7 +149,7 @@
                 <div class="stat-info">
                   <div class="stat-label">Monthly Payroll</div>
                   <div class="stat-value" id="stat-payroll">$4.2M</div>
-                  <div class="stat-change up"><i class="bi bi-arrow-up-short"></i> Processed on time</div>
+                  <div class="stat-change up" id="stat-payroll-change"><i class="bi bi-arrow-up-short"></i> Processed on time</div>
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@
                 <div class="stat-info">
                   <div class="stat-label">Open Positions</div>
                   <div class="stat-value" id="stat-open-positions">47</div>
-                  <div class="stat-change up"><i class="bi bi-arrow-up-short"></i> 234 applicants</div>
+                  <div class="stat-change up" id="stat-open-positions-change"><i class="bi bi-arrow-up-short"></i> 234 applicants</div>
                 </div>
               </div>
             </div>
@@ -315,7 +315,7 @@
               <div class="card-custom">
                 <div class="card-header-custom">
                   <div class="card-header-title">Upcoming Events</div>
-                  <button class="btn-outline-custom" style="padding:4px 10px;">+ Add</button>
+                  <button class="btn-outline-custom" style="padding:4px 10px;" onclick="openQuickAdd('Event')">+ Add</button>
                 </div>
                 <div class="card-body-custom">
                   <div style="display:flex;flex-direction:column;gap:10px;">
@@ -385,6 +385,76 @@
   <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
 
 
+  <!-- ═══ modalQuickAdd ═══ -->
+  <div class="modal fade" id="modalQuickAdd" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:460px;">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#cffafe">⚡</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;" id="quick-add-title">Quick Add</div>
+              <div style="font-size:0.78rem;color:#64748b;">Add an item to your dashboard</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+          <div class="form-grid">
+            <div class="fg">
+              <div class="fl">Record Type *</div>
+              <select class="fi" data-field="record_type">
+                <option value="Announcement">Announcement</option>
+                <option value="Event">Event</option>
+                <option value="Recognition">Recognition</option>
+                <option value="Document">Document</option>
+              </select>
+              <div class="field-error" data-error-for="record_type"></div>
+            </div>
+            <div class="fg">
+              <div class="fl">Title *</div><input class="fi" data-field="title" placeholder="e.g. Town hall meeting" />
+              <div class="field-error" data-error-for="title"></div>
+            </div>
+            <div class="fg full">
+              <div class="fl">Details</div><textarea class="fi" data-field="details" rows="3"
+                placeholder="Optional notes..."></textarea>
+            </div>
+            <div class="fg">
+              <div class="fl">Date</div><input class="fi" data-field="date" type="date" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+            data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveQuickAdd()">💾 Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalDelete ═══ -->
+  <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+      <div class="modal-content"
+        style="border-radius:14px;border:none;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+        <div
+          style="width:60px;height:60px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;">
+          🗑️</div>
+        <div style="font-size:1.05rem;font-weight:800;color:#0f172a;margin-bottom:8px;" id="delete-title">Delete Record
+        </div>
+        <div style="font-size:0.82rem;color:#64748b;margin-bottom:24px;" id="delete-desc">This action cannot be undone.
+          Are you sure?</div>
+        <div class="d-flex gap-2 justify-content-center">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+            data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm fw-bold" onclick="confirmDelete()">🗑️ Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
@@ -404,6 +474,48 @@
       showToast('🗑️', 'Record deleted successfully');
     }
 
+    function clearFieldErrors() {
+      document.querySelectorAll('#modalQuickAdd .field-error').forEach(function (el) { el.textContent = ''; });
+      document.querySelectorAll('#modalQuickAdd .fi').forEach(function (el) {
+        el.style.borderColor = '';
+      });
+    }
+    function showFieldError(field, msg) {
+      var input = document.querySelector('#modalQuickAdd [data-field="' + field + '"]');
+      if (input) input.style.borderColor = '#ef4444';
+      var err = document.querySelector('#modalQuickAdd [data-error-for="' + field + '"]');
+      if (err) err.textContent = msg;
+    }
+
+    function openQuickAdd(recordType) {
+      clearFieldErrors();
+      var select = document.querySelector('#modalQuickAdd [data-field="record_type"]');
+      if (select && recordType) select.value = recordType;
+      document.getElementById('quick-add-title').textContent = recordType
+        ? 'Add ' + recordType
+        : 'Quick Add';
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalQuickAdd')).show();
+    }
+
+    function saveQuickAdd() {
+      var val = function (name) {
+        var el = document.querySelector('#modalQuickAdd [data-field="' + name + '"]');
+        return el ? (el.value || '').trim() : '';
+      };
+      clearFieldErrors();
+      var errors = [];
+      var type = val('record_type');
+      var title = val('title');
+      if (!type) { showFieldError('record_type', 'Record type is required.'); errors.push('type'); }
+      if (!title) { showFieldError('title', 'Title is required.'); errors.push('title'); }
+      if (errors.length) return;
+
+      var label = type.toLowerCase().replace(/_/g, ' ');
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('modalQuickAdd')).hide();
+      setTimeout(function () { clearFieldErrors(); }, 300);
+      showToast('✅', title.charAt(0).toUpperCase() + title.slice(1) + ' added to ' + label + 's!');
+    }
+
     const API = {
       employeeStats: '/core-module/employee/api/employee/stats/',
       attendanceStats: '/core-module/attendance/api/attendance/stats/',
@@ -411,6 +523,8 @@
       headcount: '/operation/api/report/headcount/',
       turnover: '/operation/api/report/turnover/',
       leavePending: '/core-module/attendance/api/leave/?status=pending&page=1&page_size=5',
+      payrollStats: '/core-module/payroll/api/stats/',
+      jobPostings: '/core-module/recruitment/api/job/?status=active&page=1&page_size=1',
     };
 
     function getCsrf() {
@@ -527,6 +641,8 @@
         apiGet(API.turnover),
         apiGet(API.leavePending),
         apiGet(API.weeklyStats),
+        apiGet(API.payrollStats),
+        apiGet(API.jobPostings),
       ]);
       var empStats = results[0].status === 'fulfilled' ? results[0].value : null;
       var attStats = results[1].status === 'fulfilled' ? results[1].value : null;
@@ -534,28 +650,73 @@
       var turnover = results[3].status === 'fulfilled' ? results[3].value : null;
       var leaveRes = results[4].status === 'fulfilled' ? results[4].value : null;
       var weeklyData = results[5].status === 'fulfilled' ? results[5].value : null;
+      var payrollStats = results[6].status === 'fulfilled' ? results[6].value : null;
+      var jobRes = results[7].status === 'fulfilled' ? results[7].value : null;
+      if (window.console) console.log('[dashboard-stats]', { empStats: empStats, attStats: attStats, payrollStats: payrollStats, jobRes: jobRes });
 
       if (empStats) {
         var totalEl = document.getElementById('stat-total');
-        if (totalEl) totalEl.textContent = (empStats.total || 0).toLocaleString();
+        // Prefer backend `current` (active + probation); fall back to computing it
+        var currentCount = (empStats.current != null) ? empStats.current : ((empStats.active || 0) + (empStats.probation || 0));
+        if (totalEl) totalEl.textContent = Number(currentCount).toLocaleString();
         var sub = document.getElementById('stat-total-change');
         if (sub) sub.innerHTML = '<i class="bi bi-arrow-up-short"></i> ' + (empStats.active || 0) + ' active · ' + (empStats.probation || 0) + ' probation';
       }
       if (attStats) {
         var presentEl = document.getElementById('stat-present');
-        if (presentEl) presentEl.textContent = (attStats.present || 0).toLocaleString();
         var presentChange = document.getElementById('stat-present-change');
-        if (presentChange && attStats.total_records) {
-          var rate = Math.round((attStats.present || 0) / attStats.total_records * 1000) / 10;
-          presentChange.innerHTML = '<i class="bi bi-arrow-up-short"></i> ' + rate + '% attendance';
-        }
         var onLeaveEl = document.getElementById('stat-onleave');
-        if (onLeaveEl) onLeaveEl.textContent = (attStats.on_leave || 0).toLocaleString();
         var onLeaveChange = document.getElementById('stat-onleave-change');
+        var totalRecs = Number(attStats.total_records) || 0;
+        if (totalRecs > 0) {
+          if (presentEl) presentEl.textContent = (attStats.present || 0).toLocaleString();
+          if (presentChange) {
+            var rate = Math.round((attStats.present || 0) / totalRecs * 1000) / 10;
+            presentChange.innerHTML = '<i class="bi bi-arrow-up-short"></i> ' + rate + '% attendance';
+          }
+          if (onLeaveEl) onLeaveEl.textContent = (attStats.on_leave || 0).toLocaleString();
+          if (onLeaveChange) onLeaveChange.innerHTML = '<i class="bi bi-arrow-down-short"></i> ' + (attStats.on_leave || 0) + ' on leave today';
+        } else {
+          if (presentEl) presentEl.textContent = '—';
+          if (presentChange) presentChange.innerHTML = '<i class="bi bi-dash"></i> No attendance today';
+          if (onLeaveEl) onLeaveEl.textContent = '—';
+          if (onLeaveChange) onLeaveChange.innerHTML = '<i class="bi bi-dash"></i> Awaiting check-ins';
+        }
         if (onLeaveChange) {
           var pending = (leaveRes && (leaveRes.count != null ? leaveRes.count : (leaveRes.data ? leaveRes.data.length : null)));
-          onLeaveChange.innerHTML = '<i class="bi bi-arrow-down-short"></i> ' + (pending != null ? pending + ' pending approvals' : (attStats.on_leave || 0) + ' on leave');
+          if (pending != null && Number(pending) > 0) {
+            onLeaveChange.innerHTML = '<i class="bi bi-arrow-down-short"></i> ' + pending + ' pending approvals';
+          }
         }
+      }
+      if (payrollStats && !payrollStats.error) {
+        var payrollEl = document.getElementById('stat-payroll');
+        var payrollChange = document.getElementById('stat-payroll-change');
+        // Backend key is `gross_payroll` (not total_gross)
+        var gross = Number(payrollStats.gross_payroll) || 0;
+        var slips = Number(payrollStats.payslip_count) || 0;
+        if (payrollEl && gross > 0) {
+          payrollEl.textContent = gross >= 1000000 ? '$' + (gross / 1000000).toFixed(1) + 'M'
+            : gross >= 1000 ? '$' + (gross / 1000).toFixed(0) + 'K'
+            : '$' + gross.toLocaleString();
+          if (payrollChange) {
+            var net = Number(payrollStats.net_payroll) || 0;
+            var netTxt = net >= 1000000 ? '$' + (net / 1000000).toFixed(1) + 'M'
+              : net >= 1000 ? '$' + (net / 1000).toFixed(0) + 'K'
+              : '$' + net.toLocaleString();
+            payrollChange.innerHTML = '<i class="bi bi-arrow-up-short"></i> Net ' + netTxt + ' · ' + slips + ' slips';
+          }
+        } else if (payrollEl && slips === 0) {
+          payrollEl.textContent = '—';
+          if (payrollChange) payrollChange.innerHTML = '<i class="bi bi-dash"></i> No payslips yet';
+        }
+      }
+      if (jobRes && !jobRes.error) {
+        var openEl = document.getElementById('stat-open-positions');
+        var openChange = document.getElementById('stat-open-positions-change');
+        var jobCount = (jobRes.count != null) ? Number(jobRes.count) : (Array.isArray(jobRes.data) ? jobRes.data.length : 0);
+        if (openEl) openEl.textContent = jobCount.toLocaleString();
+        if (openChange) openChange.innerHTML = '<i class="bi bi-arrow-up-short"></i> ' + jobCount + ' active opening' + (jobCount === 1 ? '' : 's');
       }
       if (weeklyData && Array.isArray(weeklyData.data) && weeklyData.data.length) {
         renderWeeklyChart(weeklyData.data);
@@ -579,7 +740,7 @@
       } else {
         renderPendingApprovals([], null);
       }
-      // Note: Monthly Payroll, Open Positions, Avg Performance, Training Completion have no dedicated dashboard stats endpoint — left as static placeholders.
+      // Note: Avg Performance, Training Completion have no dedicated dashboard stats endpoint — left as static placeholders.
     }
 
     $(function () {

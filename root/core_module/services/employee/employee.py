@@ -103,10 +103,12 @@ class EmployeeService(BaseService):
         return self.repository.get_active_employees()
 
     def get_dashboard_stats(self):
-        return Employee.objects.aggregate(
+        agg = Employee.objects.aggregate(
             total=Count('id'),
             active=Count('id', filter=Q(status='active')),
             probation=Count('id', filter=Q(status='probation')),
             resigned=Count('id', filter=Q(status='resigned')),
             terminated=Count('id', filter=Q(status='terminated')),
         )
+        agg['current'] = (agg['active'] or 0) + (agg['probation'] or 0)
+        return agg
