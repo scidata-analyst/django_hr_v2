@@ -13,7 +13,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <meta name="csrf-token" content="{{ csrf_token }}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
 <body>
@@ -169,16 +170,16 @@
                 </div>
                 <div style="overflow-x:auto;">
                   <table class="table-custom">
-                    <thead>
-                      <tr>
-                        <th>Country</th>
-                        <th>Office</th>
-                        <th>Employees</th>
-                        <th>Currency</th>
-                        <th>Payroll Status</th>
-                        <th>Compliance</th>
-                      </tr>
-                    </thead>
+<thead>
+                        <tr>
+                          <th onclick="sortOffices('country')" style="cursor:pointer;">Country <span class="sort-indicator" id="sort-country">↕</span></th>
+                          <th onclick="sortOffices('name')" style="cursor:pointer;">Office <span class="sort-indicator" id="sort-name">↕</span></th>
+                          <th onclick="sortOffices('employee_count')" style="cursor:pointer;">Employees <span class="sort-indicator" id="sort-employee_count">↕</span></th>
+                          <th onclick="sortOffices('local_currency')" style="cursor:pointer;">Currency <span class="sort-indicator" id="sort-local_currency">↕</span></th>
+                          <th>Payroll Status</th>
+                          <th>Compliance</th>
+                        </tr>
+                      </thead>
                     <tbody id="offices-tbody">
                       <tr>
                         <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">Loading...</td>
@@ -282,10 +283,11 @@
 
           <div class="form-grid">
             <div class="fg">
-              <div class="fl">Office Name *</div><input class="fi" placeholder="e.g. London Office" />
+              <div class="fl">Office Name *</div><input class="fi" data-field="name" placeholder="e.g. London Office" />
+              <div class="field-error" data-error-for="name"></div>
             </div>
             <div class="fg">
-              <div class="fl">Country *</div><select class="fi">
+              <div class="fl">Country *</div><select class="fi" data-field="country">
                 <option>Bangladesh</option>
                 <option>India</option>
                 <option>UK</option>
@@ -294,12 +296,14 @@
                 <option>Singapore</option>
                 <option>Australia</option>
               </select>
+              <div class="field-error" data-error-for="country"></div>
             </div>
             <div class="fg">
-              <div class="fl">City *</div><input class="fi" placeholder="City" />
+              <div class="fl">City *</div><input class="fi" data-field="city" placeholder="City" />
+              <div class="field-error" data-error-for="city"></div>
             </div>
             <div class="fg">
-              <div class="fl">Office Type</div><select class="fi">
+              <div class="fl">Office Type</div><select class="fi" data-field="office_type">
                 <option>Headquarters</option>
                 <option>Regional Office</option>
                 <option>Branch</option>
@@ -307,11 +311,11 @@
               </select>
             </div>
             <div class="fg full">
-              <div class="fl">Full Address</div><textarea class="fi" rows="3"
+              <div class="fl">Full Address</div><textarea class="fi" data-field="full_address" rows="3"
                 placeholder="Complete office address..."></textarea>
             </div>
             <div class="fg">
-              <div class="fl">Local Currency</div><select class="fi">
+              <div class="fl">Local Currency</div><select class="fi" data-field="local_currency">
                 <option>BDT - Bangladeshi Taka</option>
                 <option>USD - US Dollar</option>
                 <option>GBP - British Pound</option>
@@ -320,7 +324,7 @@
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Timezone</div><select class="fi">
+              <div class="fl">Timezone</div><select class="fi" data-field="timezone">
                 <option>Asia/Dhaka (UTC+6)</option>
                 <option>Europe/London (UTC+0/+1)</option>
                 <option>Asia/Dubai (UTC+4)</option>
@@ -328,23 +332,23 @@
               </select>
             </div>
             <div class="fg">
-              <div class="fl">HR Contact</div><select class="fi">
+              <div class="fl">HR Contact</div><select class="fi" data-field="hr_contact">
                 <option>Ahmed Rahman</option>
                 <option>Sara Ahmed</option>
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Applicable Tax Law</div><input class="fi"
+              <div class="fl">Applicable Tax Law</div><input class="fi" data-field="tax_law"
                 placeholder="e.g. Bangladesh Income Tax Ordinance" />
             </div>
             <div class="fg">
-              <div class="fl">Labor Law Reference</div><input class="fi" placeholder="e.g. Bangladesh Labor Act 2006" />
+              <div class="fl">Labor Law Reference</div><input class="fi" data-field="labor_law" placeholder="e.g. Bangladesh Labor Act 2006" />
             </div>
             <div class="fg">
-              <div class="fl">Office Capacity</div><input class="fi" type="number" placeholder="Max headcount" />
+              <div class="fl">Office Capacity</div><input class="fi" data-field="capacity" type="number" placeholder="Max headcount" />
             </div>
             <div class="fg">
-              <div class="fl">Status</div><select class="fi">
+              <div class="fl">Status</div><select class="fi" data-field="status">
                 <option>Active</option>
                 <option>Inactive</option>
                 <option>Planned</option>
@@ -355,7 +359,7 @@
         <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
           <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
             data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Office</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveOffice()">💾 Save Office</button>
         </div>
       </div>
     </div>
@@ -427,9 +431,9 @@
     }
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-  <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -447,44 +451,30 @@
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
 
-    const pageTitles = {
-      dashboard: 'Dashboard Overview',
-      employee: 'Employee Management',
-      attendance: 'Attendance & Leave',
-      payroll: 'Payroll Management',
-      recruitment: 'Recruitment & Hiring',
-      performance: 'Performance Management',
-      training: 'Training & Development',
-      onboarding: 'Onboarding & Offboarding',
-      ess: 'Employee Self-Service',
-      reports: 'Reports & Analytics',
-      compliance: 'Compliance & Policies',
-      engagement: 'Engagement & Recognition',
-      health: 'Health, Safety & Benefits',
-      talent: 'Talent & Succession',
-      branding: 'Recruitment Marketing',
-      global: 'Global HR',
-      integrations: 'Integrations & Automation'
-    };
-
-    function showPage(id, btn) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('page-' + id);
-      if (target) target.classList.add('active');
-      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-      document.getElementById('sidebar').classList.remove('open');
-      window.scrollTo(0, 0);
+    // ── Validation helpers ──
+    function showFieldError(fieldName, message) {
+      const errorEl = document.querySelector(`[data-error-for="${fieldName}"]`);
+      if (errorEl) { errorEl.textContent = message || ''; errorEl.classList.toggle('visible', !!message); }
+      const inputEl = document.querySelector(`[data-field="${fieldName}"]`);
+      if (inputEl) inputEl.classList.toggle('input-error', !!message);
+    }
+    function clearFieldErrors() {
+      document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
     }
 
-    const d = new Date();
-    const dateEl = document.getElementById('topbar-date');
-    if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    // ── Office sorting ──
+    let officeSortBy = 'country';
+    let officeSortDir = 'asc';
 
-    document.querySelectorAll('.toggle').forEach(t => {
-      t.addEventListener('click', () => t.classList.toggle('on'));
-    });
+    function sortOffices(field) {
+      if (officeSortBy === field) { officeSortDir = officeSortDir === 'asc' ? 'desc' : 'asc'; }
+      else { officeSortBy = field; officeSortDir = 'asc'; }
+      document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '↕');
+      const indicator = document.getElementById(`sort-${field}`);
+      if (indicator) indicator.textContent = officeSortDir === 'asc' ? '↑' : '↓';
+      loadOffices(1);
+    }
 
     function renderPagination(result, infoId, containerId, fnName) {
       const totalPages = result.total_pages || 1;
@@ -493,9 +483,7 @@
       const start = (page - 1) * pageSize + 1;
       const end = Math.min(page * pageSize, result.count);
       const info = document.getElementById(infoId);
-      if (info) {
-        info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
-      }
+      if (info) info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
       const container = document.getElementById(containerId);
       if (container) {
         let html = '';
@@ -518,7 +506,7 @@
         page = page || 1;
         const search = document.getElementById('office-search')?.value || '';
         const country = document.getElementById('office-filter-country')?.value || '';
-        const params = { page, page_size: pageSize };
+        const params = { page, page_size: pageSize, sort_by: officeSortBy, sort_direction: officeSortDir };
         if (search) params.search = search;
         if (country) params.country = country;
         const result = await indexOffices(params);
@@ -550,26 +538,28 @@
 
     async function saveOffice() {
       try {
+        clearFieldErrors();
         const modal = document.getElementById('modalOffice');
-        const inputs = modal.querySelectorAll('.fi');
-        const selects = modal.querySelectorAll('select.fi');
-        const data = {
-          name: inputs[0]?.value || '',
-          country: inputs[1]?.value || '',
-          city: inputs[2]?.value || '',
-          office_type: selects[0]?.value || 'branch',
-          full_address: inputs[3]?.value || '',
-          local_currency: selects[1]?.value || 'BDT',
-          timezone: selects[2]?.value || 'Asia/Dhaka',
-          capacity: inputs[4]?.value || 0,
-          status: selects[3]?.value || 'active',
-        };
+        const name = document.querySelector('[data-field="name"]')?.value?.trim() || '';
+        const country = document.querySelector('[data-field="country"]')?.value || '';
+        const city = document.querySelector('[data-field="city"]')?.value?.trim() || '';
+        if (!name) { showFieldError('name', 'Office Name is required'); return; }
+        if (!country) { showFieldError('country', 'Country is required'); return; }
+        if (!city) { showFieldError('city', 'City is required'); return; }
+        const data = { name, country, city };
         await createOffice(data);
         showToast('✅', 'Office saved!');
         bootstrap.Modal.getInstance(modal).hide();
         loadOffices();
       } catch (e) {
-        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+        try {
+          const errData = JSON.parse(e.message);
+          if (errData.errors) {
+            Object.entries(errData.errors).forEach(([key, val]) => {
+              showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+            });
+          } else { showToast('❌', errData.message || 'Failed'); }
+        } catch { showToast('❌', 'Failed to save office'); }
       }
     }
 
@@ -579,7 +569,7 @@
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
       $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-  </script>
+    </script>
 </body>
 
 </html>

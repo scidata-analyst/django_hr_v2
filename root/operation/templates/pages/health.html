@@ -13,7 +13,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <meta name="csrf-token" content="{{ csrf_token }}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
 <body>
@@ -166,15 +167,15 @@
                 </div>
                 <div style="overflow-x:auto;">
                   <table class="table-custom">
-                    <thead>
-                      <tr>
-                        <th>Plan</th>
-                        <th>Coverage</th>
-                        <th>Enrolled</th>
-                        <th>Cost/Month</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
+<thead>
+                        <tr>
+                          <th onclick="sortBenefitPlans('plan_name')" style="cursor:pointer;">Plan <span class="sort-indicator" id="sort-plan_name">↕</span></th>
+                          <th onclick="sortBenefitPlans('plan_type')" style="cursor:pointer;">Coverage <span class="sort-indicator" id="sort-plan_type">↕</span></th>
+                          <th onclick="sortBenefitPlans('enrollment_count')" style="cursor:pointer;">Enrolled <span class="sort-indicator" id="sort-enrollment_count">↕</span></th>
+                          <th onclick="sortBenefitPlans('cost_per_month')" style="cursor:pointer;">Cost/Month <span class="sort-indicator" id="sort-cost_per_month">↕</span></th>
+                          <th onclick="sortBenefitPlans('is_active')" style="cursor:pointer;">Status <span class="sort-indicator" id="sort-is_active">↕</span></th>
+                        </tr>
+                      </thead>
                     <tbody id="benefits-tbody">
                       <tr>
                         <td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Loading...</td>
@@ -290,10 +291,11 @@
 
           <div class="form-grid">
             <div class="fg full">
-              <div class="fl">Plan Name *</div><input class="fi" placeholder="e.g. Family Medical Insurance" />
+              <div class="fl">Plan Name *</div><input class="fi" data-field="plan_name" placeholder="e.g. Family Medical Insurance" />
+              <div class="field-error" data-error-for="plan_name"></div>
             </div>
             <div class="fg">
-              <div class="fl">Benefit Type *</div><select class="fi">
+              <div class="fl">Benefit Type *</div><select class="fi" data-field="plan_type">
                 <option>Health/Medical</option>
                 <option>Dental</option>
                 <option>Vision</option>
@@ -303,46 +305,50 @@
                 <option>Childcare</option>
                 <option>Wellness</option>
               </select>
+              <div class="field-error" data-error-for="plan_type"></div>
             </div>
             <div class="fg">
-              <div class="fl">Provider</div><input class="fi" placeholder="Insurance company name" />
+              <div class="fl">Provider</div><input class="fi" data-field="provider" placeholder="Insurance company name" />
+              <div class="field-error" data-error-for="provider"></div>
             </div>
             <div class="fg">
-              <div class="fl">Coverage Amount ($)</div><input class="fi" type="number"
+              <div class="fl">Coverage Amount ($)</div><input class="fi" data-field="coverage_amount" type="number"
                 placeholder="Annual coverage limit" />
+              <div class="field-error" data-error-for="coverage_amount"></div>
             </div>
             <div class="fg">
-              <div class="fl">Employee Cost/Month ($)</div><input class="fi" type="number" value="0" />
+              <div class="fl">Employee Cost/Month ($)</div><input class="fi" data-field="employee_cost" type="number" value="0" />
             </div>
             <div class="fg">
-              <div class="fl">Company Cost/Month ($)</div><input class="fi" type="number" placeholder="0.00" />
+              <div class="fl">Company Cost/Month ($)</div><input class="fi" data-field="company_cost" type="number" placeholder="0.00" />
             </div>
             <div class="fg">
-              <div class="fl">Eligibility</div><select class="fi">
+              <div class="fl">Eligibility</div><select class="fi" data-field="eligibility">
                 <option>All Full-time Employees</option>
                 <option>Permanent Staff Only</option>
                 <option>After 6 months probation</option>
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Coverage Type</div><select class="fi">
+              <div class="fl">Coverage Type</div><select class="fi" data-field="coverage_type">
                 <option>Employee Only</option>
                 <option>Employee + Spouse</option>
                 <option>Employee + Family</option>
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Effective Date</div><input class="fi" type="date" />
+              <div class="fl">Effective Date</div><input class="fi" data-field="effective_date" type="date" />
             </div>
             <div class="fg">
-              <div class="fl">Renewal Date</div><input class="fi" type="date" />
+              <div class="fl">Renewal Date</div><input class="fi" data-field="renewal_date" type="date" />
             </div>
             <div class="fg full">
-              <div class="fl">Plan Details</div><textarea class="fi" rows="3"
+              <div class="fl">Plan Details</div><textarea class="fi" data-field="coverage_details" rows="3"
                 placeholder="Coverage inclusions and exclusions..."></textarea>
+              <div class="field-error" data-error-for="coverage_details"></div>
             </div>
             <div class="fg">
-              <div class="fl">Status</div><select class="fi">
+              <div class="fl">Status</div><select class="fi" data-field="status">
                 <option>Active</option>
                 <option>Inactive</option>
               </select>
@@ -352,7 +358,7 @@
         <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
           <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
             data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Benefit
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveBenefit()">💾 Save Benefit
             Plan</button>
         </div>
       </div>
@@ -384,8 +390,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js">
-  </script>
-  <script>
+</script>
+    <script src="{% static 'operation/js/constants.js' %}"></script>
+    <script src="{% static 'operation/js/APIClient.js' %}"></script>
+    <script>
     const api = new APIClient({
       baseURL: API_CONFIG.BASE_URL,
       timeout: API_CONFIG.TIMEOUT,
@@ -395,6 +403,9 @@
     if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
     window.api = api;
     window.API_ENDPOINTS = API_ENDPOINTS;
+
+    let benefitSortBy = 'plan_name';
+    let benefitSortDir = 'asc';
 
     async function allBenefitPlans() {
       try { return await api.all(API_ENDPOINTS.BENEFITS.PLANS.INDEX); }
@@ -437,91 +448,49 @@
       try { return await api._request('POST', API_ENDPOINTS.SAFETY.INCIDENTS.RESOLVE(id), {}); }
       catch (e) { console.error('Error resolving safety incident:', e); throw e; }
     }
-  </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-  <script>
-    $(document).on('show.bs.modal', '#modalIntegration', function (e) {
-      var name = $(e.relatedTarget).data('integration-name');
-      if (name) $('#integration-name').text(name);
-    });
-
-    function showToast(icon, msg, duration) {
-      duration = duration || 3000;
-      $('#toast-icon').text(icon);
-      $('#toast-msg').text(msg);
-      $('#toast').addClass('show');
-      setTimeout(function () { $('#toast').removeClass('show'); }, duration);
-    }
-    function confirmDelete() {
-      $('#modalDelete').modal('hide');
-      showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
-    }
-
-    const pageTitles = {
-      dashboard: 'Dashboard Overview',
-      employee: 'Employee Management',
-      attendance: 'Attendance & Leave',
-      payroll: 'Payroll Management',
-      recruitment: 'Recruitment & Hiring',
-      performance: 'Performance Management',
-      training: 'Training & Development',
-      onboarding: 'Onboarding & Offboarding',
-      ess: 'Employee Self-Service',
-      reports: 'Reports & Analytics',
-      compliance: 'Compliance & Policies',
-      engagement: 'Engagement & Recognition',
-      health: 'Health, Safety & Benefits',
-      talent: 'Talent & Succession',
-      branding: 'Recruitment Marketing',
-      global: 'Global HR',
-      integrations: 'Integrations & Automation'
-    };
-
-    function showPage(id, btn) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('page-' + id);
-      if (target) target.classList.add('active');
-      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-      document.getElementById('sidebar').classList.remove('open');
-      window.scrollTo(0, 0);
-    }
-
-    const d = new Date();
-    const dateEl = document.getElementById('topbar-date');
-    if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
-    document.querySelectorAll('.toggle').forEach(t => {
-      t.addEventListener('click', () => t.classList.toggle('on'));
-    });
-
-    function renderPagination(result, infoId, containerId, fnName) {
-      const totalPages = result.total_pages || 1;
-      const page = result.page || 1;
-      const pageSize = result.page_size || 10;
-      const start = (page - 1) * pageSize + 1;
-      const end = Math.min(page * pageSize, result.count);
-      const info = document.getElementById(infoId);
-      if (info) {
-        info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
+    function showFieldError(fieldName, message) {
+      const errorEl = document.querySelector(`[data-error-for="${fieldName}"]`);
+      if (errorEl) {
+        errorEl.textContent = message || '';
+        errorEl.classList.toggle('visible', !!message);
       }
-      const container = document.getElementById(containerId);
-      if (container) {
-        let html = '';
-        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
-        for (let i = 1; i <= totalPages; i++) {
-          if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
-            html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
-          } else if (i === page - 2 || i === page + 2) {
-            html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-          }
+      const inputEl = document.querySelector(`[data-field="${fieldName}"]`);
+      if (inputEl) {
+        inputEl.classList.toggle('input-error', !!message);
+      }
+    }
+
+    function clearFieldErrors() {
+      document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+    }
+
+    function validateForm(fields) {
+      clearFieldErrors();
+      let isValid = true;
+      for (const [name, label] of Object.entries(fields)) {
+        const input = document.querySelector(`[data-field="${name}"]`);
+        const val = input ? input.value.trim() : '';
+        if (!val) {
+          showFieldError(name, `${label} is required`);
+          isValid = false;
         }
-        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
-        container.innerHTML = html;
       }
+      return isValid;
+    }
+
+    function sortBenefitPlans(field) {
+      if (benefitSortBy === field) {
+        benefitSortDir = benefitSortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        benefitSortBy = field;
+        benefitSortDir = 'asc';
+      }
+      document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '↕');
+      const indicator = document.getElementById(`sort-${field}`);
+      if (indicator) indicator.textContent = benefitSortDir === 'asc' ? '↑' : '↓';
+      loadBenefitPlans(1);
     }
 
     async function loadBenefitPlans(page) {
@@ -530,7 +499,7 @@
         page = page || 1;
         const search = document.getElementById('benefit-search')?.value || '';
         const status = document.getElementById('benefit-filter-status')?.value || '';
-        const params = { page, page_size: pageSize };
+        const params = { page, page_size: pageSize, sort_by: benefitSortBy, sort_direction: benefitSortDir };
         if (search) params.search = search;
         if (status) params.status = status;
         const result = await indexBenefitPlans(params);
@@ -547,7 +516,7 @@
             tr.innerHTML = `
               <td style="font-weight:600;">${bp.plan_name}</td>
               <td>${bp.plan_type}</td>
-              <td>${bp.enrolled_count || 0}</td>
+              <td>${bp.enrollment_count || 0}</td>
               <td>$${Number(bp.cost_per_month || 0).toLocaleString()}/mo</td>
               <td><span class="badge-custom ${bp.is_active ? 'badge-success' : 'badge-gray'}">${bp.is_active ? 'Active' : 'Inactive'}</span></td>`;
             tbody.appendChild(tr);
@@ -587,23 +556,79 @@
 
     async function saveBenefit() {
       try {
+        clearFieldErrors();
         const modal = document.getElementById('modalBenefit');
-        const inputs = modal.querySelectorAll('.fi');
-        const selects = modal.querySelectorAll('select.fi');
+        const planName = document.querySelector('[data-field="plan_name"]')?.value?.trim() || '';
+        const planType = document.querySelector('[data-field="plan_type"]')?.value || '';
+        const coverageDetails = document.querySelector('[data-field="coverage_details"]')?.value?.trim() || '';
+        const costPerMonth = document.querySelector('[data-field="coverage_amount"]')?.value || 0;
+        const employerContribution = document.querySelector('[data-field="company_cost"]')?.value || 0;
+        if (!planName) { showFieldError('plan_name', 'Plan Name is required'); return; }
+        if (!planType) { showFieldError('plan_type', 'Benefit Type is required'); return; }
         const data = {
-          plan_name: inputs[0]?.value || '',
-          plan_type: selects[0]?.value || 'medical',
-          coverage_details: inputs[1]?.value || '',
-          cost_per_month: inputs[2]?.value || 0,
-          employer_contribution: inputs[3]?.value || 0,
+          plan_name: planName,
+          plan_type: planType,
+          coverage_details: coverageDetails,
+          cost_per_month: costPerMonth,
+          employer_contribution: employerContribution,
           is_active: true,
         };
-        await createBenefitPlan(data);
+        const result = await createBenefitPlan(data);
+        if (result && result.errors) {
+          Object.entries(result.errors).forEach(([key, val]) => {
+            showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+          });
+          return;
+        }
         showToast('✅', 'Benefit plan saved!');
         bootstrap.Modal.getInstance(modal).hide();
         loadBenefitPlans();
       } catch (e) {
-        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+        try {
+          const errData = JSON.parse(e.message);
+          if (errData.errors) {
+            Object.entries(errData.errors).forEach(([key, val]) => {
+              showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+            });
+          } else {
+            showToast('❌', errData.message || 'Failed to save');
+          }
+        } catch { showToast('❌', 'Failed to save benefit plan'); }
+      }
+    }
+
+    function showToast(icon, msg, duration) {
+      duration = duration || 3000;
+      $('#toast-icon').text(icon);
+      $('#toast-msg').text(msg);
+      $('#toast').addClass('show');
+      setTimeout(function () { $('#toast').removeClass('show'); }, duration);
+    }
+    function confirmDelete() {
+      $('#modalDelete').modal('hide');
+      showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
+    }
+    function renderPagination(result, infoId, containerId, fnName) {
+      const totalPages = result.total_pages || 1;
+      const page = result.page || 1;
+      const pageSize = result.page_size || 10;
+      const start = (page - 1) * pageSize + 1;
+      const end = Math.min(page * pageSize, result.count);
+      const info = document.getElementById(infoId);
+      if (info) info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
+      const container = document.getElementById(containerId);
+      if (container) {
+        let html = '';
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+            html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
+          } else if (i === page - 2 || i === page + 2) {
+            html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
+          }
+        }
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
+        container.innerHTML = html;
       }
     }
 

@@ -1609,3 +1609,34 @@ textarea.fi {
 #toast-icon {
     font-size: 1rem;
 }
+
+/* FORM VALIDATION */
+.field-error {
+    font-size: 0.7rem;
+    color: var(--danger);
+    margin-top: 2px;
+    min-height: 0;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.field-error.visible {
+    min-height: 1em;
+}
+
+.input-error {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* SORT INDICATOR */
+.sort-indicator {
+    font-size: 0.6rem;
+    margin-left: 4px;
+    opacity: 0.5;
+}
+
+.table-custom thead th:hover {
+    color: var(--primary);
+    background: #e8f0fe;
+}

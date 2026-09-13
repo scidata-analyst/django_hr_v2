@@ -13,7 +13,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <meta name="csrf-token" content="{{ csrf_token }}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
 <body>
@@ -169,16 +170,16 @@
                 </div>
                 <div style="overflow-x:auto;">
                   <table class="table-custom">
-                    <thead>
-                      <tr>
-                        <th>Policy Name</th>
-                        <th>Category</th>
-                        <th>Version</th>
-                        <th>Last Updated</th>
-                        <th>Acknowledgement</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
+<thead>
+                        <tr>
+                          <th onclick="sortPolicies('policy_name')" style="cursor:pointer;">Policy Name <span class="sort-indicator" id="sort-policy_name">↕</span></th>
+                          <th onclick="sortPolicies('category')" style="cursor:pointer;">Category <span class="sort-indicator" id="sort-category">↕</span></th>
+                          <th onclick="sortPolicies('version')" style="cursor:pointer;">Version <span class="sort-indicator" id="sort-version">↕</span></th>
+                          <th onclick="sortPolicies('effective_date')" style="cursor:pointer;">Last Updated <span class="sort-indicator" id="sort-effective_date">↕</span></th>
+                          <th onclick="sortPolicies('acknowledgement_count')" style="cursor:pointer;">Acknowledgement <span class="sort-indicator" id="sort-acknowledgement_count">↕</span></th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
                     <tbody id="policies-tbody">
                       <tr>
                         <td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">Loading...</td>
@@ -302,10 +303,11 @@
 
           <div class="form-grid">
             <div class="fg full">
-              <div class="fl">Policy Name *</div><input class="fi" placeholder="e.g. Remote Work Policy" />
+              <div class="fl">Policy Name *</div><input class="fi" data-field="policy_name" placeholder="e.g. Remote Work Policy" />
+              <div class="field-error" data-error-for="policy_name"></div>
             </div>
             <div class="fg">
-              <div class="fl">Category *</div><select class="fi">
+              <div class="fl">Category *</div><select class="fi" data-field="category">
                 <option>Governance</option>
                 <option>HR Policy</option>
                 <option>IT & Security</option>
@@ -313,18 +315,19 @@
                 <option>Operations</option>
                 <option>Safety</option>
               </select>
+              <div class="field-error" data-error-for="category"></div>
             </div>
             <div class="fg">
-              <div class="fl">Version</div><input class="fi" placeholder="e.g. v1.0" />
+              <div class="fl">Version</div><input class="fi" data-field="version" placeholder="e.g. v1.0" />
             </div>
             <div class="fg">
-              <div class="fl">Effective Date</div><input class="fi" type="date" />
+              <div class="fl">Effective Date</div><input class="fi" data-field="effective_date" type="date" />
             </div>
             <div class="fg">
-              <div class="fl">Review Date</div><input class="fi" type="date" />
+              <div class="fl">Review Date</div><input class="fi" data-field="review_date" type="date" />
             </div>
             <div class="fg">
-              <div class="fl">Policy Owner</div><select class="fi">
+              <div class="fl">Policy Owner</div><select class="fi" data-field="policy_owner">
                 <option>HR Department</option>
                 <option>Legal</option>
                 <option>Management</option>
@@ -332,14 +335,14 @@
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Acknowledgement Required</div><select class="fi">
+              <div class="fl">Acknowledgement Required</div><select class="fi" data-field="acknowledgement">
                 <option>Yes - All Employees</option>
                 <option>Yes - Specific Dept</option>
                 <option>No</option>
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Access Level</div><select class="fi">
+              <div class="fl">Access Level</div><select class="fi" data-field="access_level">
                 <option>All Staff</option>
                 <option>Managers Only</option>
                 <option>HR Only</option>
@@ -347,15 +350,15 @@
               </select>
             </div>
             <div class="fg full">
-              <div class="fl">Description / Summary</div><textarea class="fi" rows="3"
+              <div class="fl">Description / Summary</div><textarea class="fi" data-field="description" rows="3"
                 placeholder="Brief summary of the policy..."></textarea>
             </div>
             <div class="fg full">
-              <div class="fl">Upload Document (PDF)</div><input class="fi" type="file" style="padding:7px 10px;"
+              <div class="fl">Upload Document (PDF)</div><input class="fi" data-field="document" type="file" style="padding:7px 10px;"
                 accept=".pdf,.doc,.docx" />
             </div>
             <div class="fg">
-              <div class="fl">Status</div><select class="fi">
+              <div class="fl">Status</div><select class="fi" data-field="status">
                 <option>Active</option>
                 <option>Draft</option>
                 <option>Under Review</option>
@@ -367,7 +370,7 @@
         <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
           <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
             data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Publish Policy</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="savePolicy()">💾 Publish Policy</button>
         </div>
       </div>
     </div>
@@ -451,9 +454,11 @@
     }
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-  <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'operation/js/constants.js' %}"></script>
+    <script src="{% static 'operation/js/APIClient.js' %}"></script>
+    <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -471,78 +476,47 @@
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
 
-    const pageTitles = {
-      dashboard: 'Dashboard Overview',
-      employee: 'Employee Management',
-      attendance: 'Attendance & Leave',
-      payroll: 'Payroll Management',
-      recruitment: 'Recruitment & Hiring',
-      performance: 'Performance Management',
-      training: 'Training & Development',
-      onboarding: 'Onboarding & Offboarding',
-      ess: 'Employee Self-Service',
-      reports: 'Reports & Analytics',
-      compliance: 'Compliance & Policies',
-      engagement: 'Engagement & Recognition',
-      health: 'Health, Safety & Benefits',
-      talent: 'Talent & Succession',
-      branding: 'Recruitment Marketing',
-      global: 'Global HR',
-      integrations: 'Integrations & Automation'
-    };
-
-    function showPage(id, btn) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('page-' + id);
-      if (target) target.classList.add('active');
-      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-      document.getElementById('sidebar').classList.remove('open');
-      window.scrollTo(0, 0);
+    // ── Validation helpers ──
+    function showFieldError(fieldName, message) {
+      const errorEl = document.querySelector(`[data-error-for="${fieldName}"]`);
+      if (errorEl) {
+        errorEl.textContent = message || '';
+        errorEl.classList.toggle('visible', !!message);
+      }
+      const inputEl = document.querySelector(`[data-field="${fieldName}"]`);
+      if (inputEl) inputEl.classList.toggle('input-error', !!message);
     }
 
-    const d = new Date();
-    const dateEl = document.getElementById('topbar-date');
-    if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
-    document.querySelectorAll('.toggle').forEach(t => {
-      t.addEventListener('click', () => t.classList.toggle('on'));
-    });
-
-    function renderPagination(result, infoId, containerId, fnName) {
-      const totalPages = result.total_pages || 1;
-      const page = result.page || 1;
-      const pageSize = result.page_size || 10;
-      const start = (page - 1) * pageSize + 1;
-      const end = Math.min(page * pageSize, result.count);
-      const info = document.getElementById(infoId);
-      if (info) {
-        info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
-      }
-      const container = document.getElementById(containerId);
-      if (container) {
-        let html = '';
-        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
-        for (let i = 1; i <= totalPages; i++) {
-          if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
-            html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
-          } else if (i === page - 2 || i === page + 2) {
-            html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-          }
-        }
-        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
-        container.innerHTML = html;
-      }
+    function clearFieldErrors() {
+      document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
     }
 
+    // ── Policy sorting ──
+    let policySortBy = 'policy_name';
+    let policySortDir = 'asc';
+
+    function sortPolicies(field) {
+      if (policySortBy === field) {
+        policySortDir = policySortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        policySortBy = field;
+        policySortDir = 'asc';
+      }
+      document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '↕');
+      const indicator = document.getElementById(`sort-${field}`);
+      if (indicator) indicator.textContent = policySortDir === 'asc' ? '↑' : '↓';
+      loadPolicies(1);
+    }
+
+    // ── Load policies with server-side sorting ──
     async function loadPolicies(page) {
       try {
         const pageSize = document.getElementById('policies-page-size')?.value || 10;
         page = page || 1;
         const search = document.getElementById('policy-search')?.value || '';
         const category = document.getElementById('policy-filter-category')?.value || '';
-        const params = { page, page_size: pageSize };
+        const params = { page, page_size: pageSize, sort_by: policySortBy, sort_direction: policySortDir };
         if (search) params.search = search;
         if (category) params.category = category;
         const result = await indexPolicies(params);
@@ -621,24 +595,65 @@
 
     async function savePolicy() {
       try {
+        clearFieldErrors();
         const modal = document.getElementById('modalPolicy');
-        const inputs = modal.querySelectorAll('.fi');
-        const selects = modal.querySelectorAll('select.fi');
+        const policyName = document.querySelector('[data-field="policy_name"]')?.value?.trim() || '';
+        const category = document.querySelector('[data-field="category"]')?.value || '';
+        const description = document.querySelector('[data-field="description"]')?.value?.trim() || '';
+        const effectiveDate = document.querySelector('[data-field="effective_date"]')?.value || '';
+        if (!policyName) { showFieldError('policy_name', 'Policy Name is required'); return; }
+        if (!category) { showFieldError('category', 'Category is required'); return; }
         const data = {
-          policy_name: inputs[0]?.value || '',
-          category: selects[0]?.value || 'hr',
-          version: inputs[1]?.value || '1.0',
-          description: inputs[2]?.value || '',
-          effective_date: inputs[3]?.value || null,
-          review_date: inputs[4]?.value || null,
-          is_mandatory: selects[1]?.value === 'Yes',
+          policy_name: policyName,
+          category: category,
+          description: description,
+          effective_date: effectiveDate || null,
         };
-        await createPolicy(data);
+        const result = await createPolicy(data);
+        if (result && result.errors) {
+          Object.entries(result.errors).forEach(([key, val]) => {
+            showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+          });
+          return;
+        }
         showToast('✅', 'Policy published!');
         bootstrap.Modal.getInstance(modal).hide();
         loadPolicies();
       } catch (e) {
-        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+        try {
+          const errData = JSON.parse(e.message);
+          if (errData.errors) {
+            Object.entries(errData.errors).forEach(([key, val]) => {
+              showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+            });
+          } else {
+            showToast('❌', errData.message || 'Failed to publish policy');
+          }
+        } catch { showToast('❌', 'Failed to publish policy'); }
+      }
+    }
+
+    function renderPagination(result, infoId, containerId, fnName) {
+      const totalPages = result.total_pages || 1;
+      const page = result.page || 1;
+      const pageSize = result.page_size || 10;
+      const start = (page - 1) * pageSize + 1;
+      const end = Math.min(page * pageSize, result.count);
+      const info = document.getElementById(infoId);
+      if (info) info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
+      const container = document.getElementById(containerId);
+      if (container) {
+        let html = '';
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+            html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
+          } else if (i === page - 2 || i === page + 2) {
+            html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
+          }
+        }
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
+        container.innerHTML = html;
       }
     }
 
@@ -648,7 +663,7 @@
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
       $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-  </script>
+    </script>
 </body>
 
 </html>

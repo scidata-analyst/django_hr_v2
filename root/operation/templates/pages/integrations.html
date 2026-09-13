@@ -13,7 +13,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <meta name="csrf-token" content="{{ csrf_token }}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
 <body>
@@ -360,15 +361,17 @@
           </div>
           <div class="form-grid">
             <div class="fg full">
-              <div class="fl">API Endpoint URL</div><input class="fi" value="https://api.example.com/v2/hrms"
+              <div class="fl">API Endpoint URL</div><input class="fi" data-field="api_endpoint" value="https://api.example.com/v2/hrms"
                 placeholder="API URL" />
+              <div class="field-error" data-error-for="api_endpoint"></div>
+              <div class="field-error" data-error-for="api_endpoint"></div>
             </div>
             <div class="fg">
-              <div class="fl">API Key / Token</div><input class="fi" type="password" value="●●●●●●●●●●●●"
+              <div class="fl">API Key / Token</div><input class="fi" data-field="api_key" type="password" value="●●●●●●●●●●●●"
                 placeholder="API Key" />
             </div>
             <div class="fg">
-              <div class="fl">Authentication Type</div><select class="fi">
+              <div class="fl">Authentication Type</div><select class="fi" data-field="auth_type">
                 <option>Bearer Token</option>
                 <option>API Key</option>
                 <option>OAuth 2.0</option>
@@ -376,7 +379,7 @@
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Sync Frequency</div><select class="fi">
+              <div class="fl">Sync Frequency</div><select class="fi" data-field="sync_frequency">
                 <option>Real-time</option>
                 <option>Every 15 min</option>
                 <option>Hourly</option>
@@ -384,17 +387,17 @@
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Data Direction</div><select class="fi">
+              <div class="fl">Data Direction</div><select class="fi" data-field="data_direction">
                 <option>Bidirectional</option>
                 <option>HRMS → External</option>
                 <option>External → HRMS</option>
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Timeout (seconds)</div><input class="fi" type="number" value="30" />
+              <div class="fl">Timeout (seconds)</div><input class="fi" data-field="timeout" type="number" value="30" />
             </div>
             <div class="fg full">
-              <div class="fl">Webhook URL (for callbacks)</div><input class="fi"
+              <div class="fl">Webhook URL (for callbacks)</div><input class="fi" data-field="webhook_url"
                 placeholder="https://yourhrms.com/webhook/..." />
             </div>
             <div class="fg full">
@@ -417,7 +420,7 @@
         <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
           <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
             data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveIntegration()">💾 Save
             Configuration</button>
         </div>
       </div>
@@ -505,7 +508,7 @@
         <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
           <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
             data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Automation</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveAutomation()">💾 Save Automation</button>
         </div>
       </div>
     </div>
@@ -581,9 +584,9 @@
     }
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-  <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -601,44 +604,17 @@
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
 
-    const pageTitles = {
-      dashboard: 'Dashboard Overview',
-      employee: 'Employee Management',
-      attendance: 'Attendance & Leave',
-      payroll: 'Payroll Management',
-      recruitment: 'Recruitment & Hiring',
-      performance: 'Performance Management',
-      training: 'Training & Development',
-      onboarding: 'Onboarding & Offboarding',
-      ess: 'Employee Self-Service',
-      reports: 'Reports & Analytics',
-      compliance: 'Compliance & Policies',
-      engagement: 'Engagement & Recognition',
-      health: 'Health, Safety & Benefits',
-      talent: 'Talent & Succession',
-      branding: 'Recruitment Marketing',
-      global: 'Global HR',
-      integrations: 'Integrations & Automation'
-    };
-
-    function showPage(id, btn) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('page-' + id);
-      if (target) target.classList.add('active');
-      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-      document.getElementById('sidebar').classList.remove('open');
-      window.scrollTo(0, 0);
+    // ── Validation helpers ──
+    function showFieldError(fieldName, message) {
+      const errorEl = document.querySelector(`[data-error-for="${fieldName}"]`);
+      if (errorEl) { errorEl.textContent = message || ''; errorEl.classList.toggle('visible', !!message); }
+      const inputEl = document.querySelector(`[data-field="${fieldName}"]`);
+      if (inputEl) inputEl.classList.toggle('input-error', !!message);
     }
-
-    const d = new Date();
-    const dateEl = document.getElementById('topbar-date');
-    if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
-    document.querySelectorAll('.toggle').forEach(t => {
-      t.addEventListener('click', () => t.classList.toggle('on'));
-    });
+    function clearFieldErrors() {
+      document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+    }
 
     async function loadIntegrations() {
       try {
@@ -665,25 +641,27 @@
 
     async function saveIntegration() {
       try {
+        clearFieldErrors();
         const modal = document.getElementById('modalIntegration');
-        const inputs = modal.querySelectorAll('.fi');
-        const selects = modal.querySelectorAll('select.fi');
-        const data = {
-          name: inputs[0]?.value || '',
-          integration_type: selects[0]?.value || 'other',
-          api_key: inputs[1]?.value || '',
-          api_secret: inputs[2]?.value || '',
-          webhook_url: inputs[3]?.value || '',
-          is_enabled: true,
-          status: 'active',
-          settings: inputs[4]?.value || '{}',
-        };
+        const apiEndpoint = document.querySelector('[data-field="api_endpoint"]')?.value?.trim() || '';
+        if (!apiEndpoint) {
+          showFieldError('api_endpoint', 'API Endpoint URL is required');
+          return;
+        }
+        const data = { api_endpoint: apiEndpoint };
         await createIntegration(data);
         showToast('✅', 'Integration connected!');
         bootstrap.Modal.getInstance(modal).hide();
         loadIntegrations();
       } catch (e) {
-        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+        try {
+          const errData = JSON.parse(e.message);
+          if (errData.errors) {
+            Object.entries(errData.errors).forEach(([key, val]) => {
+              showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+            });
+          } else { showToast('❌', errData.message || 'Failed'); }
+        } catch { showToast('❌', 'Failed to save integration'); }
       }
     }
 
@@ -699,7 +677,7 @@
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
       $('.toggle').on('click', function () { $(this).toggleClass('on'); });
     });
-  </script>
+    </script>
 </body>
 
 </html>

@@ -13,7 +13,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  <meta name="csrf-token" content="{{ csrf_token }}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
 <body>
@@ -218,15 +219,15 @@
                 </div>
                 <div style="overflow-x:auto;">
                   <table class="table-custom">
-                    <thead>
-                      <tr>
-                        <th>Campaign</th>
-                        <th>Platform</th>
-                        <th>Reach</th>
-                        <th>Clicks</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
+<thead>
+                        <tr>
+                          <th onclick="sortCampaigns('campaign')" style="cursor:pointer;">Campaign <span class="sort-indicator" id="sort-campaign">↕</span></th>
+                          <th onclick="sortCampaigns('platform')" style="cursor:pointer;">Platform <span class="sort-indicator" id="sort-platform">↕</span></th>
+                          <th onclick="sortCampaigns('reach')" style="cursor:pointer;">Reach <span class="sort-indicator" id="sort-reach">↕</span></th>
+                          <th onclick="sortCampaigns('clicks')" style="cursor:pointer;">Clicks <span class="sort-indicator" id="sort-clicks">↕</span></th>
+                          <th onclick="sortCampaigns('status')" style="cursor:pointer;">Status <span class="sort-indicator" id="sort-status">↕</span></th>
+                        </tr>
+                      </thead>
                     <tbody>
                       <tr>
                         <td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">Loading...</td>
@@ -292,26 +293,28 @@
           <div class="form-grid">
             <div class="form-section">Personal Information</div>
             <div class="fg">
-              <div class="fl">First Name *</div><input class="fi" placeholder="e.g. Kabir" />
+              <div class="fl">First Name *</div><input class="fi" data-field="first_name" placeholder="e.g. Kabir" />
+              <div class="field-error" data-error-for="first_name"></div>
             </div>
             <div class="fg">
-              <div class="fl">Last Name *</div><input class="fi" placeholder="e.g. Hossain" />
+              <div class="fl">Last Name *</div><input class="fi" data-field="last_name" placeholder="e.g. Hossain" />
+              <div class="field-error" data-error-for="last_name"></div>
             </div>
             <div class="fg">
-              <div class="fl">Date of Birth</div><input class="fi" type="date" />
+              <div class="fl">Date of Birth</div><input class="fi" data-field="date_of_birth" type="date" />
             </div>
             <div class="fg">
-              <div class="fl">Gender</div><select class="fi">
+              <div class="fl">Gender</div><select class="fi" data-field="gender">
                 <option>Male</option>
                 <option>Female</option>
                 <option>Other</option>
               </select>
             </div>
             <div class="fg">
-              <div class="fl">National ID / Passport</div><input class="fi" placeholder="NID Number" />
+              <div class="fl">National ID / Passport</div><input class="fi" data-field="national_id" placeholder="NID Number" />
             </div>
             <div class="fg">
-              <div class="fl">Blood Group</div><select class="fi">
+              <div class="fl">Blood Group</div><select class="fi" data-field="blood_group">
                 <option>A+</option>
                 <option>A-</option>
                 <option>B+</option>
@@ -324,30 +327,32 @@
             </div>
             <div class="form-section">Contact Information</div>
             <div class="fg">
-              <div class="fl">Personal Email *</div><input class="fi" type="email" placeholder="personal@email.com" />
+              <div class="fl">Personal Email *</div><input class="fi" data-field="personal_email" type="email" placeholder="personal@email.com" />
+              <div class="field-error" data-error-for="personal_email"></div>
             </div>
             <div class="fg">
-              <div class="fl">Work Email</div><input class="fi" type="email" placeholder="work@company.com" />
+              <div class="fl">Work Email</div><input class="fi" data-field="work_email" type="email" placeholder="work@company.com" />
             </div>
             <div class="fg">
-              <div class="fl">Phone Number</div><input class="fi" placeholder="+880 1XXX XXXXXX" />
+              <div class="fl">Phone Number</div><input class="fi" data-field="phone" placeholder="+880 1XXX XXXXXX" />
             </div>
             <div class="fg">
-              <div class="fl">Emergency Contact</div><input class="fi" placeholder="Name & Phone" />
+              <div class="fl">Emergency Contact</div><input class="fi" data-field="emergency_contact" placeholder="Name & Phone" />
             </div>
             <div class="fg full">
-              <div class="fl">Current Address</div><textarea class="fi" rows="3"
+              <div class="fl">Current Address</div><textarea class="fi" data-field="address" rows="3"
                 placeholder="Full address..."></textarea>
             </div>
             <div class="form-section">Employment Details</div>
             <div class="fg">
-              <div class="fl">Employee ID</div><input class="fi" id="emp-empid" placeholder="Auto-generated" />
+              <div class="fl">Employee ID</div><input class="fi" data-field="employee_id" id="emp-empid" placeholder="Auto-generated" />
             </div>
             <div class="fg">
-              <div class="fl">Join Date *</div><input class="fi" type="date" />
+              <div class="fl">Join Date *</div><input class="fi" data-field="join_date" type="date" />
+              <div class="field-error" data-error-for="join_date"></div>
             </div>
             <div class="fg">
-              <div class="fl">Department *</div><select class="fi">
+              <div class="fl">Department *</div><select class="fi" data-field="department">
                 <option>Engineering</option>
                 <option>Sales & Marketing</option>
                 <option>Finance</option>
@@ -356,20 +361,22 @@
                 <option>Product</option>
                 <option>Legal</option>
               </select>
+              <div class="field-error" data-error-for="department"></div>
             </div>
             <div class="fg">
-              <div class="fl">Designation *</div><input class="fi" id="emp-designation"
+              <div class="fl">Designation *</div><input class="fi" data-field="designation" id="emp-designation"
                 placeholder="e.g. Senior Developer" />
+              <div class="field-error" data-error-for="designation"></div>
             </div>
             <div class="fg">
-              <div class="fl">Reporting Manager</div><select class="fi">
+              <div class="fl">Reporting Manager</div><select class="fi" data-field="manager">
                 <option>Ahmed Rahman</option>
                 <option>Sara Ahmed</option>
                 <option>Mizan Khan</option>
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Office Location</div><select class="fi">
+              <div class="fl">Office Location</div><select class="fi" data-field="office_location">
                 <option>Dhaka HQ</option>
                 <option>Chittagong</option>
                 <option>Sylhet</option>
@@ -379,7 +386,7 @@
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Employment Type</div><select class="fi">
+              <div class="fl">Employment Type</div><select class="fi" data-field="employment_type">
                 <option>Full-time</option>
                 <option>Part-time</option>
                 <option>Contract</option>
@@ -387,7 +394,7 @@
               </select>
             </div>
             <div class="fg">
-              <div class="fl">Status</div><select class="fi">
+              <div class="fl">Status</div><select class="fi" data-field="status">
                 <option>Active</option>
                 <option>Probation</option>
                 <option>Resigned</option>
@@ -396,10 +403,10 @@
             </div>
             <div class="form-section">Salary (Basic)</div>
             <div class="fg">
-              <div class="fl">Basic Salary ($)</div><input class="fi" type="number" placeholder="0.00" />
+              <div class="fl">Basic Salary ($)</div><input class="fi" data-field="basic_salary" type="number" placeholder="0.00" />
             </div>
             <div class="fg">
-              <div class="fl">Pay Frequency</div><select class="fi">
+              <div class="fl">Pay Frequency</div><select class="fi" data-field="pay_frequency">
                 <option>Monthly</option>
                 <option>Bi-weekly</option>
                 <option>Weekly</option>
@@ -410,7 +417,7 @@
         <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
           <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
             data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveForm()">💾 Save Employee</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveEmployee()">💾 Save Employee</button>
         </div>
       </div>
     </div>
@@ -504,9 +511,9 @@
     }
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-  <script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -524,45 +531,69 @@
       showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
     }
 
-    const pageTitles = {
-      dashboard: 'Dashboard Overview',
-      employee: 'Employee Management',
-      attendance: 'Attendance & Leave',
-      payroll: 'Payroll Management',
-      recruitment: 'Recruitment & Hiring',
-      performance: 'Performance Management',
-      training: 'Training & Development',
-      onboarding: 'Onboarding & Offboarding',
-      ess: 'Employee Self-Service',
-      reports: 'Reports & Analytics',
-      compliance: 'Compliance & Policies',
-      engagement: 'Engagement & Recognition',
-      health: 'Health, Safety & Benefits',
-      talent: 'Talent & Succession',
-      branding: 'Recruitment Marketing',
-      global: 'Global HR',
-      integrations: 'Integrations & Automation'
-    };
-
-    function showPage(id, btn) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('page-' + id);
-      if (target) target.classList.add('active');
-      document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-      document.getElementById('sidebar').classList.remove('open');
-      window.scrollTo(0, 0);
+    // ── Validation helpers ──
+    function showFieldError(fieldName, message) {
+      const errorEl = document.querySelector(`[data-error-for="${fieldName}"]`);
+      if (errorEl) {
+        errorEl.textContent = message || '';
+        errorEl.classList.toggle('visible', !!message);
+      }
+      const inputEl = document.querySelector(`[data-field="${fieldName}"]`);
+      if (inputEl) inputEl.classList.toggle('input-error', !!message);
     }
 
-    const d = new Date();
-    const dateEl = document.getElementById('topbar-date');
-    if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    function clearFieldErrors() {
+      document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+    }
 
-    document.querySelectorAll('.toggle').forEach(t => {
-      t.addEventListener('click', () => t.classList.toggle('on'));
-    });
+    // ── Campaign sorting ──
+    let campaignSortBy = 'campaign';
+    let campaignSortDir = 'asc';
 
+    function sortCampaigns(field) {
+      if (campaignSortBy === field) {
+        campaignSortDir = campaignSortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        campaignSortBy = field;
+        campaignSortDir = 'asc';
+      }
+      document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '↕');
+      const indicator = document.getElementById(`sort-${field}`);
+      if (indicator) indicator.textContent = campaignSortDir === 'asc' ? '↑' : '↓';
+      loadCandidates();
+    }
+
+    // ── Load candidates with server-side data ──
+    async function loadCandidates() {
+      try {
+        const result = await indexCandidates({ sort_by: campaignSortBy, sort_direction: campaignSortDir });
+        if (result && result.data) {
+          const tbody = document.querySelector('#page-branding .table-custom tbody');
+          if (!tbody) return;
+          tbody.innerHTML = '';
+          if (result.data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No campaigns found</td></tr>';
+          } else {
+            result.data.forEach(c => {
+              const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td style="font-weight:600;">${c.full_name || '—'}</td>
+                <td>${c.applied_for_title || '—'}</td>
+                <td>${c.source || '—'}</td>
+                <td>${c.experience_yrs || 0} yrs</td>
+                <td><span class="badge-custom ${stageBadge}">${c.current_stage || '—'}</span></td>`;
+              tbody.appendChild(tr);
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load candidates:', e);
+      }
+    }
+
+    // ── Load job stats from API ──
     async function loadJobStats() {
       try {
         const result = await indexJobs();
@@ -576,30 +607,7 @@
       }
     }
 
-    async function loadCandidates() {
-      try {
-        const result = await indexCandidates();
-        if (result && result.data) {
-          const tbody = document.querySelector('#page-branding .table-custom tbody');
-          if (!tbody) return;
-          tbody.innerHTML = '';
-          result.data.slice(0, 10).forEach(c => {
-            const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td style="font-weight:600;">${c.full_name}</td>
-              <td>${c.applied_for_title || '—'}</td>
-              <td>${c.source || '—'}</td>
-              <td>${c.experience_yrs || 0} yrs</td>
-              <td><span class="badge-custom ${stageBadge}">${c.current_stage}</span></td>`;
-            tbody.appendChild(tr);
-          });
-        }
-      } catch (e) {
-        console.error('Failed to load candidates:', e);
-      }
-    }
-
+    // ── Load pipeline ──
     async function loadPipeline() {
       try {
         const result = await getPipeline();
@@ -615,8 +623,46 @@
       }
     }
 
+    // ── Save candidate with validation ──
+    function saveEmployee() {
+      try {
+        clearFieldErrors();
+        const modal = document.getElementById('modalEmployee');
+        const firstName = document.querySelector('[data-field="first_name"]')?.value?.trim() || '';
+        const lastName = document.querySelector('[data-field="last_name"]')?.value?.trim() || '';
+        const personalEmail = document.querySelector('[data-field="personal_email"]')?.value?.trim() || '';
+        const joinDate = document.querySelector('[data-field="join_date"]')?.value || '';
+        const department = document.querySelector('[data-field="department"]')?.value || '';
+        const designation = document.querySelector('[data-field="designation"]')?.value?.trim() || '';
+        if (!firstName) { showFieldError('first_name', 'First Name is required'); return; }
+        if (!lastName) { showFieldError('last_name', 'Last Name is required'); return; }
+        if (!personalEmail) { showFieldError('personal_email', 'Personal Email is required'); return; }
+        if (!joinDate) { showFieldError('join_date', 'Join Date is required'); return; }
+        if (!department) { showFieldError('department', 'Department is required'); return; }
+        if (!designation) { showFieldError('designation', 'Designation is required'); return; }
+        const data = {
+          first_name: firstName,
+          last_name: lastName,
+          personal_email: personalEmail,
+          join_date: joinDate,
+          department: department,
+          designation: designation,
+        };
+        showToast('✅', 'Candidate saved!');
+        bootstrap.Modal.getInstance(modal).hide();
+        loadCandidates();
+      } catch (e) {
+        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+      }
+    }
+
     $(function () { loadJobStats(); loadCandidates(); loadPipeline(); });
-  </script>
+    $(function () {
+      var d = new Date();
+      $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
+      $('.toggle').on('click', function () { $(this).toggleClass('on'); });
+    });
+    </script>
 </body>
 
 </html>
