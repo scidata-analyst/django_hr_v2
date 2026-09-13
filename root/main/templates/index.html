@@ -76,13 +76,14 @@
           Integrations</button>
       </div>
       <div class="sidebar-footer">
-        <div class="user-card" onclick="location.href='{% url 'logout' %}'" title="Sign out">
+        <div class="user-card">
           <div class="user-avatar">{{ request.user.first_name|default:request.user.username|slice:":2"|upper }}</div>
           <div class="user-info">
             <div class="user-name">{% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}</div>
-            <div class="user-role">{% if request.user.is_superuser %}HR Administrator{% else %}Team Member{% endif %} · Sign out</div>
-          </div><i class="bi bi-box-arrow-right" style="color:#94a3b8;font-size:0.9rem;"></i>
+            <div class="user-role">{% if request.user.is_superuser %}HR Administrator{% else %}Team Member{% endif %}</div>
+          </div>
         </div>
+        <button class="logout-btn" onclick="location.href='{% url 'logout' %}'"><i class="bi bi-box-arrow-left"></i> Log out</button>
       </div>
     </aside>
     <div class="main-wrap">
@@ -96,7 +97,13 @@
         <div class="topbar-action"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
         <div class="topbar-action" onclick="location.href='{% url 'logout' %}'" title="Sign out"><i class="bi bi-box-arrow-right"></i></div>
         <div class="topbar-action"><i class="bi bi-gear"></i></div>
-        <div class="avatar av-blue" style="width:34px;height:34px;font-size:0.72rem;cursor:pointer;" title="{% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}">{{ request.user.first_name|default:request.user.username|slice:":2"|upper }}</div>
+        <div class="topbar-user">
+          <div class="avatar av-blue" style="width:34px;height:34px;font-size:0.72rem;">{{ request.user.first_name|default:request.user.username|slice:":2"|upper }}</div>
+          <div class="tu-text">
+            <div class="tu-name">{% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}</div>
+            <div class="tu-role">{% if request.user.is_superuser %}HR Administrator{% else %}Team Member{% endif %}</div>
+          </div>
+        </div>
       </div>
       <div class="page-content">
         <div class="page active" id="page-dashboard">
