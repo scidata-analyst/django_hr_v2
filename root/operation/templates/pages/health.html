@@ -115,7 +115,7 @@
                 <div class="stat-icon green"><i class="bi bi-heart-pulse"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Health Insured</div>
-                  <div class="stat-value">98%</div>
+                  <div class="stat-value" id="stat-health-insured">98%</div>
                 </div>
               </div>
             </div>
@@ -124,7 +124,7 @@
                 <div class="stat-icon blue"><i class="bi bi-shield-plus"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Claims This Month</div>
-                  <div class="stat-value">124</div>
+                  <div class="stat-value" id="stat-claims">124</div>
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@
                 <div class="stat-icon amber"><i class="bi bi-exclamation-triangle"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Safety Incidents</div>
-                  <div class="stat-value">3</div>
+                  <div class="stat-value" id="stat-incidents">3</div>
                 </div>
               </div>
             </div>
@@ -142,7 +142,7 @@
                 <div class="stat-icon purple"><i class="bi bi-activity"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Wellness Enrolled</div>
-                  <div class="stat-value">1,642</div>
+                  <div class="stat-value" id="stat-wellness">1,642</div>
                 </div>
               </div>
             </div>
@@ -509,8 +509,12 @@
         tbody.innerHTML = '';
         if (result.data.length === 0) {
           tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No benefit plans found</td></tr>';
+          const wellnessEl = document.getElementById('stat-wellness');
+          if (wellnessEl) wellnessEl.textContent = '0';
         } else {
+          let totalEnrollment = 0;
           result.data.forEach(bp => {
+            totalEnrollment += Number(bp.enrollment_count || 0);
             const tr = document.createElement('tr');
             tr.setAttribute('data-id', bp.id);
             tr.innerHTML = `
@@ -521,6 +525,8 @@
               <td><span class="badge-custom ${bp.is_active ? 'badge-success' : 'badge-gray'}">${bp.is_active ? 'Active' : 'Inactive'}</span></td>`;
             tbody.appendChild(tr);
           });
+          const wellnessEl = document.getElementById('stat-wellness');
+          if (wellnessEl) wellnessEl.textContent = totalEnrollment.toLocaleString();
         }
         renderPagination(result, 'benefits-pagination-info', 'benefits-pagination', 'loadBenefitPlans');
       } catch (e) {
@@ -532,6 +538,8 @@
       try {
         const result = await indexSafetyIncidents();
         if (result && result.data) {
+          const incidentsEl = document.getElementById('stat-incidents');
+          if (incidentsEl) incidentsEl.textContent = result.count || result.data.length;
           const container = document.querySelector('#page-health .card-body-custom .d-flex.flex-column');
           if (!container) return;
           container.innerHTML = '';
@@ -548,6 +556,14 @@
               <span class="badge-custom ${si.status === 'closed' ? 'badge-success' : 'badge-warning'}">${si.status}</span>`;
             container.appendChild(div);
           });
+          const claimsEl = document.getElementById('stat-claims');
+          if (claimsEl) claimsEl.textContent = result.data.filter(si => si.status !== 'closed' && si.status !== 'resolved').length;
+          const healthEl = document.getElementById('stat-health-insured');
+          if (healthEl && result.count > 0) {
+            const resolvedCount = result.data.filter(si => si.status === 'resolved' || si.status === 'closed').length;
+            const healthScore = Math.round((resolvedCount / result.count) * 100);
+            healthEl.textContent = healthScore + '%';
+          }
         }
       } catch (e) {
         console.error('Failed to load safety incidents:', e);

@@ -115,7 +115,7 @@
                 <div class="stat-icon blue"><i class="bi bi-globe"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Countries</div>
-                  <div class="stat-value">8</div>
+                  <div class="stat-value" id="stat-countries">8</div>
                 </div>
               </div>
             </div>
@@ -124,7 +124,7 @@
                 <div class="stat-icon green"><i class="bi bi-building"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Office Locations</div>
-                  <div class="stat-value">24</div>
+                  <div class="stat-value" id="stat-offices">24</div>
                 </div>
               </div>
             </div>
@@ -133,7 +133,7 @@
                 <div class="stat-icon amber"><i class="bi bi-currency-exchange"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Currencies Supported</div>
-                  <div class="stat-value">12</div>
+                  <div class="stat-value" id="stat-currencies">12</div>
                 </div>
               </div>
             </div>
@@ -174,8 +174,8 @@
                         <tr>
                           <th onclick="sortOffices('country')" style="cursor:pointer;">Country <span class="sort-indicator" id="sort-country">↕</span></th>
                           <th onclick="sortOffices('name')" style="cursor:pointer;">Office <span class="sort-indicator" id="sort-name">↕</span></th>
-                          <th onclick="sortOffices('employee_count')" style="cursor:pointer;">Employees <span class="sort-indicator" id="sort-employee_count">↕</span></th>
-                          <th onclick="sortOffices('local_currency')" style="cursor:pointer;">Currency <span class="sort-indicator" id="sort-local_currency">↕</span></th>
+                          <th onclick="sortOffices('capacity')" style="cursor:pointer;">Capacity <span class="sort-indicator" id="sort-capacity">↕</span></th>
+                          <th>Currency</th>
                           <th>Payroll Status</th>
                           <th>Compliance</th>
                         </tr>
@@ -304,10 +304,10 @@
             </div>
             <div class="fg">
               <div class="fl">Office Type</div><select class="fi" data-field="office_type">
-                <option>Headquarters</option>
-                <option>Regional Office</option>
-                <option>Branch</option>
-                <option>Remote Hub</option>
+                <option value="headquarters">Headquarters</option>
+                <option value="regional">Regional Office</option>
+                <option value="branch" selected>Branch</option>
+                <option value="remote_hub">Remote Hub</option>
               </select>
             </div>
             <div class="fg full">
@@ -316,19 +316,19 @@
             </div>
             <div class="fg">
               <div class="fl">Local Currency</div><select class="fi" data-field="local_currency">
-                <option>BDT - Bangladeshi Taka</option>
-                <option>USD - US Dollar</option>
-                <option>GBP - British Pound</option>
-                <option>AED - UAE Dirham</option>
-                <option>INR - Indian Rupee</option>
+                <option value="BDT" selected>BDT - Bangladeshi Taka</option>
+                <option value="USD">USD - US Dollar</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="AED">AED - UAE Dirham</option>
+                <option value="INR">INR - Indian Rupee</option>
               </select>
             </div>
             <div class="fg">
               <div class="fl">Timezone</div><select class="fi" data-field="timezone">
-                <option>Asia/Dhaka (UTC+6)</option>
-                <option>Europe/London (UTC+0/+1)</option>
-                <option>Asia/Dubai (UTC+4)</option>
-                <option>America/New_York (UTC-5/-4)</option>
+                <option value="Asia/Dhaka" selected>Asia/Dhaka (UTC+6)</option>
+                <option value="Europe/London">Europe/London (UTC+0/+1)</option>
+                <option value="Asia/Dubai">Asia/Dubai (UTC+4)</option>
+                <option value="America/New_York">America/New_York (UTC-5/-4)</option>
               </select>
             </div>
             <div class="fg">
@@ -349,9 +349,9 @@
             </div>
             <div class="fg">
               <div class="fl">Status</div><select class="fi" data-field="status">
-                <option>Active</option>
-                <option>Inactive</option>
-                <option>Planned</option>
+                <option value="active" selected>Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="planned">Planned</option>
               </select>
             </div>
           </div>
@@ -431,12 +431,9 @@
     }
   </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-    $(document).on('show.bs.modal', '#modalIntegration', function (e) {
-      var name = $(e.relatedTarget).data('integration-name');
-      if (name) $('#integration-name').text(name);
+<script>
+    $(document).on('show.bs.modal', '#modalOffice', function () {
+      clearFieldErrors();
     });
 
     function showToast(icon, msg, duration) {
@@ -523,7 +520,7 @@
             tr.innerHTML = `
               <td><span style="font-weight:600;">${o.country}</span></td>
               <td>${o.name}</td>
-              <td style="font-weight:700;">${o.employee_count || 0}</td>
+              <td style="font-weight:700;">${o.capacity != null ? Number(o.capacity).toLocaleString() : 0}</td>
               <td>${o.local_currency || '-'}</td>
               <td><span class="badge-custom badge-success">Processed</span></td>
               <td><span class="badge-custom badge-success">100%</span></td>`;
@@ -536,34 +533,77 @@
       }
     }
 
+    // ── Office stats from API (offices total exact; distinct countries/currencies via full list) ──
+    async function loadOfficeStats() {
+      try {
+        const result = await indexOffices({ page: 1, page_size: 100 });
+        if (!result) return;
+        const list = result.data || [];
+        const officesEl = document.getElementById('stat-offices');
+        if (officesEl) officesEl.textContent = Number(result.count ?? list.length ?? 0).toLocaleString();
+        if (list.length) {
+          const countriesEl = document.getElementById('stat-countries');
+          if (countriesEl) countriesEl.textContent = new Set(list.map(o => o.country).filter(Boolean)).size;
+          const currenciesEl = document.getElementById('stat-currencies');
+          if (currenciesEl) currenciesEl.textContent = new Set(list.map(o => o.local_currency).filter(Boolean)).size;
+        }
+        // Note: Languages has no backend API — left as static placeholder.
+      } catch (e) {
+        console.error('Failed to load office stats:', e);
+      }
+    }
+
     async function saveOffice() {
       try {
         clearFieldErrors();
         const modal = document.getElementById('modalOffice');
-        const name = document.querySelector('[data-field="name"]')?.value?.trim() || '';
-        const country = document.querySelector('[data-field="country"]')?.value || '';
-        const city = document.querySelector('[data-field="city"]')?.value?.trim() || '';
+        const val = (name) => document.querySelector(`#modalOffice [data-field="${name}"]`)?.value?.trim() || '';
+        const name = val('name');
+        const country = val('country');
+        const city = val('city');
         if (!name) { showFieldError('name', 'Office Name is required'); return; }
         if (!country) { showFieldError('country', 'Country is required'); return; }
         if (!city) { showFieldError('city', 'City is required'); return; }
-        const data = { name, country, city };
-        await createOffice(data);
+        const capacityRaw = val('capacity');
+        const data = {
+          name,
+          country,
+          city,
+          office_type: val('office_type') || 'branch',
+          full_address: val('full_address'),
+          local_currency: val('local_currency') || 'BDT',
+          timezone: val('timezone') || 'Asia/Dhaka',
+          // hr_contact omitted: backend expects an employee id, but this page has no employee lookup wired
+          tax_law: val('tax_law'),
+          labor_law: val('labor_law'),
+          capacity: capacityRaw === '' ? 0 : Number(capacityRaw),
+          status: val('status') || 'active',
+        };
+        if (Number.isNaN(data.capacity) || data.capacity < 0) { showFieldError('capacity', 'Capacity must be 0 or more'); return; }
+        const result = await createOffice(data);
+        if (result && result.errors) {
+          Object.entries(result.errors).forEach(([key, errVal]) => {
+            showFieldError(key, Array.isArray(errVal) ? errVal.join(', ') : errVal);
+          });
+          return;
+        }
         showToast('✅', 'Office saved!');
-        bootstrap.Modal.getInstance(modal).hide();
-        loadOffices();
+        if (modal) bootstrap.Modal.getOrCreateInstance(modal).hide();
+        loadOffices(1);
+        loadOfficeStats();
       } catch (e) {
         try {
           const errData = JSON.parse(e.message);
           if (errData.errors) {
-            Object.entries(errData.errors).forEach(([key, val]) => {
-              showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+            Object.entries(errData.errors).forEach(([key, errVal]) => {
+              showFieldError(key, Array.isArray(errVal) ? errVal.join(', ') : errVal);
             });
-          } else { showToast('❌', errData.message || 'Failed'); }
+          } else { showToast('❌', errData.message || errData.error || 'Failed'); }
         } catch { showToast('❌', 'Failed to save office'); }
       }
     }
 
-    $(function () { loadOffices(); });
+    $(function () { loadOffices(); loadOfficeStats(); });
     $(function () {
       var d = new Date();
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));

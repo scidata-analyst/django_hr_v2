@@ -76,7 +76,7 @@
                 <div class="stat-icon blue"><i class="bi bi-graph-up"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Avg Attendance</div>
-                  <div class="stat-value">84.3%</div>
+                  <div class="stat-value" id="stat-attendance">84.3%</div>
                   <div class="stat-change up">+2.1% MoM</div>
                 </div>
               </div>
@@ -86,7 +86,7 @@
                 <div class="stat-icon red"><i class="bi bi-person-x"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Attrition Rate</div>
-                  <div class="stat-value">3.2%</div>
+                  <div class="stat-value" id="stat-attrition">3.2%</div>
                   <div class="stat-change down">-0.8% MoM</div>
                 </div>
               </div>
@@ -96,7 +96,7 @@
                 <div class="stat-icon green"><i class="bi bi-emoji-smile"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Engagement Score</div>
-                  <div class="stat-value">78%</div>
+                  <div class="stat-value" id="stat-engagement">78%</div>
                   <div class="stat-change up">+5% QoQ</div>
                 </div>
               </div>
@@ -106,7 +106,7 @@
                 <div class="stat-icon amber"><i class="bi bi-clock"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Avg Time to Hire</div>
-                  <div class="stat-value">21 days</div>
+                  <div class="stat-value" id="stat-time-hire">21 days</div>
                   <div class="stat-change down">-3 days</div>
                 </div>
               </div>
@@ -119,47 +119,10 @@
                   <div class="card-header-title">Headcount Trend</div>
                 </div>
                 <div class="card-body-custom">
-                  <div style="display:flex;align-items:flex-end;gap:6px;height:120px;">
-                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                      <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
-                        <div
-                          style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:62%;opacity:0.5;">
-                        </div>
-                      </div>
-                      <div style="font-size:0.6rem;color:var(--text-muted);">Q1'25</div>
-                    </div>
-                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                      <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
-                        <div
-                          style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:70%;opacity:0.6;">
-                        </div>
-                      </div>
-                      <div style="font-size:0.6rem;color:var(--text-muted);">Q2'25</div>
-                    </div>
-                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                      <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
-                        <div
-                          style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:78%;opacity:0.75;">
-                        </div>
-                      </div>
-                      <div style="font-size:0.6rem;color:var(--text-muted);">Q3'25</div>
-                    </div>
-                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                      <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
-                        <div
-                          style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:88%;opacity:0.85;">
-                        </div>
-                      </div>
-                      <div style="font-size:0.6rem;color:var(--text-muted);">Q4'25</div>
-                    </div>
-                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-                      <div style="flex:1;width:100%;display:flex;align-items:flex-end;">
-                        <div style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:100%;"></div>
-                      </div>
-                      <div style="font-size:0.6rem;color:var(--text-muted);font-weight:700;">Q1'26</div>
-                    </div>
+                  <div id="headcount-chart" style="display:flex;align-items:flex-end;gap:6px;height:120px;">
+                    <div style="flex:1;text-align:center;padding:40px 0;color:var(--text-muted);font-size:0.75rem;">Loading headcount...</div>
                   </div>
-                  <div style="margin-top:10px;text-align:center;font-size:0.75rem;color:var(--text-mid);">2,847
+                  <div id="headcount-total" style="margin-top:10px;text-align:center;font-size:0.75rem;color:var(--text-mid);">2,847
                     employees · +12% YoY growth</div>
                 </div>
               </div>
@@ -422,41 +385,19 @@
       try { return await api.all(API_ENDPOINTS.REPORTS.TURNOVER); }
       catch (e) { console.error('Error fetching turnover report:', e); throw e; }
     }
-    async function getEmployeeStats() {
-      try { return await api.all(API_ENDPOINTS.EMPLOYEE.STATS); }
-      catch (e) { console.error('Error fetching employee stats:', e); throw e; }
-    }
-    async function getAttendanceStats() {
-      try { return await api.all(API_ENDPOINTS.ATTENDANCE.STATS.INDEX); }
-      catch (e) { console.error('Error fetching attendance stats:', e); throw e; }
-    }
   </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-    const api = new APIClient({
-      baseURL: API_CONFIG.BASE_URL,
-      timeout: API_CONFIG.TIMEOUT,
-      headers: API_CONFIG.HEADERS
-    });
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-    if (csrfToken) api.headers['X-CSRF-TOKEN'] = csrfToken;
-    window.api = api;
-    window.API_ENDPOINTS = API_ENDPOINTS;
-
-    // ── Report API functions ──
-    async function getHeadcountReport() {
-      try { return await api.all(API_ENDPOINTS.REPORTS.HEADCOUNT); }
-      catch (e) { console.error('Error fetching headcount report:', e); throw e; }
+<script>
+    function showToast(icon, msg, duration) {
+      duration = duration || 3000;
+      $('#toast-icon').text(icon);
+      $('#toast-msg').text(msg);
+      $('#toast').addClass('show');
+      setTimeout(function () { $('#toast').removeClass('show'); }, duration);
     }
-    async function getAttendanceReport() {
-      try { return await api.all(API_ENDPOINTS.REPORTS.ATTENDANCE); }
-      catch (e) { console.error('Error fetching attendance report:', e); throw e; }
-    }
-    async function getTurnoverReport() {
-      try { return await api.all(API_ENDPOINTS.REPORTS.TURNOVER); }
-      catch (e) { console.error('Error fetching turnover report:', e); throw e; }
+    function confirmDelete() {
+      $('#modalDelete').modal('hide');
+      showToast('🗑️', 'Record deleted successfully');
     }
 
     // ── Validation helpers ──
@@ -475,31 +416,87 @@
       document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
     }
 
+    function renderHeadcountChart(list) {
+      const chart = document.getElementById('headcount-chart');
+      if (!chart) return;
+      const rows = (Array.isArray(list) ? list : [])
+        .map(d => ({ name: d.department__name || 'Unassigned', count: Number(d.count) || 0 }))
+        .filter(d => d.count >= 0)
+        .slice(0, 8);
+      if (!rows.length) {
+        chart.innerHTML = '<div style="flex:1;text-align:center;padding:40px 0;color:var(--text-muted);font-size:0.75rem;">No headcount data</div>';
+        return;
+      }
+      const max = Math.max(...rows.map(r => r.count), 1);
+      chart.innerHTML = rows.map((r, i) => {
+        const pct = Math.max(8, Math.round(r.count / max * 100));
+        const opacity = 0.45 + (i / Math.max(rows.length - 1, 1)) * 0.55;
+        const short = r.name.length > 10 ? r.name.slice(0, 10) + '…' : r.name;
+        return `
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;" title="${r.name}: ${r.count}">
+            <div style="font-size:0.62rem;font-weight:700;color:var(--text-mid);">${r.count}</div>
+            <div style="flex:1;width:100%;display:flex;align-items:flex-end;min-height:60px;">
+              <div style="width:100%;background:var(--primary);border-radius:3px 3px 0 0;height:${pct}%;opacity:${opacity};"></div>
+            </div>
+            <div style="font-size:0.6rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${short}</div>
+          </div>`;
+      }).join('');
+    }
+
     // ── Load reports with server-side data ──
+    // Backend shapes:
+    // headcount: {data: [{department__name, count}]} | attendance: {data: [{status, count}]}
+    // turnover: {data: {turnover_rate, total_employees, resigned_last_year}}
     async function loadReports() {
       try {
-        const [headcount, attendance, turnover] = await Promise.all([
+        const results = await Promise.allSettled([
           getHeadcountReport(),
           getAttendanceReport(),
           getTurnoverReport(),
         ]);
-        const cards = document.querySelectorAll('#page-reports .stat-card .stat-value');
-        if (cards[0]) {
-          const avgRate = attendance?.data?.avg_rate || attendance?.avg_rate || 84.3;
-          cards[0].textContent = avgRate + '%';
+        const headcount = results[0].status === 'fulfilled' ? results[0].value : null;
+        const attendance = results[1].status === 'fulfilled' ? results[1].value : null;
+        const turnover = results[2].status === 'fulfilled' ? results[2].value : null;
+
+        if (attendance && Array.isArray(attendance.data) && attendance.data.length) {
+          const byStatus = {};
+          let total = 0;
+          attendance.data.forEach(r => {
+            const c = Number(r.count || 0);
+            byStatus[r.status] = (byStatus[r.status] || 0) + c;
+            total += c;
+          });
+          if (total > 0) {
+            const attended = (byStatus.present || 0) + (byStatus.work_from_home || 0)
+              + (byStatus.late || 0) + 0.5 * (byStatus.half_day || 0);
+            const avgRate = Math.round(attended / total * 1000) / 10;
+            const el = document.getElementById('stat-attendance');
+            if (el) el.textContent = avgRate + '%';
+          }
         }
-        if (cards[1]) {
-          const rate = turnover?.data?.rate || turnover?.rate || 3.2;
-          cards[1].textContent = rate + '%';
+
+        if (turnover && turnover.data && turnover.data.turnover_rate != null) {
+          const el = document.getElementById('stat-attrition');
+          if (el) el.textContent = Number(turnover.data.turnover_rate) + '%';
         }
-        if (cards[2]) {
-          const activeCount = Array.isArray(headcount?.data) ? headcount.data.reduce((sum, d) => sum + (d.count || 0), 0) : (headcount?.count || 78);
-          cards[2].textContent = activeCount;
+
+        if (headcount && Array.isArray(headcount.data) && headcount.data.length) {
+          const totalEmployees = headcount.data.reduce((sum, d) => sum + (Number(d.count) || 0), 0);
+          renderHeadcountChart(headcount.data);
+          const el = document.getElementById('headcount-total');
+          if (el) el.textContent = totalEmployees.toLocaleString() + ' employees · live headcount';
+        } else if (turnover && turnover.data && turnover.data.total_employees != null) {
+          renderHeadcountChart([]);
+          const el = document.getElementById('headcount-total');
+          if (el) el.textContent = Number(turnover.data.total_employees).toLocaleString() + ' employees · live headcount';
+        } else {
+          renderHeadcountChart([]);
+          if (results[0].status !== 'fulfilled') {
+            const chart = document.getElementById('headcount-chart');
+            if (chart) chart.innerHTML = '<div style="flex:1;text-align:center;padding:40px 0;color:var(--text-muted);font-size:0.75rem;">Failed to load headcount</div>';
+          }
         }
-        if (cards[3]) {
-          const avgTenure = attendance?.data?.avg_tenure || attendance?.avg_tenure || 21;
-          cards[3].textContent = avgTenure + ' days';
-        }
+        // Note: Engagement Score and Avg Time to Hire have no backend API yet — left as static placeholders.
       } catch (e) {
         console.error('Failed to load reports:', e);
       }
@@ -510,10 +507,10 @@
       try {
         clearFieldErrors();
         const modal = document.getElementById('modalReport');
-        const reportName = document.querySelector('#modalReport .fi')?.value?.trim() || '';
+        const reportName = document.querySelector('#modalReport [data-field="report_name"]')?.value?.trim() || '';
         if (!reportName) { showFieldError('report_name', 'Report Name is required'); return; }
         showToast('📊', 'Report generated successfully!');
-        bootstrap.Modal.getInstance(modal).hide();
+        if (modal) bootstrap.Modal.getOrCreateInstance(modal).hide();
       } catch (e) {
         showToast('❌', 'Failed to generate report');
       }

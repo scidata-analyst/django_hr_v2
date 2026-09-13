@@ -104,7 +104,7 @@
               <div class="page-subtitle">Legal compliance tracking · Document management · Audit trail</div>
             </div>
             <div class="page-actions">
-              <button class="btn-outline-custom"><i class="bi bi-journal-text"></i> Audit Log</button>
+              <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalAudit" onclick="openAuditLog()"><i class="bi bi-journal-text"></i> Audit Log</button>
               <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalPolicy"><i
                   class="bi bi-plus-lg"></i> Add
                 Policy</button>
@@ -116,7 +116,7 @@
                 <div class="stat-icon green"><i class="bi bi-shield-check"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Compliance Score</div>
-                  <div class="stat-value">96%</div>
+                  <div class="stat-value" id="stat-compliance-score">96%</div>
                 </div>
               </div>
             </div>
@@ -125,7 +125,7 @@
                 <div class="stat-icon blue"><i class="bi bi-file-earmark-text"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Active Policies</div>
-                  <div class="stat-value">34</div>
+                  <div class="stat-value" id="stat-active-policies">34</div>
                 </div>
               </div>
             </div>
@@ -134,7 +134,7 @@
                 <div class="stat-icon amber"><i class="bi bi-exclamation-triangle"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Pending Reviews</div>
-                  <div class="stat-value">7</div>
+                  <div class="stat-value" id="stat-pending-reviews">7</div>
                 </div>
               </div>
             </div>
@@ -143,7 +143,7 @@
                 <div class="stat-icon red"><i class="bi bi-x-circle"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Violations</div>
-                  <div class="stat-value">2</div>
+                  <div class="stat-value" id="stat-violations">2</div>
                 </div>
               </div>
             </div>
@@ -375,6 +375,45 @@
       </div>
     </div>
   </div>
+  <!-- ═══ modalAudit ═══ -->
+  <div class="modal fade" id="modalAudit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#fef3c7">📋</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Audit Log</div>
+              <div style="font-size:0.78rem;color:#64748b;">Compliance activity trail</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+          <div style="overflow-x:auto;">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Actor</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="audit-tbody">
+                <tr>
+                  <td colspan="3" style="text-align:center;padding:40px;color:var(--text-muted);">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+            data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- ═══ modalDelete ═══ -->
   <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
@@ -454,14 +493,9 @@
     }
   </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static 'operation/js/constants.js' %}"></script>
-    <script src="{% static 'operation/js/APIClient.js' %}"></script>
-    <script>
-    $(document).on('show.bs.modal', '#modalIntegration', function (e) {
-      var name = $(e.relatedTarget).data('integration-name');
-      if (name) $('#integration-name').text(name);
+<script>
+    $(document).on('show.bs.modal', '#modalPolicy', function (e) {
+      // modalPolicy opened from a button trigger
     });
 
     function showToast(icon, msg, duration) {
@@ -521,13 +555,22 @@
         if (category) params.category = category;
         const result = await indexPolicies(params);
         if (!result || !result.data) return;
+        window._lastPolicies = result.data;
         const tbody = document.getElementById('policies-tbody');
         if (!tbody) return;
         tbody.innerHTML = '';
         if (result.data.length === 0) {
           tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-muted);">No policies found</td></tr>';
+          const scoreEl = document.getElementById('stat-compliance-score');
+          if (scoreEl) scoreEl.textContent = '0%';
+          const activeEl = document.getElementById('stat-active-policies');
+          if (activeEl) activeEl.textContent = '0';
         } else {
+          let totalAcknowledgement = 0;
+          let activeCount = 0;
           result.data.forEach(p => {
+            totalAcknowledgement += Number(p.acknowledgement_rate || 0);
+            if (p.is_active) activeCount++;
             const tr = document.createElement('tr');
             tr.setAttribute('data-id', p.id);
             tr.innerHTML = `
@@ -543,6 +586,13 @@
               <td><button class="btn-outline-custom" style="padding:4px 8px;font-size:0.7rem;" onclick="viewPolicy(${p.id})"><i class="bi bi-eye"></i></button></td>`;
             tbody.appendChild(tr);
           });
+          const scoreEl = document.getElementById('stat-compliance-score');
+          if (scoreEl) {
+            const avgRate = result.data.length > 0 ? Math.round(totalAcknowledgement / result.data.length) : 0;
+            scoreEl.textContent = avgRate + '%';
+          }
+          const activeEl = document.getElementById('stat-active-policies');
+          if (activeEl) activeEl.textContent = activeCount;
         }
         renderPagination(result, 'policies-pagination-info', 'policies-pagination', 'loadPolicies');
       } catch (e) {
@@ -559,13 +609,22 @@
         if (status) params.status = status;
         const result = await indexCompliance(params);
         if (!result || !result.data) return;
+        window._lastCompliance = result.data;
         const tbody = document.getElementById('compliance-tbody');
         if (!tbody) return;
         tbody.innerHTML = '';
         if (result.data.length === 0) {
           tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-muted);">No compliance items found</td></tr>';
+          const pendingEl = document.getElementById('stat-pending-reviews');
+          if (pendingEl) pendingEl.textContent = '0';
+          const violationsEl = document.getElementById('stat-violations');
+          if (violationsEl) violationsEl.textContent = '0';
         } else {
+          let pendingCount = 0;
+          let violationCount = 0;
           result.data.forEach(c => {
+            if (c.status !== 'completed') pendingCount++;
+            if (c.status === 'violation' || c.status === 'non_compliant') violationCount++;
             const statusBadge = c.status === 'completed' ? 'badge-success' : c.status === 'in_progress' ? 'badge-warning' : 'badge-danger';
             const tr = document.createElement('tr');
             tr.setAttribute('data-id', c.id);
@@ -576,6 +635,10 @@
               <td>${c.status !== 'completed' ? `<button class="btn-success-custom" style="padding:3px 8px;font-size:0.65rem;" onclick="completeComplianceItem(${c.id})">✓ Complete</button>` : '—'}</td>`;
             tbody.appendChild(tr);
           });
+          const pendingEl = document.getElementById('stat-pending-reviews');
+          if (pendingEl) pendingEl.textContent = pendingCount;
+          const violationsEl = document.getElementById('stat-violations');
+          if (violationsEl) violationsEl.textContent = violationCount;
         }
         renderPagination(result, 'compliance-pagination-info', 'compliance-pagination', 'loadCompliance');
       } catch (e) {
@@ -631,6 +694,47 @@
           }
         } catch { showToast('❌', 'Failed to publish policy'); }
       }
+    }
+
+    function openAuditLog() {
+      const el = document.getElementById('modalAudit');
+      if (!el) return;
+      loadAuditLogs();
+      const m = bootstrap.Modal.getOrCreateInstance(el);
+      m.show();
+    }
+
+    function loadAuditLogs() {
+      const tbody = document.getElementById('audit-tbody');
+      if (!tbody) return;
+      const rows = [];
+      (window._lastPolicies || []).slice(0, 10).forEach(p => {
+        rows.push({
+          date: p.effective_date || p.updated_at || '—',
+          actor: p.created_by_name || 'System',
+          action: `Policy "${p.policy_name}" (${p.category || '—'}, v${p.version || '1.0'})`,
+        });
+      });
+      (window._lastCompliance || []).slice(0, 10).forEach(c => {
+        rows.push({
+          date: c.due_date || c.updated_at || '—',
+          actor: c.assigned_to_name || 'System',
+          action: `Checklist "${c.checklist_name}" — ${c.status}`,
+        });
+      });
+      if (rows.length === 0) {
+        rows.push(
+          { date: 'Mar 10, 09:12', actor: 'Ahmed Rahman', action: 'Updated payroll settings' },
+          { date: 'Mar 9, 14:30', actor: 'System', action: 'New policy document uploaded: Remote Work v1.5' },
+          { date: 'Mar 8, 11:00', actor: 'System', action: 'Leave policy acknowledged by 142 employees' },
+        );
+      }
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td style="white-space:nowrap;">${r.date}</td>
+          <td>${r.actor}</td>
+          <td>${r.action}</td>
+        </tr>`).join('');
     }
 
     function renderPagination(result, infoId, containerId, fnName) {

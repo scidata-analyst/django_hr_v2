@@ -117,7 +117,7 @@
                 <div class="stat-icon blue"><i class="bi bi-plug"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Connected Apps</div>
-                  <div class="stat-value">14</div>
+                  <div class="stat-value" id="stat-connected">14</div>
                 </div>
               </div>
             </div>
@@ -154,7 +154,7 @@
               <div class="card-custom mb-3">
                 <div class="card-header-custom">
                   <div class="card-header-title">Connected Integrations</div><button class="btn-outline-custom"
-                    style="padding:4px 10px;">+ Add New</button>
+                    style="padding:4px 10px;" data-bs-toggle="modal" data-bs-target="#modalIntegration">+ Add New</button>
                 </div>
                 <div class="card-body-custom">
                   <div class="row g-3">
@@ -245,6 +245,7 @@
                     <div class="col-md-4 col-6">
                       <div
                         style="padding:16px;border:2px dashed var(--border);border-radius:10px;text-align:center;cursor:pointer;transition:all 0.2s;background:#f8fafc;"
+                        data-bs-toggle="modal" data-bs-target="#modalIntegration"
                         onmouseenter="this.style.borderColor='var(--primary)';this.style.background='#eff6ff'"
                         onmouseleave="this.style.borderColor='var(--border)';this.style.background='#f8fafc'">
                         <div style="font-size:1.8rem;margin-bottom:6px;color:var(--text-muted);">➕</div>
@@ -259,7 +260,7 @@
               <div class="card-custom mb-3">
                 <div class="card-header-custom">
                   <div class="card-header-title">Workflow Automation</div><button class="btn-primary-custom"
-                    style="padding:6px 12px;">+ New Rule</button>
+                    style="padding:6px 12px;" data-bs-toggle="modal" data-bs-target="#modalAutomation">+ New Rule</button>
                 </div>
                 <div class="card-body-custom">
                   <div style="display:flex;flex-direction:column;gap:8px;">
@@ -360,10 +361,24 @@
               Connected</span>
           </div>
           <div class="form-grid">
+            <div class="fg">
+              <div class="fl">Integration Name *</div><input class="fi" data-field="name" placeholder="e.g. SAP ERP" />
+              <div class="field-error" data-error-for="name"></div>
+            </div>
+            <div class="fg">
+              <div class="fl">Integration Type *</div><select class="fi" data-field="integration_type">
+                <option value="payroll">Payroll System</option>
+                <option value="calendar">Calendar</option>
+                <option value="storage">Cloud Storage</option>
+                <option value="communication" selected>Communication</option>
+                <option value="analytics">Analytics</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="field-error" data-error-for="integration_type"></div>
+            </div>
             <div class="fg full">
               <div class="fl">API Endpoint URL</div><input class="fi" data-field="api_endpoint" value="https://api.example.com/v2/hrms"
                 placeholder="API URL" />
-              <div class="field-error" data-error-for="api_endpoint"></div>
               <div class="field-error" data-error-for="api_endpoint"></div>
             </div>
             <div class="fg">
@@ -445,7 +460,8 @@
 
           <div class="form-grid">
             <div class="fg full">
-              <div class="fl">Rule Name *</div><input class="fi" placeholder="e.g. Auto-approve short leaves" />
+              <div class="fl">Rule Name *</div><input class="fi" data-field="rule_name" placeholder="e.g. Auto-approve short leaves" />
+              <div class="field-error" data-error-for="rule_name"></div>
             </div>
             <div class="fg full">
               <div class="fl">Description</div><input class="fi" placeholder="What does this automation do?" />
@@ -584,9 +600,7 @@
     }
   </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
+<script>
     $(document).on('show.bs.modal', '#modalIntegration', function (e) {
       var name = $(e.relatedTarget).data('integration-name');
       if (name) $('#integration-name').text(name);
@@ -621,9 +635,10 @@
         const result = await indexIntegrations();
         if (result && result.data) {
           const connectedCount = result.data.filter(i => i.status === 'active').length;
-          const statCards = document.querySelectorAll('#page-integrations .stat-card .stat-value');
-          if (statCards[0]) statCards[0].textContent = connectedCount;
+          const el = document.getElementById('stat-connected');
+          if (el) el.textContent = connectedCount;
         }
+        // Note: Automations Active, API Calls Today and Uptime have no backend API — static placeholders.
       } catch (e) {
         console.error('Failed to load integrations:', e);
       }
@@ -639,36 +654,59 @@
       }
     }
 
+    // Backend Integration model fields: name*, integration_type*, api_key, webhook_url, is_enabled, status.
+    // UI-only fields (auth_type, sync_frequency, data_direction, timeout, api_endpoint) are not persisted.
     async function saveIntegration() {
       try {
         clearFieldErrors();
         const modal = document.getElementById('modalIntegration');
-        const apiEndpoint = document.querySelector('[data-field="api_endpoint"]')?.value?.trim() || '';
-        if (!apiEndpoint) {
-          showFieldError('api_endpoint', 'API Endpoint URL is required');
+        const val = (name) => document.querySelector(`#modalIntegration [data-field="${name}"]`)?.value?.trim() || '';
+        const name = val('name');
+        const integrationType = val('integration_type');
+        if (!name) { showFieldError('name', 'Integration Name is required'); return; }
+        if (!integrationType) { showFieldError('integration_type', 'Integration Type is required'); return; }
+        const data = {
+          name,
+          integration_type: integrationType,
+          api_key: val('api_key'),
+          webhook_url: val('webhook_url'),
+          is_enabled: true,
+          status: 'active',
+        };
+        const result = await createIntegration(data);
+        if (result && result.errors) {
+          Object.entries(result.errors).forEach(([key, errVal]) => {
+            showFieldError(key, Array.isArray(errVal) ? errVal.join(', ') : errVal);
+          });
           return;
         }
-        const data = { api_endpoint: apiEndpoint };
-        await createIntegration(data);
         showToast('✅', 'Integration connected!');
-        bootstrap.Modal.getInstance(modal).hide();
+        if (modal) bootstrap.Modal.getOrCreateInstance(modal).hide();
         loadIntegrations();
       } catch (e) {
         try {
           const errData = JSON.parse(e.message);
           if (errData.errors) {
-            Object.entries(errData.errors).forEach(([key, val]) => {
-              showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+            Object.entries(errData.errors).forEach(([key, errVal]) => {
+              showFieldError(key, Array.isArray(errVal) ? errVal.join(', ') : errVal);
             });
-          } else { showToast('❌', errData.message || 'Failed'); }
+          } else { showToast('❌', errData.message || errData.error || 'Failed'); }
         } catch { showToast('❌', 'Failed to save integration'); }
       }
     }
 
     async function saveAutomation() {
-      const modal = document.getElementById('modalAutomation');
-      showToast('✅', 'Automation rule saved!');
-      bootstrap.Modal.getInstance(modal).hide();
+      try {
+        clearFieldErrors();
+        const modal = document.getElementById('modalAutomation');
+        const ruleName = document.querySelector('#modalAutomation [data-field="rule_name"]')?.value?.trim() || '';
+        if (!ruleName) { showFieldError('rule_name', 'Rule Name is required'); return; }
+        // No backend endpoint for automation rules — kept client-side.
+        showToast('✅', 'Automation rule saved!');
+        if (modal) bootstrap.Modal.getOrCreateInstance(modal).hide();
+      } catch (e) {
+        showToast('❌', 'Failed to save automation');
+      }
     }
 
     $(function () { loadIntegrations(); });

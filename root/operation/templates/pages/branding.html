@@ -104,8 +104,8 @@
               <div class="page-subtitle">Attracting top talent with your employer brand</div>
             </div>
             <div class="page-actions">
-              <button class="btn-outline-custom"><i class="bi bi-megaphone"></i> New Campaign</button>
-              <button class="btn-primary-custom"><i class="bi bi-share"></i> Post to Job Boards</button>
+              <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalEmployee"><i class="bi bi-megaphone"></i> New Campaign</button>
+              <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalJobBoards" onclick="openJobBoards()"><i class="bi bi-share"></i> Post to Job Boards</button>
             </div>
           </div>
           <div class="row g-3 mb-4">
@@ -114,7 +114,7 @@
                 <div class="stat-icon blue"><i class="bi bi-eye"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Profile Views</div>
-                  <div class="stat-value">28.4K</div>
+                  <div class="stat-value" id="stat-profile-views">28.4K</div>
                   <div class="stat-change up">+34% MoM</div>
                 </div>
               </div>
@@ -124,7 +124,7 @@
                 <div class="stat-icon green"><i class="bi bi-mouse3"></i></div>
                 <div class="stat-info">
                   <div class="stat-label">Applications</div>
-                  <div class="stat-value">1,240</div>
+                  <div class="stat-value" id="stat-applications">1,240</div>
                   <div class="stat-change up">This month</div>
                 </div>
               </div>
@@ -216,24 +216,55 @@
               <div class="card-custom mb-3">
                 <div class="card-header-custom">
                   <div class="card-header-title">Social Media Campaigns</div>
+                  <div class="d-flex gap-2 align-items-center">
+                    <input id="candidate-search" type="text" placeholder="Search..."
+                      style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;width:120px;" />
+                    <select id="candidate-filter-stage"
+                      style="padding:5px 10px;font-size:0.75rem;border:1px solid var(--border);border-radius:6px;">
+                      <option value="">All Stages</option>
+                      <option value="applied">Applied</option>
+                      <option value="screening">Screening</option>
+                      <option value="interview">Interview</option>
+                      <option value="offer">Offer</option>
+                      <option value="hired">Hired</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                    <button class="btn-primary-custom" style="padding:6px 14px;font-size:0.75rem;"
+                      onclick="loadCandidates(1)"><i class="bi bi-funnel"></i></button>
+                  </div>
                 </div>
                 <div style="overflow-x:auto;">
                   <table class="table-custom">
 <thead>
                         <tr>
-                          <th onclick="sortCampaigns('campaign')" style="cursor:pointer;">Campaign <span class="sort-indicator" id="sort-campaign">↕</span></th>
-                          <th onclick="sortCampaigns('platform')" style="cursor:pointer;">Platform <span class="sort-indicator" id="sort-platform">↕</span></th>
-                          <th onclick="sortCampaigns('reach')" style="cursor:pointer;">Reach <span class="sort-indicator" id="sort-reach">↕</span></th>
-                          <th onclick="sortCampaigns('clicks')" style="cursor:pointer;">Clicks <span class="sort-indicator" id="sort-clicks">↕</span></th>
-                          <th onclick="sortCampaigns('status')" style="cursor:pointer;">Status <span class="sort-indicator" id="sort-status">↕</span></th>
+                          <th onclick="sortCampaigns('full_name')" style="cursor:pointer;">Candidate <span class="sort-indicator" id="sort-full_name">↕</span></th>
+                          <th>Applied For</th>
+                          <th>Source</th>
+                          <th onclick="sortCampaigns('experience_yrs')" style="cursor:pointer;">Experience <span class="sort-indicator" id="sort-experience_yrs">↕</span></th>
+                          <th onclick="sortCampaigns('current_stage')" style="cursor:pointer;">Stage <span class="sort-indicator" id="sort-current_stage">↕</span></th>
                         </tr>
                       </thead>
-                    <tbody>
+                    <tbody id="campaigns-tbody">
                       <tr>
                         <td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">Loading...</td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+                <div
+                  style="padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+                  <span id="campaigns-pagination-info" style="font-size:0.72rem;color:var(--text-muted);"></span>
+                  <div style="display:flex;gap:8px;align-items:center;">
+                    <select id="campaigns-page-size"
+                      style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;"
+                      onchange="loadCandidates(1)">
+                      <option value="5">5 per page</option>
+                      <option value="10" selected>10 per page</option>
+                      <option value="25">25 per page</option>
+                      <option value="50">50 per page</option>
+                    </select>
+                    <div id="campaigns-pagination" style="display:flex;gap:4px;"></div>
+                  </div>
                 </div>
               </div>
               <div class="card-custom">
@@ -369,6 +400,12 @@
               <div class="field-error" data-error-for="designation"></div>
             </div>
             <div class="fg">
+              <div class="fl">Applied For (Job) *</div><select class="fi" data-field="applied_for" id="emp-applied-for">
+                <option value="">Select a job...</option>
+              </select>
+              <div class="field-error" data-error-for="applied_for"></div>
+            </div>
+            <div class="fg">
               <div class="fl">Reporting Manager</div><select class="fi" data-field="manager">
                 <option>Ahmed Rahman</option>
                 <option>Sara Ahmed</option>
@@ -418,6 +455,49 @@
           <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
             data-bs-dismiss="modal">Cancel</button>
           <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveEmployee()">💾 Save Employee</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ modalJobBoards ═══ -->
+  <div class="modal fade" id="modalJobBoards" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
+        <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon" style="background:#dbeafe">📣</div>
+            <div>
+              <div class="fw-bold" style="font-size:1rem;color:#0f172a;">Post to Job Boards</div>
+              <div style="font-size:0.78rem;color:#64748b;">Share an open job to connected boards</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:20px 24px;">
+          <div class="form-grid">
+            <div class="fg full">
+              <div class="fl">Job *</div><select class="fi" data-field="job_id" id="jb-job-id">
+                <option value="">Select a job...</option>
+              </select>
+              <div class="field-error" data-error-for="job_id"></div>
+            </div>
+            <div class="fg full">
+              <div class="fl">Boards</div>
+              <div class="d-flex gap-3 flex-wrap mt-1">
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" class="jb-board" value="linkedin" checked /> LinkedIn</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" class="jb-board" value="bdjobs" checked /> BDJobs</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" class="jb-board" value="glassdoor" /> Glassdoor</label>
+                <label class="d-flex align-items-center gap-1" style="font-size:0.78rem;cursor:pointer;"><input type="checkbox" class="jb-board" value="indeed" /> Indeed</label>
+              </div>
+              <div class="field-error" data-error-for="boards"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
+          <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
+            data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="postToJobBoards()">📣 Post Job</button>
         </div>
       </div>
     </div>
@@ -511,12 +591,9 @@
     }
   </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-    $(document).on('show.bs.modal', '#modalIntegration', function (e) {
-      var name = $(e.relatedTarget).data('integration-name');
-      if (name) $('#integration-name').text(name);
+<script>
+    $(document).on('show.bs.modal', '#modalEmployee', function () {
+      loadJobsForSelect();
     });
 
     function showToast(icon, msg, duration) {
@@ -547,9 +624,9 @@
       document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
     }
 
-    // ── Campaign sorting ──
-    let campaignSortBy = 'campaign';
-    let campaignSortDir = 'asc';
+    // ── Campaign sorting (candidate API allows: full_name, current_stage, experience_yrs, …) ──
+    let campaignSortBy = 'id';
+    let campaignSortDir = 'desc';
 
     function sortCampaigns(field) {
       if (campaignSortBy === field) {
@@ -558,105 +635,194 @@
         campaignSortBy = field;
         campaignSortDir = 'asc';
       }
-      document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '↕');
+      document.querySelectorAll('#page-branding .sort-indicator').forEach(el => el.textContent = '↕');
       const indicator = document.getElementById(`sort-${field}`);
       if (indicator) indicator.textContent = campaignSortDir === 'asc' ? '↑' : '↓';
-      loadCandidates();
+      loadCandidates(1);
     }
 
     // ── Load candidates with server-side data ──
-    async function loadCandidates() {
+    async function loadCandidates(page) {
       try {
-        const result = await indexCandidates({ sort_by: campaignSortBy, sort_direction: campaignSortDir });
-        if (result && result.data) {
-          const tbody = document.querySelector('#page-branding .table-custom tbody');
-          if (!tbody) return;
-          tbody.innerHTML = '';
-          if (result.data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No campaigns found</td></tr>';
-          } else {
-            result.data.forEach(c => {
-              const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
-              const tr = document.createElement('tr');
-              tr.innerHTML = `
-                <td style="font-weight:600;">${c.full_name || '—'}</td>
-                <td>${c.applied_for_title || '—'}</td>
-                <td>${c.source || '—'}</td>
-                <td>${c.experience_yrs || 0} yrs</td>
-                <td><span class="badge-custom ${stageBadge}">${c.current_stage || '—'}</span></td>`;
-              tbody.appendChild(tr);
-            });
-          }
+        const pageSize = document.getElementById('campaigns-page-size')?.value || 10;
+        page = page || 1;
+        const search = document.getElementById('candidate-search')?.value || '';
+        const stage = document.getElementById('candidate-filter-stage')?.value || '';
+        const params = { page, page_size: pageSize, sort_by: campaignSortBy, sort_direction: campaignSortDir };
+        if (search) params.search = search;
+        if (stage) params.stage = stage;
+        const result = await indexCandidates(params);
+        const tbody = document.getElementById('campaigns-tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (!result || !result.data || result.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">No candidates found</td></tr>';
+        } else {
+          result.data.forEach(c => {
+            const stageBadge = c.current_stage === 'hired' ? 'badge-success' : c.current_stage === 'rejected' ? 'badge-danger' : 'badge-warning';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="font-weight:600;">${c.full_name || '—'}</td>
+              <td>${c.applied_for_title || '—'}</td>
+              <td>${c.source_display || c.source || '—'}</td>
+              <td>${c.experience_yrs != null ? c.experience_yrs + ' yrs' : '—'}</td>
+              <td><span class="badge-custom ${stageBadge}">${c.current_stage_display || c.current_stage || '—'}</span></td>`;
+            tbody.appendChild(tr);
+          });
         }
+        renderPagination(result, 'campaigns-pagination-info', 'campaigns-pagination', 'loadCandidates');
       } catch (e) {
+        const tbody = document.getElementById('campaigns-tbody');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Failed to load candidates</td></tr>';
         console.error('Failed to load candidates:', e);
       }
     }
 
-    // ── Load job stats from API ──
+    // ── Load job stats from API (job serializer has candidate_count, no view_count) ──
     async function loadJobStats() {
       try {
         const result = await indexJobs();
         if (result && result.data) {
-          const cards = document.querySelectorAll('#page-branding .stat-card .stat-value');
-          if (cards[0]) cards[0].textContent = (result.data.reduce((sum, j) => sum + (j.view_count || 0), 0)).toLocaleString();
-          if (cards[1]) cards[1].textContent = result.data.reduce((sum, j) => sum + (j.candidate_count || 0), 0).toLocaleString();
+          const totalCandidates = result.data.reduce((sum, j) => sum + (Number(j.candidate_count) || 0), 0);
+          const el = document.getElementById('stat-applications');
+          if (el) el.textContent = totalCandidates.toLocaleString();
         }
       } catch (e) {
         console.error('Failed to load job stats:', e);
       }
     }
 
-    // ── Load pipeline ──
-    async function loadPipeline() {
+    // ── Populate Applied-For job select ──
+    async function loadJobsForSelect() {
       try {
-        const result = await getPipeline();
-        if (result) {
-          const counts = document.querySelectorAll('#page-branding .kanban-count');
-          if (counts[0]) counts[0].textContent = result.applied || 0;
-          if (counts[1]) counts[1].textContent = result.screening || 0;
-          if (counts[2]) counts[2].textContent = result.interview || 0;
-          if (counts[3]) counts[3].textContent = result.offer || 0;
-        }
+        const select = document.getElementById('emp-applied-for');
+        if (!select || select.options.length > 1) return;
+        const result = await indexJobs();
+        (result?.data || []).forEach(j => {
+          const opt = document.createElement('option');
+          opt.value = j.id;
+          opt.textContent = j.job_title;
+          select.appendChild(opt);
+        });
       } catch (e) {
-        console.error('Failed to load pipeline:', e);
+        console.error('Failed to load jobs for select:', e);
       }
     }
 
-    // ── Save candidate with validation ──
-    function saveEmployee() {
+    function renderPagination(result, infoId, containerId, fnName) {
+      const totalPages = result.total_pages || 1;
+      const page = result.page || 1;
+      const pageSize = result.page_size || 10;
+      const start = (page - 1) * pageSize + 1;
+      const end = Math.min(page * pageSize, result.count);
+      const info = document.getElementById(infoId);
+      if (info) info.textContent = result.count > 0 ? `Showing ${start}–${end} of ${result.count}` : 'No data found';
+      const container = document.getElementById(containerId);
+      if (container) {
+        let html = '';
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page - 1})">‹ Prev</button>`;
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= page - 1 && i <= page + 1)) {
+            html += `<button class="${i === page ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;font-size:0.72rem;" onclick="${fnName}(${i})">${i}</button>`;
+          } else if (i === page - 2 || i === page + 2) {
+            html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
+          }
+        }
+        html += `<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.72rem;${page === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="${fnName}(${page + 1})">Next ›</button>`;
+        container.innerHTML = html;
+      }
+    }
+
+    // ── Post to Job Boards (no backend endpoint — records selection client-side) ──
+    function openJobBoards() {
+      const el = document.getElementById('modalJobBoards');
+      if (!el) return;
+      loadJobsInto('jb-job-id');
+      const m = bootstrap.Modal.getOrCreateInstance(el);
+      m.show();
+    }
+
+    async function loadJobsInto(selectId) {
+      try {
+        const select = document.getElementById(selectId);
+        if (!select || select.options.length > 1) return;
+        const result = await indexJobs();
+        (result?.data || []).forEach(j => {
+          const opt = document.createElement('option');
+          opt.value = j.id;
+          opt.textContent = j.job_title;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Failed to load jobs:', e);
+      }
+    }
+
+    function postToJobBoards() {
+      document.querySelectorAll('#modalJobBoards .field-error').forEach(el => el.textContent = '');
+      const jobId = document.querySelector('#modalJobBoards [data-field="job_id"]')?.value || '';
+      if (!jobId) {
+        const errEl = document.querySelector('#modalJobBoards [data-error-for="job_id"]');
+        if (errEl) { errEl.textContent = 'Please select a job'; errEl.classList.add('visible'); }
+        return;
+      }
+      const boards = Array.from(document.querySelectorAll('#modalJobBoards .jb-board:checked')).map(b => b.value);
+      if (!boards.length) {
+        const errEl = document.querySelector('#modalJobBoards [data-error-for="boards"]');
+        if (errEl) { errEl.textContent = 'Select at least one board'; errEl.classList.add('visible'); }
+        return;
+      }
+      showToast('📣', 'Job posted to ' + boards.length + ' board(s)!');
+      const modal = document.getElementById('modalJobBoards');
+      if (modal) bootstrap.Modal.getOrCreateInstance(modal).hide();
+    }
+
+    // ── Save candidate with validation (candidate API requires full_name, email, applied_for) ──
+    async function saveEmployee() {
       try {
         clearFieldErrors();
         const modal = document.getElementById('modalEmployee');
-        const firstName = document.querySelector('[data-field="first_name"]')?.value?.trim() || '';
-        const lastName = document.querySelector('[data-field="last_name"]')?.value?.trim() || '';
-        const personalEmail = document.querySelector('[data-field="personal_email"]')?.value?.trim() || '';
-        const joinDate = document.querySelector('[data-field="join_date"]')?.value || '';
-        const department = document.querySelector('[data-field="department"]')?.value || '';
-        const designation = document.querySelector('[data-field="designation"]')?.value?.trim() || '';
+        const firstName = document.querySelector('#modalEmployee [data-field="first_name"]')?.value?.trim() || '';
+        const lastName = document.querySelector('#modalEmployee [data-field="last_name"]')?.value?.trim() || '';
+        const personalEmail = document.querySelector('#modalEmployee [data-field="personal_email"]')?.value?.trim() || '';
+        const phone = document.querySelector('#modalEmployee [data-field="phone"]')?.value?.trim() || '';
+        const appliedFor = document.querySelector('#modalEmployee [data-field="applied_for"]')?.value || '';
         if (!firstName) { showFieldError('first_name', 'First Name is required'); return; }
         if (!lastName) { showFieldError('last_name', 'Last Name is required'); return; }
         if (!personalEmail) { showFieldError('personal_email', 'Personal Email is required'); return; }
-        if (!joinDate) { showFieldError('join_date', 'Join Date is required'); return; }
-        if (!department) { showFieldError('department', 'Department is required'); return; }
-        if (!designation) { showFieldError('designation', 'Designation is required'); return; }
+        if (!appliedFor) { showFieldError('applied_for', 'Please select a job'); return; }
         const data = {
-          first_name: firstName,
-          last_name: lastName,
-          personal_email: personalEmail,
-          join_date: joinDate,
-          department: department,
-          designation: designation,
+          full_name: `${firstName} ${lastName}`.trim(),
+          email: personalEmail,
+          phone: phone,
+          applied_for: appliedFor,
         };
+        const result = await createCandidate(data);
+        if (result && result.errors) {
+          Object.entries(result.errors).forEach(([key, val]) => {
+            showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+          });
+          return;
+        }
         showToast('✅', 'Candidate saved!');
-        bootstrap.Modal.getInstance(modal).hide();
-        loadCandidates();
+        if (modal) bootstrap.Modal.getOrCreateInstance(modal).hide();
+        loadCandidates(1);
+        loadJobStats();
       } catch (e) {
-        showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
+        try {
+          const errData = JSON.parse(e.message);
+          if (errData.errors) {
+            Object.entries(errData.errors).forEach(([key, val]) => {
+              showFieldError(key, Array.isArray(val) ? val.join(', ') : val);
+            });
+          } else {
+            showToast('❌', errData.message || errData.error || 'Failed to save candidate');
+          }
+        } catch { showToast('❌', 'Failed to save candidate'); }
       }
     }
 
-    $(function () { loadJobStats(); loadCandidates(); loadPipeline(); });
+    $(function () { loadJobStats(); loadCandidates(); });
     $(function () {
       var d = new Date();
       $('#topbar-date').text(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }));
