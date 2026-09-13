@@ -4,11 +4,12 @@
 """
 
 from django.urls import path
-from core_module.views.api.attendance.attendance import attendance_list, attendance_detail, attendance_stats, employee_attendance_stats
+from core_module.views.api.attendance.attendance import attendance_list, attendance_detail, attendance_stats, employee_attendance_stats, weekly_stats
 
 urlpatterns = [
     path('', attendance_list, name='attendance_list'),
     path('<int:pk>/', attendance_detail, name='attendance_detail'),
     path('stats/', attendance_stats, name='attendance_stats'),
     path('<int:employee_id>/stats/', employee_attendance_stats, name='employee_attendance_stats'),
+    path('weekly/', weekly_stats, name='weekly_stats'),
 ]

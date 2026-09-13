@@ -64,3 +64,19 @@ class AttendanceService(BaseService):
         if not end_date:
             end_date = date.today()
         return self.repository.get_employee_attendance_stats(employee_id, start_date, end_date)
+
+    def get_weekly_summary(self, end_date=None):
+        from datetime import datetime, timedelta
+        if isinstance(end_date, str):
+            end_date = end_date.strip()
+            if end_date:
+                try:
+                    end_date = datetime.strptime(end_date[:10], '%Y-%m-%d').date()
+                except (ValueError, TypeError):
+                    end_date = date.today()
+            else:
+                end_date = date.today()
+        if not end_date:
+            end_date = date.today()
+        start_date = end_date - timedelta(days=6)
+        return self.repository.get_weekly_summary(start_date, end_date)

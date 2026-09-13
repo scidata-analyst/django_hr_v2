@@ -1,4 +1,5 @@
 from django.db.models import Q, Count, Sum
+from datetime import timedelta
 from core_module.abstract.base_repository import BaseRepository
 from core_module.models.attendance.attendance import Attendance
 
@@ -45,3 +46,14 @@ class AttendanceRepository(BaseRepository):
         )
         agg['total_overtime'] = agg['total_overtime'] or 0
         return agg
+
+    def get_weekly_summary(self, start_date, end_date):
+        records = self.model.objects.filter(
+            date__gte=start_date, date__lte=end_date
+        ).values('date').annotate(
+            present=Count('id', filter=Q(status='present')),
+            absent=Count('id', filter=Q(status='absent')),
+            on_leave=Count('id', filter=Q(status='on_leave')),
+            total=Count('id'),
+        ).order_by('date')
+        return list(records)

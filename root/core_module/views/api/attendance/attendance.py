@@ -170,3 +170,11 @@ def employee_attendance_stats(request, employee_id):
     end = request.GET.get('end_date')
     stats = attendance_service.get_employee_stats(employee_id, start, end)
     return JsonResponse(stats)
+
+
+@require_login
+@safe_json_handler
+def weekly_stats(request):
+    end = request.GET.get('end_date')
+    summary = attendance_service.get_weekly_summary(end)
+    return JsonResponse({'data': summary})
