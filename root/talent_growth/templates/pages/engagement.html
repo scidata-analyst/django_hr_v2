@@ -10,9 +10,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alata&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
-        rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        .field-error { font-size:0.68rem; color:#ef4444; margin-top:4px; min-height:14px; line-height:1.3; }
+        .fi.is-invalid { border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.08) !important; }
+        .form-global-error { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:10px 12px; border-radius:8px; font-size:0.78rem; margin-bottom:12px; display:none; }
+        .form-global-error.show { display:block; }
+        .fg.has-error .fl { color:#ef4444; }
+        .sort-btn { font-size:0.68rem; padding:4px 8px; border:1px solid var(--border); border-radius:6px; background:#fff; cursor:pointer; }
+        .sort-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+    </style>
 </head>
 
 <body>
@@ -25,52 +34,34 @@
                     <div class="brand-sub">Enterprise Suite</div>
                 </div>
             </div>
-
             <div class="sidebar-section">
                 <div class="sidebar-section-label">Main</div>
-                <button class="nav-item-btn" onclick="location.href='{% url 'home' %}'"><span class="nav-icon">🏠</span>
-                    Dashboard</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'home' %}'"><span class="nav-icon">🏠</span> Dashboard</button>
             </div>
             <div class="sidebar-section">
                 <div class="sidebar-section-label">Core Modules</div>
-                <button class="nav-item-btn" onclick="location.href='{% url 'employee' %}'"><span
-                        class="nav-icon">👤</span> Employee Management</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'attendance' %}'"><span
-                        class="nav-icon">🕒</span> Attendance & Leave<span class="nav-badge">5</span></button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'payroll' %}'"><span
-                        class="nav-icon">💰</span> Payroll Management</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'recruitment' %}'"><span
-                        class="nav-icon">📝</span> Recruitment & Hiring</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'onboarding' %}'"><span
-                        class="nav-icon">🤝</span> Onboarding & Offboarding</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'ess' %}'"><span class="nav-icon">🖥️</span>
-                    Self-Service (ESS)</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'employee' %}'"><span class="nav-icon">👤</span> Employee Management</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'attendance' %}'"><span class="nav-icon">🕒</span> Attendance & Leave<span class="nav-badge">5</span></button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'payroll' %}'"><span class="nav-icon">💰</span> Payroll Management</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'recruitment' %}'"><span class="nav-icon">📝</span> Recruitment & Hiring</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'onboarding' %}'"><span class="nav-icon">🤝</span> Onboarding & Offboarding</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'ess' %}'"><span class="nav-icon">🖥️</span> Self-Service (ESS)</button>
             </div>
             <div class="sidebar-section">
                 <div class="sidebar-section-label">Talent & Growth</div>
-                <button class="nav-item-btn" onclick="location.href='{% url 'performance' %}'"><span
-                        class="nav-icon">📈</span> Performance Mgmt</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'training' %}'"><span
-                        class="nav-icon">🎓</span> Training & Development</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'talent' %}'"><span
-                        class="nav-icon">🚀</span> Talent & Succession</button>
-                <button class="nav-item-btn active" onclick="location.href='{% url 'engagement' %}'"><span
-                        class="nav-icon">🌟</span> Engagement & Recognition</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'performance' %}'"><span class="nav-icon">📈</span> Performance Mgmt</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'training' %}'"><span class="nav-icon">🎓</span> Training & Development</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'talent' %}'"><span class="nav-icon">🚀</span> Talent & Succession</button>
+                <button class="nav-item-btn active" onclick="location.href='{% url 'engagement' %}'"><span class="nav-icon">🌟</span> Engagement & Recognition</button>
             </div>
             <div class="sidebar-section">
                 <div class="sidebar-section-label">Operations</div>
-                <button class="nav-item-btn" onclick="location.href='{% url 'health' %}'"><span
-                        class="nav-icon">🏥</span> Health, Safety & Benefits</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'compliance' %}'"><span
-                        class="nav-icon">⚖️</span> Compliance & Policies</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'report' %}'"><span
-                        class="nav-icon">📊</span> Reports & Analytics</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'branding' %}'"><span
-                        class="nav-icon">📣</span> Recruitment Marketing</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'global_view' %}'"><span
-                        class="nav-icon">🌍</span> Global HR</button>
-                <button class="nav-item-btn" onclick="location.href='{% url 'integration' %}'"><span
-                        class="nav-icon">⚙️</span> Integrations</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'health' %}'"><span class="nav-icon">🏥</span> Health, Safety & Benefits</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'compliance' %}'"><span class="nav-icon">⚖️</span> Compliance & Policies</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'report' %}'"><span class="nav-icon">📊</span> Reports & Analytics</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'branding' %}'"><span class="nav-icon">📣</span> Recruitment Marketing</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'global_view' %}'"><span class="nav-icon">🌍</span> Global HR</button>
+                <button class="nav-item-btn" onclick="location.href='{% url 'integration' %}'"><span class="nav-icon">⚙️</span> Integrations</button>
             </div>
             <div class="sidebar-footer">
                 <div class="user-card">
@@ -84,11 +75,9 @@
         </aside>
         <div class="main-wrap">
             <div class="topbar">
-                <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i
-                        class="bi bi-list"></i></button>
+                <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="bi bi-list"></i></button>
                 <div class="topbar-title">Engagement & Recognition</div>
-                <div class="topbar-search"><i class="bi bi-search" style="color:#94a3b8;font-size:0.85rem;"></i><input
-                        type="text" placeholder="Search anything..." /></div>
+                <div class="topbar-search"><i class="bi bi-search" style="color:#94a3b8;font-size:0.85rem;"></i><input type="text" placeholder="Search anything..." /></div>
                 <div class="topbar-date" id="topbar-date"></div>
                 <div class="topbar-action"><i class="bi bi-bell"></i><span class="notif-dot"></span></div>
                 <div class="topbar-action"><i class="bi bi-gear"></i></div>
@@ -102,12 +91,8 @@
                             <div class="page-subtitle">Building a culture of appreciation and belonging</div>
                         </div>
                         <div class="page-actions">
-                            <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalSurvey"><i
-                                    class="bi bi-chat-square-text"></i>
-                                New Survey</button>
-                            <button class="btn-primary-custom" data-bs-toggle="modal"
-                                data-bs-target="#modalRecognition"><i class="bi bi-award"></i> Recognize
-                                Employee</button>
+                            <button class="btn-outline-custom" data-bs-toggle="modal" data-bs-target="#modalSurvey"><i class="bi bi-chat-square-text"></i> New Survey</button>
+                            <button class="btn-primary-custom" data-bs-toggle="modal" data-bs-target="#modalRecognition"><i class="bi bi-award"></i> Recognize Employee</button>
                         </div>
                     </div>
                     <div class="row g-3 mb-4">
@@ -117,7 +102,7 @@
                                 <div class="stat-info">
                                     <div class="stat-label">Engagement Score</div>
                                     <div class="stat-value" id="stat-engagement-score">—</div>
-                                    <div class="stat-change up" id="stat-engagement-change">Loading...</div>
+                                    <div class="stat-change" id="stat-engagement-change">No score API</div>
                                 </div>
                             </div>
                         </div>
@@ -145,6 +130,7 @@
                                 <div class="stat-info">
                                     <div class="stat-label">Announcements</div>
                                     <div class="stat-value" id="stat-announcements">—</div>
+                                    <div class="stat-change" id="stat-announcements-sub">No announcements API</div>
                                 </div>
                             </div>
                         </div>
@@ -153,15 +139,35 @@
                         <div class="col-xl-6">
                             <div class="card-custom">
                                 <div class="card-header-custom">
-                                    <div class="card-header-title">🏆 Recognition Wall</div><button
-                                        class="btn-primary-custom" style="padding:6px 12px;" data-bs-toggle="modal"
-                                        data-bs-target="#modalRecognition">+
-                                        Recognize</button>
+                                    <div class="card-header-title">🏆 Recognition Wall</div>
+                                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                                        <input id="recognition-search" type="text" placeholder="Search..." style="padding:5px 10px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;width:110px;" />
+                                        <select id="recognition-sort-by" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="changeRecognitionSort()">
+                                            <option value="given_at">Newest</option>
+                                            <option value="points">Points</option>
+                                            <option value="recognition_type">Type</option>
+                                        </select>
+                                        <select id="recognition-sort-dir" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="changeRecognitionSort()">
+                                            <option value="desc">↓ Desc</option>
+                                            <option value="asc">↑ Asc</option>
+                                        </select>
+                                        <button class="btn-primary-custom" style="padding:6px 12px;" data-bs-toggle="modal" data-bs-target="#modalRecognition">+ Recognize</button>
+                                    </div>
                                 </div>
                                 <div class="card-body-custom">
                                     <div id="recognition-wall" style="display:flex;flex-direction:column;gap:12px;">
-                                        <div style="text-align:center;padding:40px;color:var(--text-muted);">
-                                            Loading recognitions...</div>
+                                        <div style="text-align:center;padding:40px;color:var(--text-muted);">Loading recognitions...</div>
+                                    </div>
+                                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+                                        <span id="recognition-pagination-info" style="font-size:0.68rem;color:var(--text-muted);"></span>
+                                        <div style="display:flex;gap:6px;align-items:center;">
+                                            <select id="recognition-page-size" style="padding:5px 8px;font-size:0.68rem;border:1px solid var(--border);border-radius:6px;" onchange="loadRecognitions(1)">
+                                                <option value="5">5 per page</option>
+                                                <option value="10" selected>10 per page</option>
+                                                <option value="25">25 per page</option>
+                                            </select>
+                                            <div id="recognition-pagination" style="display:flex;gap:4px;align-items:center;"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -169,25 +175,47 @@
                         <div class="col-xl-6">
                             <div class="card-custom mb-3">
                                 <div class="card-header-custom">
-                                    <div class="card-header-title">Latest Survey Results</div><span
-                                        class="badge-custom badge-success">Q1
-                                        2026</span>
+                                    <div class="card-header-title">Latest Survey Results</div>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <input id="survey-search" type="text" placeholder="Search surveys..." style="padding:5px 10px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;width:130px;" />
+                                        <select id="survey-sort-by" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="changeSurveySort()">
+                                            <option value="start_date">Start Date</option>
+                                            <option value="title">Title</option>
+                                            <option value="created_at">Created</option>
+                                        </select>
+                                        <select id="survey-sort-dir" style="padding:5px 8px;font-size:0.72rem;border:1px solid var(--border);border-radius:6px;" onchange="changeSurveySort()">
+                                            <option value="desc">↓ Desc</option>
+                                            <option value="asc">↑ Asc</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="card-body-custom">
                                     <div id="survey-results" style="display:flex;flex-direction:column;gap:10px;">
-                                        <div style="text-align:center;padding:40px;color:var(--text-muted);">
-                                            Loading surveys...</div>
+                                        <div style="text-align:center;padding:40px;color:var(--text-muted);">Loading surveys...</div>
+                                    </div>
+                                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+                                        <span id="survey-pagination-info" style="font-size:0.68rem;color:var(--text-muted);"></span>
+                                        <div style="display:flex;gap:6px;align-items:center;">
+                                            <select id="survey-page-size" style="padding:5px 8px;font-size:0.68rem;border:1px solid var(--border);border-radius:6px;" onchange="loadSurveys(1)">
+                                                <option value="5">5 per page</option>
+                                                <option value="10" selected>10 per page</option>
+                                                <option value="25">25 per page</option>
+                                            </select>
+                                            <div id="survey-pagination" style="display:flex;gap:4px;align-items:center;"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-custom">
-                                <div class="card-header-custom">
-                                    <div class="card-header-title">Upcoming Events</div>
-                                </div>
+                                <div class="card-header-custom"><div class="card-header-title">Upcoming Events <span class="badge-custom badge-gray">Demo Data</span></div></div>
                                 <div class="card-body-custom">
                                     <div id="upcoming-events" style="display:flex;flex-direction:column;gap:8px;">
-                                        <div style="text-align:center;padding:40px;color:var(--text-muted);">
-                                            Loading events...</div>
+                                        <div style="padding:10px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;display:flex;justify-content:space-between;align-items:center;">
+                                            <div><div style="font-size:0.78rem;font-weight:600;">Quarterly Town Hall</div><div style="font-size:0.68rem;color:var(--text-muted);">Mar 20, 2026 · Main Auditorium</div></div><span class="badge-custom badge-success">Upcoming</span>
+                                        </div>
+                                        <div style="padding:10px;background:#fef3c7;border-radius:8px;border:1px solid #fde68a;display:flex;justify-content:space-between;align-items:center;">
+                                            <div><div style="font-size:0.78rem;font-weight:600;">Team Building Offsite</div><div style="font-size:0.68rem;color:var(--text-muted);">Apr 05, 2026 · Resort</div></div><span class="badge-custom badge-warning">Planned</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -195,11 +223,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- ══════════════════════════════════════
-PAGE 13: HEALTH & BENEFITS
-══════════════════════════════════════ -->
-
         </div>
     </div>
     </div>
@@ -207,7 +230,7 @@ PAGE 13: HEALTH & BENEFITS
 
     <!-- ═══ modalRecognition ═══ -->
     <div class="modal fade" id="modalRecognition" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog  modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content" style="border-radius:14px;border:none;box-shadow:0 24px 64px rgba(0,0,0,0.18);">
                 <div class="modal-header" style="border-bottom:1px solid #f1f5f9;padding:18px 24px;">
                     <div class="d-flex align-items-center gap-3">
@@ -220,57 +243,40 @@ PAGE 13: HEALTH & BENEFITS
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
-
+                    <div id="form-global-error-recognition" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg">
-                            <div class="fl">Recognize *</div><select class="fi" id="recognition-employee">
-                                <option value="" disabled selected>Select Employee</option>
+                        <div class="fg" data-field-group="recognition_employee">
+                            <div class="fl">Recognize *</div><select class="fi" data-field="recognition_employee" id="recognition-employee"><option value="">Select Employee</option></select>
+                            <div class="field-error" data-error-for="recognition_employee"></div>
+                            <div class="field-error" data-error-for="employee"></div>
+                            <div class="field-error" data-error-for="employee_id"></div>
+                        </div>
+                        <div class="fg" data-field-group="recognition_type">
+                            <div class="fl">Award Type *</div><select class="fi" data-field="recognition_type" id="recognition-type">
+                                <option value="">Select Type</option>
+                                <option value="kudos">🏅 Kudos</option>
+                                <option value="peer_award">🌟 Peer Award</option>
+                                <option value="innovation">💡 Innovation Award</option>
+                                <option value="team_player">🤝 Team Player</option>
+                                <option value="leader">🎯 Leader Award</option>
                             </select>
+                            <div class="field-error" data-error-for="recognition_type"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Award Type</div><select class="fi" id="recognition-type">
-                                <option>🏅 Employee of the Month</option>
-                                <option>🌟 Star Performer</option>
-                                <option>💡 Innovation Award</option>
-                                <option>🤝 Team Player</option>
-                                <option>🎯 Target Achiever</option>
-                                <option>❤️ Culture Champion</option>
-                            </select>
+                        <div class="fg" data-field-group="recognition_points">
+                            <div class="fl">Points Awarded</div><input class="fi" data-field="recognition_points" type="number" value="100" min="0" id="recognition-points" />
+                            <div class="field-error" data-error-for="recognition_points"></div>
+                            <div class="field-error" data-error-for="points"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Recognition Month</div><input class="fi" type="month"
-                                id="recognition-month" />
-                        </div>
-                        <div class="fg">
-                            <div class="fl">Points Awarded</div><input class="fi" type="number" value="100"
-                                id="recognition-points" />
-                        </div>
-                        <div class="fg full">
-                            <div class="fl">Recognition Message *</div><textarea class="fi" rows="4"
-                                id="recognition-message"
-                                placeholder="Write a meaningful appreciation message..."></textarea>
-                        </div>
-                        <div class="fg">
-                            <div class="fl">Notify via</div><select class="fi" id="recognition-notify">
-                                <option>Email + Dashboard</option>
-                                <option>Slack + Dashboard</option>
-                                <option>Dashboard only</option>
-                            </select>
-                        </div>
-                        <div class="fg">
-                            <div class="fl">Visibility</div><select class="fi" id="recognition-visibility">
-                                <option>Company-wide</option>
-                                <option>Department only</option>
-                                <option>Private</option>
-                            </select>
+                        <div class="fg full" data-field-group="recognition_reason">
+                            <div class="fl">Recognition Message *</div><textarea class="fi" data-field="recognition_reason" rows="4" id="recognition-message" placeholder="Write a meaningful appreciation message..."></textarea>
+                            <div class="field-error" data-error-for="recognition_reason"></div>
+                            <div class="field-error" data-error-for="reason"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
-                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
-                        data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveRecognition()">💾 Send
-                        Recognition</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveRecognition()">💾 Send Recognition</button>
                 </div>
             </div>
         </div>
@@ -291,569 +297,366 @@ PAGE 13: HEALTH & BENEFITS
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="padding:20px 24px;">
-
+                    <div id="form-global-error-survey" class="form-global-error"></div>
                     <div class="form-grid">
-                        <div class="fg full">
-                            <div class="fl">Survey Title *</div><input class="fi" id="survey-title"
-                                placeholder="e.g. Q1 2026 Employee Engagement Survey" />
+                        <div class="fg full" data-field-group="survey_title">
+                            <div class="fl">Survey Title *</div><input class="fi" data-field="survey_title" id="survey-title" placeholder="e.g. Q1 2026 Employee Engagement Survey" />
+                            <div class="field-error" data-error-for="survey_title"></div>
+                            <div class="field-error" data-error-for="title"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Survey Type</div><select class="fi" id="survey-type">
-                                <option>Engagement Survey</option>
-                                <option>Exit Survey</option>
-                                <option>Pulse Check</option>
-                                <option>Training Feedback</option>
-                                <option>360° Feedback</option>
+                        <div class="fg" data-field-group="survey_start_date">
+                            <div class="fl">Start Date *</div><input class="fi" data-field="survey_start_date" type="date" id="survey-start" />
+                            <div class="field-error" data-error-for="survey_start_date"></div>
+                            <div class="field-error" data-error-for="start_date"></div>
+                        </div>
+                        <div class="fg" data-field-group="survey_end_date">
+                            <div class="fl">End Date *</div><input class="fi" data-field="survey_end_date" type="date" id="survey-end" />
+                            <div class="field-error" data-error-for="survey_end_date"></div>
+                            <div class="field-error" data-error-for="end_date"></div>
+                        </div>
+                        <div class="fg" data-field-group="survey_is_anonymous">
+                            <div class="fl">Anonymous</div><select class="fi" data-field="survey_is_anonymous" id="survey-anonymous">
+                                <option value="true">Yes - Fully Anonymous</option>
+                                <option value="false">No - Identified</option>
                             </select>
+                            <div class="field-error" data-error-for="survey_is_anonymous"></div>
+                            <div class="field-error" data-error-for="is_anonymous"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Target Audience</div><select class="fi" id="survey-audience">
-                                <option>All Employees</option>
-                                <option>Specific Department</option>
-                                <option>New Joiners</option>
-                                <option>Managers</option>
+                        <div class="fg" data-field-group="survey_is_active">
+                            <div class="fl">Status</div><select class="fi" data-field="survey_is_active" id="survey-status">
+                                <option value="true">Active</option>
+                                <option value="false">Closed</option>
                             </select>
+                            <div class="field-error" data-error-for="survey_is_active"></div>
+                            <div class="field-error" data-error-for="is_active"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">Start Date</div><input class="fi" type="date" id="survey-start" />
+                        <div class="fg full" data-field-group="survey_description">
+                            <div class="fl">Description</div><textarea class="fi" data-field="survey_description" rows="3" id="survey-description" placeholder="Survey description..."></textarea>
+                            <div class="field-error" data-error-for="survey_description"></div>
+                            <div class="field-error" data-error-for="description"></div>
                         </div>
-                        <div class="fg">
-                            <div class="fl">End Date</div><input class="fi" type="date" id="survey-end" />
-                        </div>
-                        <div class="fg">
-                            <div class="fl">Anonymous</div><select class="fi" id="survey-anonymous">
-                                <option>Yes - Fully Anonymous</option>
-                                <option>No - Identified</option>
-                            </select>
-                        </div>
-                        <div class="fg full">
-                            <div class="fl">Questions (one per line)</div><textarea class="fi" rows="5"
-                                id="survey-questions"
-                                placeholder="Q1: How satisfied are you with work-life balance? (1-5)"></textarea>
-                        </div>
-                        <div class="fg">
-                            <div class="fl">Reminder Email</div><select class="fi" id="survey-reminder">
-                                <option>3 days before deadline</option>
-                                <option>Weekly</option>
-                                <option>No reminder</option>
-                            </select>
-                        </div>
-                        <div class="fg">
-                            <div class="fl">Status</div><select class="fi" id="survey-status">
-                                <option>Draft</option>
-                                <option>Active</option>
-                                <option>Closed</option>
-                            </select>
+                        <div class="fg full" data-field-group="survey_questions">
+                            <div class="fl">Questions (one per line)</div><textarea class="fi" data-field="survey_questions" rows="4" id="survey-questions" placeholder="Q1: How satisfied are you with work-life balance? (1-5)"></textarea>
+                            <div class="field-error" data-error-for="survey_questions"></div>
+                            <div class="field-error" data-error-for="questions"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" style="border-top:1px solid #f1f5f9;padding:14px 24px;">
-                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
-                        data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveSurvey()">💾 Publish
-                        Survey</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm fw-bold" onclick="saveSurvey()">💾 Publish Survey</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ═══ modalDelete ═══ -->
     <div class="modal fade" id="modalDelete" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
-            <div class="modal-content"
-                style="border-radius:14px;border:none;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);">
-                <div
-                    style="width:60px;height:60px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;">
-                    🗑️</div>
-                <div style="font-size:1.05rem;font-weight:800;color:#0f172a;margin-bottom:8px;" id="delete-title">Delete
-                    Record</div>
-                <div style="font-size:0.82rem;color:#64748b;margin-bottom:24px;" id="delete-desc">This action cannot be
-                    undone. Are you sure?</div>
+            <div class="modal-content" style="border-radius:14px;border:none;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.2);">
+                <div style="width:60px;height:60px;background:#fef2f2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;">🗑️</div>
+                <div style="font-size:1.05rem;font-weight:800;color:#0f172a;margin-bottom:8px;" id="delete-title">Delete Record</div>
+                <div style="font-size:0.82rem;color:#64748b;margin-bottom:24px;" id="delete-desc">This action cannot be undone. Are you sure?</div>
                 <div class="d-flex gap-2 justify-content-center">
-                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold"
-                        data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger btn-sm fw-bold" onclick="confirmDelete()">Yes,
-                        Delete</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-sm fw-bold" onclick="confirmDelete()">Yes, Delete</button>
                 </div>
             </div>
         </div>
     </div>
     <div id="toast"><span id="toast-icon">✅</span><span id="toast-msg">Saved successfully!</span></div>
+
     <script src="{% static 'talent_growth/js/constants.js' %}"></script>
     <script src="{% static 'talent_growth/js/APIClient.js' %}"></script>
     <script>
-        const api = new APIClient({
-            baseURL: API_CONFIG.BASE_URL,
-            timeout: API_CONFIG.TIMEOUT,
-            headers: API_CONFIG.HEADERS
-        });
+        const api = new APIClient({ baseURL: API_CONFIG.BASE_URL, timeout: API_CONFIG.TIMEOUT, headers: API_CONFIG.HEADERS });
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-        if (csrfToken) {
-            api.headers['X-CSRF-TOKEN'] = csrfToken;
-        }
-        window.api = api;
-        window.API_ENDPOINTS = API_ENDPOINTS;
+        if (csrfToken) api.headers['X-CSRFToken'] = csrfToken;
+        window.api = api; window.API_ENDPOINTS = API_ENDPOINTS;
     </script>
-
-    <script>
-        /**
-         * @namespace Surveys CRUD operations
-         * @description REST API wrapper functions for engagement surveys.
-         * @see API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS in constants.js
-         */
-        async function allSurveys() {
-            try {
-                return await api.all(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.INDEX);
-            } catch (error) {
-                console.error('Error fetching all surveys:', error);
-                throw error;
-            }
-        }
-
-        async function indexSurveys(params = {}) {
-            try {
-                return await api.index(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.INDEX, params);
-            } catch (error) {
-                console.error('Error indexing surveys:', error);
-                throw error;
-            }
-        }
-
-        async function createSurvey(payload) {
-            try {
-                return await api.store(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.STORE, payload);
-            } catch (error) {
-                console.error('Error creating survey:', error);
-                throw error;
-            }
-        }
-
-        async function getSurvey(id) {
-            try {
-                return await api.show(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.SHOW, id);
-            } catch (error) {
-                console.error('Error fetching survey:', error);
-                throw error;
-            }
-        }
-
-        async function updateSurveyAPI(id, payload) {
-            try {
-                return await api.update(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.UPDATE, id, payload);
-            } catch (error) {
-                console.error('Error updating survey:', error);
-                throw error;
-            }
-        }
-
-        async function deleteSurveyAPI(id) {
-            try {
-                return await api.destroy(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.DESTROY, id);
-            } catch (error) {
-                console.error('Error deleting survey:', error);
-                throw error;
-            }
-        }
-
-        /**
-         * @namespace Recognition CRUD operations
-         * @description REST API wrapper functions for recognition management.
-         * @see API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION in constants.js
-         */
-        async function allRecognitions() {
-            try {
-                return await api.all(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.INDEX);
-            } catch (error) {
-                console.error('Error fetching all recognitions:', error);
-                throw error;
-            }
-        }
-
-        async function indexRecognitions(params = {}) {
-            try {
-                return await api.index(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.INDEX, params);
-            } catch (error) {
-                console.error('Error indexing recognitions:', error);
-                throw error;
-            }
-        }
-
-        async function createRecognition(payload) {
-            try {
-                return await api.store(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.STORE, payload);
-            } catch (error) {
-                console.error('Error creating recognition:', error);
-                throw error;
-            }
-        }
-
-        async function getRecognition(id) {
-            try {
-                return await api.show(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.SHOW, id);
-            } catch (error) {
-                console.error('Error fetching recognition:', error);
-                throw error;
-            }
-        }
-
-        async function updateRecognitionAPI(id, payload) {
-            try {
-                return await api.update(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.UPDATE, id, payload);
-            } catch (error) {
-                console.error('Error updating recognition:', error);
-                throw error;
-            }
-        }
-
-        async function deleteRecognitionAPI(id) {
-            try {
-                return await api.destroy(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.DESTROY, id);
-            } catch (error) {
-                console.error('Error deleting recognition:', error);
-                throw error;
-            }
-        }
-
-        async function getEmployeePoints(employeeId) {
-            try {
-                return await api.all(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.EMPLOYEE_POINTS(employeeId));
-            } catch (error) {
-                console.error('Error fetching employee points:', error);
-                throw error;
-            }
-        }
-    </script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
-
-        $(document).on('show.bs.modal', '#modalIntegration', function (e) {
-            var name = $(e.relatedTarget).data('integration-name');
-            if (name) $('#integration-name').text(name);
-        });
-
-        /**
-         * Displays a toast notification with an icon and message.
-         * @param {string} icon - Emoji or icon character.
-         * @param {string} msg - Message to display.
-         * @param {number} [duration=3000] - Auto-hide duration in ms.
-         */
-        function showToast(icon, msg, duration) {
-            duration = duration || 3000;
-            $('#toast-icon').text(icon);
-            $('#toast-msg').text(msg);
-            $('#toast').addClass('show');
-            setTimeout(function () { $('#toast').removeClass('show'); }, duration);
+        function showToast(icon, msg, duration){ duration=duration||3000; $('#toast-icon').text(icon); $('#toast-msg').text(msg); $('#toast').addClass('show'); setTimeout(function(){$('#toast').removeClass('show');}, duration); }
+        function confirmDelete(){ $('#modalDelete').modal('hide'); showToast('🗑️','Record deleted successfully'); }
+        function escHtml(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        function clearFieldErrors(){
+            document.querySelectorAll('.field-error').forEach(el=>el.textContent='');
+            document.querySelectorAll('.fi.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+            document.querySelectorAll('.fg.has-error').forEach(el=>el.classList.remove('has-error'));
+            document.querySelectorAll('.form-global-error').forEach(el=>{ el.textContent=''; el.classList.remove('show'); });
+        }
+        function showFieldErrors(errors){
+            clearFieldErrors();
+            const map={ employee:'recognition_employee', employee_id:'recognition_employee', recognition_employee:'recognition_employee', recognition_type:'recognition_type', points:'recognition_points', recognition_points:'recognition_points', reason:'recognition_reason', recognition_reason:'recognition_reason', title:'survey_title', survey_title:'survey_title', start_date:'survey_start_date', survey_start_date:'survey_start_date', end_date:'survey_end_date', survey_end_date:'survey_end_date', is_anonymous:'survey_is_anonymous', survey_is_anonymous:'survey_is_anonymous', is_active:'survey_is_active', survey_is_active:'survey_is_active', description:'survey_description', survey_description:'survey_description', questions:'survey_questions', survey_questions:'survey_questions' };
+            for(const [k,val] of Object.entries(errors)){
+                const msg=Array.isArray(val)?val.join(', '):String(val);
+                if(k==='__all__'||k==='error'||k==='non_field_errors'){
+                    document.querySelectorAll('.form-global-error').forEach(el=>{ if(!el.textContent){el.textContent=msg; el.classList.add('show');}});
+                    continue;
+                }
+                const field=map[k]||k;
+                const errorEl=document.querySelector(`[data-error-for="${field}"]`);
+                const input=document.querySelector(`[data-field="${field}"]`);
+                if(errorEl) errorEl.textContent=msg;
+                if(input){ input.classList.add('is-invalid'); const fg=input.closest('.fg'); if(fg) fg.classList.add('has-error'); }
+                if(!errorEl && !input){
+                    document.querySelectorAll('.form-global-error').forEach(el=>{ if(!el.textContent){el.textContent=`${k}: ${msg}`; el.classList.add('show');}});
+                }
+            }
+        }
+        function getModalFieldValue(modalId, field){
+            const modal=document.getElementById(modalId); if(!modal) return '';
+            const el=modal.querySelector(`[data-field="${field}"]`); if(!el) return '';
+            return (el.value||'').trim();
+        }
+        function setModalFieldValue(modalId, field, value){
+            const modal=document.getElementById(modalId); if(!modal) return;
+            const el=modal.querySelector(`[data-field="${field}"]`); if(!el) return;
+            el.value=value==null?'':value;
+        }
+        function getPageSize(selectId, fallback){ const el=document.getElementById(selectId); const v=parseInt(el?.value||fallback); return isNaN(v)?fallback:v; }
+        function renderPaginationServer(total, page, pageSize, containerId, infoId, loadFnName){
+            const totalPages=Math.max(1, Math.ceil(total/pageSize))||1;
+            const start=total>0?(page-1)*pageSize+1:0;
+            const end=Math.min(page*pageSize, total);
+            const info=document.getElementById(infoId);
+            if(info) info.textContent=total>0?`Showing ${start}–${end} of ${total}`:'No data found';
+            const container=document.getElementById(containerId);
+            if(container){
+                let html='';
+                html+=`<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.68rem;${page===1?'opacity:0.5;pointer-events:none;':''}" onclick="${loadFnName}(${page-1})">‹ Prev</button>`;
+                for(let i=1;i<=totalPages;i++){
+                    if(i===1||i===totalPages||(i>=page-1&&i<=page+1)){
+                        html+=`<button class="${i===page?'btn-primary-custom':'btn-outline-custom'}" style="padding:5px 10px;font-size:0.68rem;" onclick="${loadFnName}(${i})">${i}</button>`;
+                    } else if(i===page-2||i===page+2){ html+=`<span style="padding:5px;color:var(--text-muted);">…</span>`; }
+                }
+                html+=`<button class="btn-outline-custom" style="padding:5px 10px;font-size:0.68rem;${page===totalPages?'opacity:0.5;pointer-events:none;':''}" onclick="${loadFnName}(${page+1})">Next ›</button>`;
+                container.innerHTML=html;
+            }
         }
 
-        /**
-         * Handles delete confirmation modal close and feedback.
-         * Triggered by the delete modal's confirm button.
-         */
-        function confirmDelete() {
-            $('#modalDelete').modal('hide');
-            showToast('\uD83D\uDDD1\uFE0F', 'Record deleted successfully');
+        // ── API Wrappers ──
+        async function indexSurveys(params={}){ return await api.index(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.INDEX, params); }
+        async function createSurvey(payload){ return await api.store(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.SURVEYS.STORE, payload); }
+        async function indexRecognitions(params={}){ return await api.index(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.INDEX, params); }
+        async function createRecognition(payload){ return await api.store(API_ENDPOINTS.TALENT_GROWTH.ENGAGEMENT.RECOGNITION.STORE, payload); }
+
+        let recognitionPage=1, recognitionSortBy='given_at', recognitionSortDir='desc';
+        let surveyPage=1, surveySortBy='start_date', surveySortDir='desc';
+
+        function changeRecognitionSort(){
+            recognitionSortBy=document.getElementById('recognition-sort-by')?.value||'given_at';
+            recognitionSortDir=document.getElementById('recognition-sort-dir')?.value||'desc';
+            loadRecognitions(1);
+        }
+        function changeSurveySort(){
+            surveySortBy=document.getElementById('survey-sort-by')?.value||'start_date';
+            surveySortDir=document.getElementById('survey-sort-dir')?.value||'desc';
+            loadSurveys(1);
         }
 
-        /**
-         * Switches the active tab within a tab group.
-         * @param {string} tabGroup - Matches data-tabgroup attribute.
-         * @param {string} tabId - Matches data-tabid attribute to activate.
-         */
-        function showSubTab(tabGroup, tabId) {
-            document.querySelectorAll('[data-tabgroup="' + tabGroup + '"]').forEach(t => {
-                t.classList.toggle('active', t.dataset.tabid === tabId);
-            });
-            document.querySelectorAll('[data-panelgroup="' + tabGroup + '"]').forEach(p => {
-                p.classList.toggle('active', p.dataset.panelid === tabId);
-            });
-        }
-
-        /** Page title lookup for topbar updates. */
-        const pageTitles = {
-            dashboard: 'Dashboard Overview',
-            employee: 'Employee Management',
-            attendance: 'Attendance & Leave',
-            payroll: 'Payroll Management',
-            recruitment: 'Recruitment & Hiring',
-            performance: 'Performance Management',
-            training: 'Training & Development',
-            onboarding: 'Onboarding & Offboarding',
-            ess: 'Employee Self-Service',
-            reports: 'Reports & Analytics',
-            compliance: 'Compliance & Policies',
-            engagement: 'Engagement & Recognition',
-            health: 'Health, Safety & Benefits',
-            talent: 'Talent & Succession',
-            branding: 'Recruitment Marketing',
-            global: 'Global HR',
-            integrations: 'Integrations & Automation'
-        };
-
-        /**
-         * Navigates to a page section and updates navigation state.
-         * @param {string} id - Page identifier matching `page-{id}` element.
-         * @param {HTMLButtonElement} [btn] - Optional nav button to mark active.
-         */
-        function showPage(id, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            const target = document.getElementById('page-' + id);
-            if (target) target.classList.add('active');
-            document.querySelectorAll('.nav-item-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            document.getElementById('topbar-title').textContent = pageTitles[id] || id;
-            document.getElementById('sidebar').classList.remove('open');
-            window.scrollTo(0, 0);
-        }
-
-        const d = new Date();
-        const dateEl = document.getElementById('topbar-date');
-        if (dateEl) dateEl.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
-        document.querySelectorAll('.toggle').forEach(t => {
-            t.addEventListener('click', () => t.classList.toggle('on'));
-        });
-
-        let engagementPage = 1;
-        const engagementPageSize = 10;
-        let allRecognitionsData = [];
-        let allSurveysData = [];
-
-        /**
-         * Renders paginated table data with page info and navigation.
-         * @param {Array} data - Array of items to paginate.
-         * @param {string} tbodyId - ID of the tbody element to render rows into.
-         * @param {string} infoId - ID of the element showing "Showing X–Y of Z".
-         * @param {string} containerId - ID of the pagination buttons container.
-         * @param {Function} renderRowFn - Callback(item, index) returning HTML string for a row.
-         */
-        function renderPagination(data, tbodyId, infoId, containerId, renderRowFn) {
-            const totalPages = Math.max(1, Math.ceil(data.length / pageSize));
-            if (currentPage > totalPages) currentPage = totalPages;
-            const start = (currentPage - 1) * pageSize;
-            const end = Math.min(start + pageSize, data.length);
-            const pageData = data.slice(start, end);
-
-            const tbody = document.getElementById(tbodyId);
-            if (tbody) {
-                tbody.innerHTML = '';
-                if (pageData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="99" style="text-align:center;padding:40px;color:var(--text-muted);">No data found</td></tr>';
+        async function loadRecognitions(page){
+            recognitionPage=page||1;
+            const pageSize=getPageSize('recognition-page-size',10);
+            const search=document.getElementById('recognition-search')?.value?.trim()||'';
+            const params={ page:recognitionPage, page_size:pageSize, sort_by:recognitionSortBy, sort_direction:recognitionSortDir };
+            if(search) params.search=search;
+            try{
+                const result=await indexRecognitions(params);
+                const container=document.getElementById('recognition-wall');
+                const data=result.data||[];
+                const count=result.count??data.length;
+                if(data.length===0){
+                    container.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-muted);">No recognitions found</div>';
                 } else {
-                    pageData.forEach((item, i) => {
-                        tbody.innerHTML += renderRowFn(item, i);
-                    });
+                    container.innerHTML=data.map(r=>`<div style="padding:14px;background:linear-gradient(135deg,#fffbeb,#fef9c3);border-radius:10px;border:1px solid #fde68a;" data-id="${r.id}">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                            <div class="avatar av-blue" style="width:32px;height:32px;font-size:0.7rem;">${escHtml((r.employee||'')[0]||'★')}</div>
+                            <div><div style="font-size:0.82rem;font-weight:700;">${escHtml(r.employee||'—')}</div><div style="font-size:0.68rem;color:var(--text-muted);">🏅 ${escHtml(r.recognition_type||'—')} · ${r.points||0} pts</div></div>
+                            <span style="margin-left:auto;font-size:1.2rem;">⭐</span>
+                        </div>
+                        <div style="font-size:0.78rem;color:var(--text-mid);">${escHtml(r.reason||'')}</div>
+                        <div style="font-size:0.68rem;color:var(--text-muted);margin-top:6px;">by ${escHtml(r.recognized_by||'—')} · ${escHtml(r.given_at||'')}</div>
+                    </div>`).join('');
                 }
+                renderPaginationServer(count, recognitionPage, pageSize, 'recognition-pagination', 'recognition-pagination-info', 'loadRecognitions');
+            } catch(e){
+                console.error('loadRecognitions',e);
+                const container=document.getElementById('recognition-wall');
+                if(container) container.innerHTML='<div style="text-align:center;padding:20px;color:#ef4444;">Failed to load recognitions</div>';
+                renderPaginationServer(0, recognitionPage, getPageSize('recognition-page-size',10), 'recognition-pagination', 'recognition-pagination-info', 'loadRecognitions');
             }
+        }
 
-            const info = document.getElementById(infoId);
-            if (info) {
-                info.textContent = data.length > 0 ? `Showing ${start + 1}–${end} of ${data.length}` : 'No data found';
-            }
-
-            const container = document.getElementById(containerId);
-            if (container) {
-                let html = '';
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === 1 ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${currentPage - 1})">‹ Prev</button>`;
-                for (let i = 1; i <= totalPages; i++) {
-                    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-                        html += `<button class="${i === currentPage ? 'btn-primary-custom' : 'btn-outline-custom'}" style="padding:5px 10px;" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${i})">${i}</button>`;
-                    } else if (i === currentPage - 2 || i === currentPage + 2) {
-                        html += `<span style="padding:5px;color:var(--text-muted);">…</span>`;
-                    }
+        async function loadSurveys(page){
+            surveyPage=page||1;
+            const pageSize=getPageSize('survey-page-size',10);
+            const search=document.getElementById('survey-search')?.value?.trim()||'';
+            const params={ page:surveyPage, page_size:pageSize, sort_by:surveySortBy, sort_direction:surveySortDir };
+            if(search) params.search=search;
+            try{
+                const result=await indexSurveys(params);
+                const container=document.getElementById('survey-results');
+                const data=result.data||[];
+                const count=result.count??data.length;
+                if(data.length===0){
+                    container.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-muted);">No surveys found</div>';
+                } else {
+                    container.innerHTML=data.map(s=>`<div style="padding:10px;background:#f8fafc;border-radius:8px;border:1px solid var(--border);" data-id="${s.id}">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <div><div style="font-size:0.82rem;font-weight:700;">${escHtml(s.title||'—')}</div><div style="font-size:0.68rem;color:var(--text-muted);">${escHtml(s.start_date||'—')} → ${escHtml(s.end_date||'—')}</div><div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;">${escHtml(s.description||'')}</div></div>
+                            <span class="badge-custom ${s.is_active?'badge-success':'badge-gray'}">${s.is_active?'Active':'Closed'}</span>
+                        </div>
+                    </div>`).join('');
                 }
-                html += `<button class="btn-outline-custom" style="padding:5px 10px;${currentPage === totalPages ? 'opacity:0.5;pointer-events:none;' : ''}" onclick="goPage('${tbodyId}','${infoId}','${containerId}',${currentPage + 1})">Next ›</button>`;
-                container.innerHTML = html;
+                renderPaginationServer(count, surveyPage, pageSize, 'survey-pagination', 'survey-pagination-info', 'loadSurveys');
+            } catch(e){
+                console.error('loadSurveys',e);
+                const container=document.getElementById('survey-results');
+                if(container) container.innerHTML='<div style="text-align:center;padding:20px;color:#ef4444;">Failed to load surveys</div>';
+                renderPaginationServer(0, surveyPage, getPageSize('survey-page-size',10), 'survey-pagination', 'survey-pagination-info', 'loadSurveys');
             }
         }
 
-        /**
-         * Updates current page and triggers render for the active paginated table.
-         * @param {string} tbodyId - ID of the tbody being paginated.
-         * @param {string} infoId - ID of the pagination info element.
-         * @param {string} containerId - ID of the pagination container.
-         * @param {number} page - Target page number.
-         */
-        function goPage(tbodyId, infoId, containerId, page) {
-            currentPage = page;
-            if (tbodyId === 'recognition-wall') renderRecognitionsPage();
-            if (tbodyId === 'survey-results') renderSurveysPage();
-        }
-
-        /** Renders the current page of recognition records. */
-        function renderRecognitionsPage() {
-            renderPagination(allRecognitionsData, 'recognition-wall', 'recognition-wall-info', 'recognition-wall-pagination', (r) => {
-                return `<div
-            style="padding:14px;background:linear-gradient(135deg,#fffbeb,#fef9c3);border-radius:10px;border:1px solid #fde68a;margin-bottom:8px;"
-            data-id="${r.id}">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-            <div class="avatar av-blue" style="width:32px;height:32px;font-size:0.7rem;">${(r.employee || '')[0]}</div>
-            <div>
-            <div style="font-size:0.82rem;font-weight:700;">${r.employee || '—'}</div>
-            <div style="font-size:0.68rem;color:var(--text-muted);">🏅 ${r.recognition_type}</div>
-        </div>
-        <span style="margin-left:auto;font-size:1.2rem;">⭐</span>
-    </div>
-    <div style="font-size:0.78rem;color:var(--text-mid);">${r.reason || ''}</div>
-    <div style="font-size:0.68rem;color:var(--text-muted);margin-top:6px;">by ${r.recognized_by || '—'} · ${r.given_at || ''}</div>
-</div>`;
-            });
-        }
-
-        /** Renders the current page of survey records. */
-        function renderSurveysPage() {
-            renderPagination(allSurveysData, 'survey-results', 'survey-results-info', 'survey-results-pagination', (s) => {
-                return `<div
-        style="padding:10px;background:#f8fafc;border-radius:8px;border:1px solid var(--border);margin-bottom:8px;"
-        data-id="${s.id}">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div>
-                <div style="font-size:0.82rem;font-weight:700;">${s.title}</div>
-                <div style="font-size:0.68rem;color:var(--text-muted);">${s.start_date || '—'} → ${s.end_date || '—'}</div>
-            </div>
-            <span class="badge-custom ${s.is_active ? 'badge-success' : 'badge-gray'}">${s.is_active ? 'Active' : 'Closed'}</span>
-        </div>
-    </div>`;
-            });
-        }
-
-        /**
-        * Fetches all recognitions and renders the recognition wall.
-        * @async
-        */
-        async function loadRecognitions() {
-            currentPage = 1;
-            try {
-                const result = await indexRecognitions({ page_size: 500 });
-                allRecognitionsData = result.data || [];
-                renderRecognitionsPage();
-            } catch (e) {
-                console.error('Failed to load recognitions:', e);
-            }
-        }
-
-        /**
-        * Fetches all surveys and renders the survey list.
-        * @async
-        */
-        async function loadSurveys() {
-            currentPage = 1;
-            try {
-                const result = await indexSurveys({ page_size: 500 });
-                allSurveysData = result.data || [];
-                renderSurveysPage();
-            } catch (e) {
-                console.error('Failed to load surveys:', e);
-            }
-        }
-
-        /**
-        * Reads recognition modal inputs, creates a recognition via API, and refreshes the list.
-        * @async
-        */
-        async function saveRecognition() {
-            const modal = document.getElementById('modalRecognition');
-            const selects = modal.querySelectorAll('select.fi');
-            const inputs = modal.querySelectorAll('input.fi');
-            const textareas = modal.querySelectorAll('textarea.fi');
-            const data = {
-                employee_id: selects[0]?.value || '',
-                recognition_type: selects[1]?.value || 'kudos',
-                recognition_month: inputs[0]?.value || '',
-                points: inputs[1]?.value || 100,
-                message: textareas[0]?.value || '',
-                visibility: selects[2]?.value || 'Company-wide',
+        async function saveRecognition(){
+            const modal=document.getElementById('modalRecognition');
+            clearFieldErrors();
+            const data={
+                employee_id: getModalFieldValue('modalRecognition','recognition_employee')||null,
+                recognition_type: getModalFieldValue('modalRecognition','recognition_type'),
+                points: parseInt(getModalFieldValue('modalRecognition','recognition_points'))||0,
+                reason: getModalFieldValue('modalRecognition','recognition_reason'),
             };
-            try {
-                await createRecognition(data);
-                showToast('✅', 'Recognition sent!');
+            if(!data.employee_id){ showFieldErrors({recognition_employee:['Employee is required']}); return; }
+            if(!data.recognition_type){ showFieldErrors({recognition_type:['Award type is required']}); return; }
+            if(!data.reason){ showFieldErrors({recognition_reason:['Message is required']}); return; }
+            if(isNaN(data.points) || data.points<0){ showFieldErrors({recognition_points:['Points must be >=0']}); return; }
+            // Normalize to backend expected keys: employee, recognized_by? But service expects employee_id and recognition_type etc.
+            const payload={ employee_id: parseInt(data.employee_id), recognition_type: data.recognition_type, points: data.points, reason: data.reason };
+            const btn=modal.querySelector('[onclick="saveRecognition()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='⏳ Sending...';}
+            try{
+                await createRecognition(payload);
+                showToast('✅','Recognition sent');
                 bootstrap.Modal.getInstance(modal).hide();
-                loadRecognitions();
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
+                resetRecognitionForm();
+                loadRecognitions(1);
+                loadEngagementStats();
+            } catch(e){
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors && Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed to send recognition'; const ge=document.getElementById('form-global-error-recognition'); if(ge){ge.textContent=msg; ge.classList.add('show');} showToast('❌',msg); }
+            } finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Send Recognition';} }
         }
-
-        /**
-        * Reads survey modal inputs, creates a survey via API, and refreshes the list.
-        * @async
-        */
-        async function saveSurvey() {
-            const modal = document.getElementById('modalSurvey');
-            const selects = modal.querySelectorAll('select.fi');
-            const inputs = modal.querySelectorAll('input.fi');
-            const textareas = modal.querySelectorAll('textarea.fi');
-            const data = {
-                title: inputs[0]?.value || '',
-                survey_type: selects[0]?.value || 'Engagement Survey',
-                target_audience: selects[1]?.value || 'All Employees',
-                start_date: inputs[1]?.value || null,
-                end_date: inputs[2]?.value || null,
-                is_anonymous: selects[2]?.value === 'Yes - Fully Anonymous',
-                questions: textareas[0]?.value || '',
-                reminder_email: selects[3]?.value || '3 days before deadline',
-                status: selects[4]?.value || 'Draft',
+        async function saveSurvey(){
+            const modal=document.getElementById('modalSurvey');
+            clearFieldErrors();
+            const questionsRaw=getModalFieldValue('modalSurvey','survey_questions');
+            // Parse questions one per line into array for backend? Backend service expects array of question texts?
+            // In engagement_service.create_survey, questions is popped and iterated to create SurveyQuestion
+            // But API expects maybe array or string; we handle both: if string with lines, split
+            let questions=[];
+            if(questionsRaw){
+                questions=questionsRaw.split('\n').map(s=>s.trim()).filter(Boolean);
+            }
+            const data={
+                title: getModalFieldValue('modalSurvey','survey_title'),
+                start_date: getModalFieldValue('modalSurvey','survey_start_date')||null,
+                end_date: getModalFieldValue('modalSurvey','survey_end_date')||null,
+                is_anonymous: getModalFieldValue('modalSurvey','survey_is_anonymous')==='true',
+                is_active: getModalFieldValue('modalSurvey','survey_is_active')==='true',
+                description: getModalFieldValue('modalSurvey','survey_description')||'',
+                questions: questions,
             };
-            try {
+            if(!data.title){ showFieldErrors({survey_title:['Title is required']}); return; }
+            if(!data.start_date){ showFieldErrors({survey_start_date:['Start date is required']}); return; }
+            if(!data.end_date){ showFieldErrors({survey_end_date:['End date is required']}); return; }
+            if(data.start_date && data.end_date && data.start_date > data.end_date){ showFieldErrors({survey_end_date:['End date must be after start date']}); return; }
+            const btn=modal.querySelector('[onclick="saveSurvey()"]');
+            const orig=btn?btn.innerHTML:'';
+            if(btn){btn.disabled=true; btn.innerHTML='⏳ Publishing...';}
+            try{
                 await createSurvey(data);
-                showToast('✅', 'Survey published!');
+                showToast('✅','Survey published');
                 bootstrap.Modal.getInstance(modal).hide();
-                loadSurveys();
-            } catch (e) {
-                showToast('❌', e?.response?.data ? JSON.stringify(e.response.data) : 'Failed');
-            }
+                resetSurveyForm();
+                loadSurveys(1);
+                loadEngagementStats();
+            } catch(e){
+                const errData=e?.response?.data||e?.data||{};
+                const errors=errData.errors||errData||{};
+                if(errors && Object.keys(errors).length){ showFieldErrors(errors); const fk=Object.keys(errors)[0]; const fm=Array.isArray(errors[fk])?errors[fk][0]:errors[fk]; showToast('❌',`${fk}: ${fm}`);} else { const msg=e?.message||'Failed to publish survey'; const ge=document.getElementById('form-global-error-survey'); if(ge){ge.textContent=msg; ge.classList.add('show');} showToast('❌',msg); }
+            } finally{ if(btn){btn.disabled=false; btn.innerHTML=orig||'💾 Publish Survey';} }
         }
-
-        /**
-        * Loads engagement statistics and updates the stat cards.
-        * @async
-        */
-        async function loadEngagementStats() {
-            try {
-                const surveysResult = await indexSurveys({ page_size: 1 });
-                const recognitionsResult = await indexRecognitions({ page_size: 1 });
-                const surveyCount = surveysResult.count || 0;
-                const recognitionCount = recognitionsResult.count || 0;
-                const cards = document.querySelectorAll('#page-engagement .stat-card .stat-value');
-                if (cards[0]) cards[0].textContent = '78%';
-                if (cards[1]) cards[1].textContent = surveyCount.toLocaleString();
-                if (cards[2]) cards[2].textContent = recognitionCount;
-                if (cards[3]) cards[3].textContent = '8';
-            } catch (e) {
-                console.error('Failed to load engagement stats:', e);
-            }
+        function resetRecognitionForm(){
+            const modal=document.getElementById('modalRecognition');
+            if(!modal) return;
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalRecognition','recognition_points','100');
         }
-
-        /**
-        * Populates the employee dropdown for recognition via the API.
-        * @async
-        */
-        async function loadEmployeeDropdown() {
-            try {
-                const result = await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, { page_size: 500 });
-                const sel = document.getElementById('recognition-employee');
-                if (sel && result?.data) {
-                    result.data.forEach(e => {
-                        const opt = document.createElement('option');
-                        opt.value = e.id;
-                        opt.textContent = `${e.first_name} ${e.last_name}`;
-                        sel.appendChild(opt);
-                    });
+        function resetSurveyForm(){
+            const modal=document.getElementById('modalSurvey');
+            if(!modal) return;
+            clearFieldErrors();
+            modal.querySelectorAll('[data-field]').forEach(el=>{ if(el.tagName==='SELECT') el.selectedIndex=0; else el.value=''; });
+            setModalFieldValue('modalSurvey','survey_is_anonymous','true');
+            setModalFieldValue('modalSurvey','survey_is_active','true');
+        }
+        async function loadEngagementStats(){
+            try{
+                const [surveysResult, recognitionsResult]=await Promise.all([
+                    indexSurveys({page:1, page_size:1}).catch(()=>({count:0})),
+                    indexRecognitions({page:1, page_size:1}).catch(()=>({count:0})),
+                ]);
+                const surveyCount=surveysResult.count||0;
+                const recognitionCount=recognitionsResult.count||0;
+                const sEl=document.getElementById('stat-survey-responses'); if(sEl) sEl.textContent=surveyCount.toLocaleString();
+                const rEl=document.getElementById('stat-awards'); if(rEl) rEl.textContent=recognitionCount.toLocaleString();
+                // Engagement Score: no backend endpoint for computed score
+                const eScore=document.getElementById('stat-engagement-score'); if(eScore) eScore.textContent='N/A';
+                const eChange=document.getElementById('stat-engagement-change'); if(eChange) eChange.textContent='No score API';
+                // Announcements: no backend API
+                const ann=document.getElementById('stat-announcements'); if(ann) ann.textContent='N/A';
+                const annSub=document.getElementById('stat-announcements-sub'); if(annSub) annSub.textContent='No announcements API';
+            } catch(e){ console.error('stats',e); }
+        }
+        async function loadEmployeeDropdown(){
+            try{
+                const result=await api.index(API_ENDPOINTS.EMPLOYEE.EMPLOYEES.INDEX, {page:1, page_size:500}).catch(()=>({data:[]}));
+                const data=result.data||[];
+                const sel=document.getElementById('recognition-employee');
+                if(sel){
+                    sel.innerHTML='<option value="">Select Employee</option>'+data.map(e=>`<option value="${e.id}">${escHtml(((e.first_name||'')+' '+(e.last_name||'')).trim()||e.employee_id||('Employee #'+e.id))}</option>`).join('');
                 }
-            } catch (e) {
-                console.error('Failed to load employees:', e);
-            }
+            } catch(e){ console.error('employees',e); }
         }
 
-        $(function () {
-            loadRecognitions();
-            loadSurveys();
+        $(function(){
+            loadRecognitions(1);
+            loadSurveys(1);
             loadEngagementStats();
             loadEmployeeDropdown();
+            let recogTimeout, surveyTimeout;
+            const rs=document.getElementById('recognition-search');
+            if(rs) rs.addEventListener('input', ()=>{ clearTimeout(recogTimeout); recogTimeout=setTimeout(()=>loadRecognitions(1),400); });
+            const ss=document.getElementById('survey-search');
+            if(ss) ss.addEventListener('input', ()=>{ clearTimeout(surveyTimeout); surveyTimeout=setTimeout(()=>loadSurveys(1),400); });
+            ['modalRecognition','modalSurvey'].forEach(mid=>{
+                const el=document.getElementById(mid);
+                if(!el) return;
+                el.addEventListener('hidden.bs.modal', ()=>clearFieldErrors());
+                el.addEventListener('show.bs.modal', ()=>clearFieldErrors());
+            });
+            document.querySelector('[data-bs-target="#modalRecognition"]')?.addEventListener('click', ()=>resetRecognitionForm());
+            document.querySelector('[data-bs-target="#modalSurvey"]')?.addEventListener('click', ()=>resetSurveyForm());
+            document.querySelectorAll('#modalRecognition .fi, #modalSurvey .fi').forEach(input=>{
+                input.addEventListener('input', ()=>{ input.classList.remove('is-invalid'); const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error'); const fe=fg?fg.querySelector('.field-error'):null; if(fe) fe.textContent=''; });
+                input.addEventListener('change', ()=>{ input.classList.remove('is-invalid'); const fg=input.closest('.fg'); if(fg) fg.classList.remove('has-error'); });
+            });
+            var d=new Date(); var dateEl=document.getElementById('topbar-date'); if(dateEl) dateEl.textContent=d.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric', year:'numeric'});
         });
-
     </script>
 </body>
-
 </html>
